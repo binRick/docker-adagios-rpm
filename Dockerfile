@@ -148,27 +148,28 @@ RUN pynag add command command_name=process-service-perfdata-file command_line='/
 	pynag add command command_name=process-host-perfdata-file command_line='/bin/mv /var/lib/naemon/host-perfdata /var/spool/pnp4nagios/host-perfdata.$TIMET$' ;\
 	pynag config --append cfg_dir=/etc/naemon/commands/
 
-RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
-RUN unlink /etc/naemon/conf.d/windows.cfg
-RUN unlink /etc/naemon/conf.d/switch.cfg
-RUN unlink /etc/naemon/conf.d/printer.cfg
-RUN naemon-ctl configtest
-RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
+#RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
+RUN unlink /etc/naemon/conf.d/windows.cfg ;\
+    unlink /etc/naemon/conf.d/switch.cfg ;\
+    unlink /etc/naemon/conf.d/printer.cfg ;\
+    naemon-ctl configtest
 
+#RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
 
-COPY configs/ncpa.cfg /etc/naemon/conf.d/ncpa.cfg
+#RUN mkdir -p /etc/naemon/commands
+
+COPY configs/commands/*.cfg /etc/naemon/commands/
+RUN pynag config --append cfg_dir=/etc/naemon/commands
 
 RUN okconfig addhost --host linuxhost.example.com --address 127.1.1.1 --template linux
+#RUN okconfig addservice host_name=linuxhost.example.com use=check_ncpa_agent_tcp_port 
 #RUN okconfig addtemplate --host example.com --template https
 
-RUN okconfig addservice host_name=linuxhost.example.com use=ncpa_agent_check 
 
-
-
-
-RUN okconfig listhosts
-RUN okconfig listtemplates
-RUN okconfig verify
+RUN naemon-ctl configtest || sleep 60;\
+    okconfig listhosts;\
+    okconfig listtemplates;\
+    okconfig verify
 
 RUN mv /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf.disabled
 
