@@ -156,12 +156,27 @@ RUN unlink /etc/naemon/conf.d/windows.cfg ;\
 
 #RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
 
-#RUN mkdir -p /etc/naemon/commands
+RUN mkdir -p /etc/naemon/commands \
+             /etc/naemon/services \
+             /usr/share/okconfig/templates/whmcs
 
 COPY configs/commands/*.cfg /etc/naemon/commands/
 RUN pynag config --append cfg_dir=/etc/naemon/commands
 
+COPY configs/services/*.cfg /etc/naemon/services/
+RUN pynag config --append cfg_dir=/etc/naemon/services
+
 RUN okconfig addhost --host linuxhost.example.com --address 127.1.1.1 --template linux
+RUN okconfig addtemplate linuxhost.example.com --template=http
+
+RUN okconfig addhost --host host1.example.com --address 127.1.1.2
+#RUN okconfig addhost --host whmcs.example.com --address 127.1.1.3 --template=http
+
+RUN okconfig addhost --host whmcs.example.com --address 127.1.1.3
+RUN okconfig addtemplate whmcs.example.com --template=http
+
+RUN okconfig addhost --host whmcs1.example.com --address 127.1.1.4
+RUN okconfig addtemplate whmcs1.example.com --template=http
 #RUN okconfig addservice host_name=linuxhost.example.com use=check_ncpa_agent_tcp_port 
 #RUN okconfig addtemplate --host example.com --template https
 
@@ -226,3 +241,5 @@ VOLUME ["/etc/naemon", "/var/log/naemon"]
 CMD ["/usr/sbin/init"]
 
 HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
+
+#RUN naemonstats|grep 'Total Services' -A 4
