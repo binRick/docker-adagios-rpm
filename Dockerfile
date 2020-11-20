@@ -161,6 +161,7 @@ COPY configs/ncpa.cfg /etc/naemon/conf.d/ncpa.cfg
 RUN okconfig addhost --host linuxhost.example.com --address 127.1.1.1 --template linux
 #RUN okconfig addtemplate --host example.com --template https
 
+RUN okconfig addservice host_name=linuxhost.example.com use=ncpa_agent_check 
 
 
 
