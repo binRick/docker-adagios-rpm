@@ -1,0 +1,10 @@
+[Unit]
+Description=Adagios container
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/podman start -a adagios
+ExecStop=/usr/bin/podman stop -t 2 adagios
+
+[Install]
+WantedBy=local.target

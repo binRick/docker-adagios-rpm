@@ -32,10 +32,16 @@ RUN rpm -ihv http://opensource.is/repo/ok-release.rpm \
 	&& yum update -y ok-release
 
 # Redhat/Centos users need to install the epel repositories (fedora users skip this step)
-RUN yum install -y epel-release && yum clean all && yum -y update
+RUN yum install -y epel-release dnf && yum clean all && yum -y update
 
 # Install naemon, adagios and other needed packages
-RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus git adagios okconfig acl pnp4nagios python-setuptools postfix python-pip
+RUN dnf -y install \
+	gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
+	gitpostfix python-pip python3-pip python3-devel python-devel acl python-setuptools
+
+RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
+
+
 
 # Now all the packages have been installed, and we need to do a little bit of
 # configuration before we start doing awesome monitoring
@@ -139,6 +145,17 @@ RUN pynag config --set 'host_perfdata_file=/var/lib/naemon/host-perfdata' ;\
 RUN pynag add command command_name=process-service-perfdata-file command_line='/bin/mv /var/lib/naemon/service-perfdata /var/spool/pnp4nagios/service-perfdata.$TIMET$' ;\
 	pynag add command command_name=process-host-perfdata-file command_line='/bin/mv /var/lib/naemon/host-perfdata /var/spool/pnp4nagios/host-perfdata.$TIMET$' ;\
 	pynag config --append cfg_dir=/etc/naemon/commands/
+
+RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
+RUN unlink /etc/naemon/conf.d/windows.cfg
+RUN unlink /etc/naemon/conf.d/switch.cfg
+RUN unlink /etc/naemon/conf.d/printer.cfg
+RUN naemon-ctl configtest
+RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
+
+RUN okconfig listhosts
+RUN okconfig listtemplates
+
 
 RUN mv /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf.disabled
 

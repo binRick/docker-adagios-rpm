@@ -1,0 +1,2 @@
+time podman build -t adagios_systemd_image .
+
