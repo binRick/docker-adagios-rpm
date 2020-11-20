@@ -37,7 +37,8 @@ RUN yum install -y epel-release dnf && yum clean all && yum -y update
 # Install naemon, adagios and other needed packages
 RUN dnf -y install \
 	gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
-	git postfix python-pip python3-pip python3-devel python-devel acl python-setuptools
+	git postfix python-pip python3-pip python3-devel python-devel acl python-setuptools \
+	zsh
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
@@ -152,6 +153,15 @@ RUN unlink /etc/naemon/conf.d/switch.cfg
 RUN unlink /etc/naemon/conf.d/printer.cfg
 RUN naemon-ctl configtest
 RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
+
+
+
+RUN okconfig addhost --host linuxhost.example.com --address 127.1.1.1 --template linux
+#RUN okconfig addtemplate --host example.com --template https
+
+
+
+
 
 RUN okconfig listhosts
 RUN okconfig listtemplates
