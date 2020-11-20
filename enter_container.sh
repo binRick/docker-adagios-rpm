@@ -1,1 +1,1 @@
-sudo podman exec -it adagios bash
+sudo podman exec -it adagios zsh

@@ -1,1 +1,1 @@
-podman kill adagios; podman rm adagios
+sudo podman kill adagios; podman rm adagios

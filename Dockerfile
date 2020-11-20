@@ -4,6 +4,7 @@
 ############################################################
 
 FROM centos:7
+#FROM adagios:7
 MAINTAINER "Gardar Thorsteinsson" <gardart@gmail.com>
 #LABEL com.example.version="0.0.1-beta"
 LABEL vendor1="Opin Kerfi hf."
@@ -155,6 +156,7 @@ RUN naemon-ctl configtest
 RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
 
 
+COPY configs/ncpa.cfg /etc/naemon/conf.d/ncpa.cfg
 
 RUN okconfig addhost --host linuxhost.example.com --address 127.1.1.1 --template linux
 #RUN okconfig addtemplate --host example.com --template https
@@ -165,7 +167,7 @@ RUN okconfig addhost --host linuxhost.example.com --address 127.1.1.1 --template
 
 RUN okconfig listhosts
 RUN okconfig listtemplates
-
+RUN okconfig verify
 
 RUN mv /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf.disabled
 
