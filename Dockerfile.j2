@@ -128,12 +128,12 @@ RUN pynag config --append cfg_dir=/etc/nagios/okconfig/commands/whmcs
 #    okconfig verify
 
 {%for p in added_plugins%}
-COPY {{p.path}} /usr/lib64/nagios/plugins
+COPY {{p.path}} {{paths.plugins}}
 {%endfor%}
 
 {%for s in daemontools_services%}
 RUN mkdir -p /service/{{s.name}}/log
-RUN echo -e "#!/bin/bash\n{{s.run}}" > /service/{{s.name}}/run
+RUN echo -e '#!/bin/bash\n{{s.run}}' > /service/{{s.name}}/run
 COPY bin/run /service/{{s.name}}/log
 RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log
 {%endfor%}
@@ -143,6 +143,8 @@ RUN echo "source /opt/liquidprompt/liquidprompt" >> /root/.zshrc
 RUN echo "source /opt/liquidprompt/liquidprompt" >> /root/.bashrc
 
 RUN naemon-ctl configtest || echo config failed && sleep 600
+
+RUN updatedb
 
 WORKDIR /etc/naemon
 

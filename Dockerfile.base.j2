@@ -49,6 +49,10 @@ RUN sed -i 's/^MaxSpareServers 20/MaxSpareServers 2/g' /etc/tinyproxy/tinyproxy.
 RUN sed -i 's/^StartServers 10/StartServers 1/g' /etc/tinyproxy/tinyproxy.conf
 RUN sh -c 'dnf list > /root/.dnf'
 
+{%for p in packages.pip3%}
+RUN pip3 install {{p}}
+{%endfor%}
+
 COPY monitoring-plugins.tar.gz /usr/src
 RUN git clone https://github.com/binRick/daemontools-encore-rpm /usr/src/daemontools-encore-rpm
 RUN git clone https://github.com/binRick/jo-rpm /usr/src/jo
@@ -62,7 +66,6 @@ RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/
 #RUN sh -c 'cd /usr/src && tar zxf monitoring-plugins.tar.gz && cd monitoring-plugins && ./tools/setup && ./configure --prefix=/opt/monitoring-plugins && make -j && make install'
 RUN sh -c 'cd /usr/src/daemontools-encore-rpm && ./build.sh 1.11 && rpm -ivh /root/rpmbuild/RPMS/x86_64/daemontools-encore-1.11-1.el7.x86_64.rpm'
 RUN sh -c 'cd /usr/src/jo && ./build.sh 1.4 && rpm -ivh /root/rpmbuild/RPMS/x86_64/jo-1.4-1.el7.x86_64.rpm'
-RUN updatedb
 
 
 # Now all the packages have been installed, and we need to do a little bit of
@@ -147,8 +150,8 @@ RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
 	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
 
 # Make naemon use nagios plugins, more people are doing it like that. And configure pnp4nagios
-RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg ;\
-	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf ;\
+RUN sed -i 's|/usr/lib64/naemon/plugins|{{paths.plugins}}|g' /etc/naemon/resource.cfg ;\
+	sed -i 's|/etc/nagios/passwd|{{paths.thruk.htpasswd}}|g' /etc/httpd/conf.d/pnp4nagios.conf ;\
 	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
 	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
 
@@ -188,7 +191,7 @@ RUN mv /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf /etc/httpd/conf.d/thruk_co
 
 RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 	rm -f /etc/nagios/passwd ;\
-	ln -s /etc/thruk/htpasswd /etc/nagios/passwd
+	ln -s {{paths.thruk.htpasswd}} /etc/nagios/passwd
 
 
 COPY bin/ttyd /usr/bin/ttyd
