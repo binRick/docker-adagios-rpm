@@ -133,7 +133,7 @@ COPY {{p.path}} {{paths.plugins}}
 
 {%for s in daemontools_services%}
 RUN mkdir -p /service/{{s.name}}/log
-RUN echo -e '#!/bin/bash\nsleep 60' > /service/{{s.name}}/run
+RUN echo -e '#!/bin/bash\nset -e\n{{s.run}}\n' > /service/{{s.name}}/run
 COPY bin/run /service/{{s.name}}/log
 RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log
 {%endfor%}

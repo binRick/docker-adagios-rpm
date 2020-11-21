@@ -7,6 +7,7 @@ cmd="sudo podman run \
     --rm \
     -p $PORT:80 \
     -p 5000:5000 \
+    -p 5001:5001 \
     -d adagios_systemd_image"
 
 #    --tmpfs /tmp \
