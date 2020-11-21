@@ -9,11 +9,11 @@ packages:
     - borg
 
 daemontools_services:
-  - name: s1
-    run: sleep 60
-
   - name: ttyd1
     run: ttyd -p 6001 -i lo zsh
+
+  - name: ttyd1_socket
+    run: ttyd -i /var/run/ttyd1.sock
 
 added_plugins:
   - name: check systemd service
