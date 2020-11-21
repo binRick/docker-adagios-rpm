@@ -1,3 +1,4 @@
 *.swp
 .attic/
 .venv
+.envrc
