@@ -13,3 +13,5 @@ cmd="sudo podman run \
 #    --tmpfs /tmp \
 #    --userns=keep-id \
 eval $cmd
+
+./iptables.sh
