@@ -19,7 +19,7 @@ added_plugins:
     path: bin/check_systemd_service.sh
 
 enabled_services:
-  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd]
+  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond]
 disabled_services:
   [firewalld]
 

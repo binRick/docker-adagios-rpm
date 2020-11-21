@@ -249,6 +249,7 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 	rm -f /etc/nagios/passwd ;\
 	ln -s {{paths.thruk.htpasswd}} /etc/nagios/passwd
 
+COPY .haproxy.cfg /etc/haproxy/haproxy.cfg
 
 
 # Enable services
