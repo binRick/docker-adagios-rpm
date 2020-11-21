@@ -13,7 +13,7 @@ daemontools_services:
     run: ttyd -p 6001 -i lo zsh
 
   - name: ttyd1_socket
-    run: ttyd -i /var/run/ttyd1.sock
+    run: ttyd -i /var/run/ttyd1.sock zsh
 
 added_plugins:
   - name: check systemd service
