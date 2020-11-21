@@ -256,6 +256,6 @@ RUN chmod a-x /usr/lib/systemd/system/*.service
 
 RUN systemctl enable {{' '.join(enabled_services)}}
 
-RUN sh -c 'firewall-cmd --add-port=http/tcp --permanent && firewall-cmd --reload'
+RUN firewall-cmd --add-port=http/tcp --permanent
 
 #RUN thruk r '/csv/hosts?columns=name,state'
