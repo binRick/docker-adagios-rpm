@@ -19,7 +19,9 @@ added_plugins:
     path: bin/check_systemd_service.sh
 
 enabled_services:
-  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, firewalld, sysstat]
+  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat]
+disabled_services:
+  [firewalld]
 
 local_processes:
   - name: Naemon
