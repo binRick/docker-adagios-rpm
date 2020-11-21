@@ -1,0 +1,82 @@
+---
+paths:
+  plugins: /usr/lib64/nagios/plugins
+  thruk:
+    htpasswd: /etc/thruk/htpasswd
+
+packages:
+  pip3:
+    - borg
+
+daemontools_services:
+  - name: s1
+    run: |
+        echo ok
+        sleep 60
+
+added_plugins:
+  - name: check systemd service
+    path: bin/check_systemd_service.sh
+
+enabled_services:
+  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, firewalld, sysstat]
+
+local_processes:
+  - name: Naemon
+    service: naemon
+    exec: naemon
+  - name: Systemd Journal Daemon
+    service: systemd-journald
+    exec: systemd-journald
+  - name: Systemd Login Daemon
+    service: systemd-logind
+  - name: Dbus
+    service: dbus
+    exec: dbus
+  - name: Fail2ban
+    service: fail2ban
+    exec: fail2ban
+  - name: Apache Webserver
+    service: httpd
+    exec: httpd
+  - name: Postfix
+    service: postfix
+    exec: postfix
+  - name: Redis
+    service: redis
+    exec: redis-server
+  - name: Tinyproxy
+    service: tinyproxy
+    exec: tinyproxy
+  - name: OpenSSH Server
+    service: sshd
+    exec: sshd
+  - name: Command Scheduler
+    service: crond
+    exec: crond
+  - name: Job Spooler
+    service: atd
+    exec: atd
+  - name: Daemontools
+    service: daemontools
+  - name: Nagios Performancedata C Daemon
+    service: npcd
+    exec: npcd
+  - name: readproctitle
+  - name: svscan
+
+local_monitored_services:
+  - service_description: Root Filesystemm
+    use: local-service
+    check_command: check_disk
+
+  - service_description: Naemon Status
+    use: local-service
+    check_command: check_naemon
+
+  - service_description: Mail Queue
+    use: local-service
+    check_command: check_mailq
+    check_args: -w 20 -c 30
+
+...
