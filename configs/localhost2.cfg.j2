@@ -1,0 +1,38 @@
+
+define command {
+    command_name    okc-check_tcpcount
+    command_line    $USER1$/check_tcpcount $ARG1$
+}
+define command {
+    command_name    okc-check_procs
+    command_line    $USER1$/check_procs $ARG1$
+}
+define command {
+    command_name    okc-check_naemon
+    command_line    $USER1$/check_nagios -F /var/lib/naemon/status.dat -e 5 -C naemon
+}
+define command {
+    command_name    okc-check_mailq
+    command_line    $USER1$/check_mailq $ARG1$
+}
+
+
+{%for lms in local_monitored_services%}
+define service {
+  service_description            {{lms.service_description}}
+  host_name                      localhost
+  use                            {{lms.use}}
+  check_command                  okc-{{lms.check_command}}!{{lms.check_args|default('')}}
+  notifications_enabled          {{lms.notifications_enabled|default('0')}}
+}
+{%endfor%}
+
+{%for lp in local_processes%}
+define service {
+  service_description            {{lp.service_description|default(lp.name)}} Process
+  host_name                      localhost
+  use                            local-service
+  check_command                  okc-check_procs!-C {{lp.name}}
+  notifications_enabled          0
+}
+{%endfor%}

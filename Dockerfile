@@ -30,7 +30,8 @@ RUN pynag add command command_name=process-service-perfdata-file command_line='/
 RUN unlink /etc/naemon/conf.d/windows.cfg ;\
     unlink /etc/naemon/conf.d/switch.cfg ;\
     unlink /etc/naemon/conf.d/printer.cfg ;\
-    unlink /etc/naemon/conf.d/localhost.cfg
+    unlink /etc/naemon/conf.d/localhost.cfg;\
+    unlink /etc/naemon/resource.cfg
 
 COPY configs/localhost.cfg /etc/naemon/conf.d
 
@@ -48,11 +49,10 @@ RUN mkdir -p /etc/naemon/commands \
 #COPY configs/whmcs-services.cfg /etc/nagios/okconfig/services
 #COPY configs/whmcs-commands.cfg /etc/nagios/okconfig/commands
 
+COPY configs/resource.cfg       /etc/naemon
 COPY configs/whmcs/commands.cfg  /etc/nagios/okconfig/commands/whmcs
 COPY configs/whmcs/services.cfg  /etc/nagios/okconfig/services/whmcs
-
-
-#RUN sh -c 'id'
+COPY configs/rendered/*.cfg      /etc/naemon/conf.d
 
 #COPY configs/commands/*.cfg /etc/naemon/commands/
 #RUN pynag config --append cfg_dir=/etc/naemon/commands
