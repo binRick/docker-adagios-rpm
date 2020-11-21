@@ -99,7 +99,7 @@ RUN sh -c 'echo "[[ $- = *i* ]] && source ~/.profile.sh" >> /etc/zshrc'
 
 ### END SOFTWARE INSTALLS
 
-RUN sed -i 's|^#broker_module=.*|broker_module=/usr/lib64/naemon/naemon-livestatus/livestatus.so /var/cache/naemon/live|g' /etc/naemon/naemon.cfg;\
+#RUN sed -i 's|^#broker_module=.*|broker_module=/usr/lib64/naemon/naemon-livestatus/livestatus.so /var/cache/naemon/live|g' /etc/naemon/naemon.cfg;\
 sed -i 's|^debug_level=.*|debug_level=128|g' /etc/naemon/naemon.cfg;\
 sed -i 's|^debug_verbosity=.*|debug_verbosity=2|g' /etc/naemon/naemon.cfg;\
 sed -i 's|^debug_file=.*|debug_file=/var/log/naemon/debug.log|g' /etc/naemon/naemon.cfg;\
