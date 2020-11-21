@@ -2,7 +2,11 @@
 set -e
 
 
-K=5557e764708823fb5432c1065692d1ec3bd6f38435862f08b5395767d1719ff6_1
+get_secret_key(){
+    sudo podman cp $(sudo podman ps -q):/var/lib/thruk/secret.key . && sudo chmod 755 secret.key && cat secret.key
+}
+
+K="$(get_secret_key)"
 curl_thruk(){
   METHOD="${2:-GET}"
   cmd="curl -X '$METHOD' -H 'X-Thruk-Auth-Key: $K' \

@@ -100,14 +100,15 @@ RUN sh -c 'echo "[[ $- = *i* ]] && source ~/.profile.sh" >> /etc/zshrc'
 ### END SOFTWARE INSTALLS
 
 #RUN sed -i 's|^#broker_module=.*|broker_module=/usr/lib64/naemon/naemon-livestatus/livestatus.so /var/cache/naemon/live|g' /etc/naemon/naemon.cfg;\
-sed -i 's|^debug_level=.*|debug_level=128|g' /etc/naemon/naemon.cfg;\
-sed -i 's|^debug_verbosity=.*|debug_verbosity=2|g' /etc/naemon/naemon.cfg;\
-sed -i 's|^debug_file=.*|debug_file=/var/log/naemon/debug.log|g' /etc/naemon/naemon.cfg;\
-sed -i 's|^enable_notifications=.*|enable_notifications=0|g' /etc/naemon/naemon.cfg;\
-sed -i 's|^max_concurrent_checks=.*|max_concurrent_checks=60|g' /etc/naemon/naemon.cfg;\
-sed -i 's|^use_syslog=.*|use_syslog=0|g' /etc/naemon/naemon.cfg;\
-sed -i 's|^check_workers=.*|check_workers=2|g' /etc/naemon/naemon.cfg;\
-sed -i 's|^host_down_disable_service_checks=.*|host_down_disable_service_checks=1|g' /etc/naemon/naemon.cfg
+RUN \
+    sed -i 's|^debug_level=.*|debug_level=128|g' /etc/naemon/naemon.cfg;\
+    sed -i 's|^debug_verbosity=.*|debug_verbosity=2|g' /etc/naemon/naemon.cfg;\
+    sed -i 's|^debug_file=.*|debug_file=/var/log/naemon/debug.log|g' /etc/naemon/naemon.cfg;\
+    sed -i 's|^enable_notifications=.*|enable_notifications=0|g' /etc/naemon/naemon.cfg;\
+    sed -i 's|^max_concurrent_checks=.*|max_concurrent_checks=60|g' /etc/naemon/naemon.cfg;\
+    sed -i 's|^use_syslog=.*|use_syslog=0|g' /etc/naemon/naemon.cfg;\
+    sed -i 's|^check_workers=.*|check_workers=2|g' /etc/naemon/naemon.cfg;\
+    sed -i 's|^host_down_disable_service_checks=.*|host_down_disable_service_checks=1|g' /etc/naemon/naemon.cfg
 
 
 #RUN sed -i 's|^.api_keys_enabled .*|api_keys_enabled = 1|g' /etc/thruk/thruk.conf;\
