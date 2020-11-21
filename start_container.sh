@@ -14,6 +14,8 @@ cmd="sudo podman run \
 #    --userns=keep-id \
 eval $cmd
 
+sleep 1
 ./iptables.sh
 
+sleep 1
 ./curl.sh
