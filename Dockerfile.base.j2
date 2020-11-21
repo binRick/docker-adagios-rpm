@@ -93,9 +93,9 @@ COPY bin/ttyd /usr/bin
 COPY bin/bwrap_exec.sh /usr/local/sbin
 COPY bin/bwrap_exec_with_network.sh /usr/local/sbin
 
-
-RUN sh -c 'echo "[[ $- = *i* ]] && source ~/.profile.sh" >> /etc/bashrc'
-RUN sh -c 'echo "[[ $- = *i* ]] && source ~/.profile.sh" >> /etc/zshrc'
+COPY .profile.sh /root
+RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/bashrc
+RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/zshrc
 
 ### END SOFTWARE INSTALLS
 
@@ -111,10 +111,10 @@ RUN \
     sed -i 's|^host_down_disable_service_checks=.*|host_down_disable_service_checks=1|g' /etc/naemon/naemon.cfg
 
 
-#RUN sed -i 's|^.api_keys_enabled .*|api_keys_enabled = 1|g' /etc/thruk/thruk.conf;\
-#    sed -i 's|^.thruk_verbose .*|thruk_verbose = 1|g' /etc/thruk/thruk.conf;\
-#    sed -i 's|^.basic_auth_enabled .*|basic_auth_enabled = 1|g' /etc/thruk/thruk.conf;\
-#    sed -i 's|^.server_timezone .*|server_timezone = Ammerica/New_York|g' /etc/thruk/thruk.conf
+RUN sed -i 's|^.api_keys_enabled .*|api_keys_enabled = 1|g' /etc/thruk/thruk.conf;\
+    sed -i 's|^.thruk_verbose .*|thruk_verbose = 1|g' /etc/thruk/thruk.conf;\
+    sed -i 's|^.basic_auth_enabled .*|basic_auth_enabled = 1|g' /etc/thruk/thruk.conf;\
+    sed -i 's|^.server_timezone .*|server_timezone = Ammerica/New_York|g' /etc/thruk/thruk.conf
 
 RUN sed -i 's/^MinSpareServers 5/MinSpareServers 1/g' /etc/tinyproxy/tinyproxy.conf;\
     sed -i 's/^MaxSpareServers 20/MaxSpareServers 2/g' /etc/tinyproxy/tinyproxy.conf;\
