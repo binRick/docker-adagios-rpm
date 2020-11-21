@@ -15,3 +15,5 @@ cmd="sudo podman run \
 eval $cmd
 
 ./iptables.sh
+
+./curl.sh
