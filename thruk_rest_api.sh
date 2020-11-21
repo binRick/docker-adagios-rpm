@@ -51,7 +51,6 @@ curl_thruk 'hosts/totals'
 curl_thruk 'lmd/sites'
 curl_thruk 'logs'
 curl_thruk 'processinfo'
-curl_thruk 'processinfo/stats'
 curl_thruk 'services'
 curl_thruk 'services/stats'
 curl_thruk 'services/totals'
@@ -69,4 +68,5 @@ curl_thruk 'config/check' POST
 #curl_thruk 'config/objects'
 #curl_thruk 'config/fullobjects'
 
-
+#wow
+curl_thruk 'processinfo/stats'

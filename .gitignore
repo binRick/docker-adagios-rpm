@@ -4,3 +4,5 @@
 .envrc
 configs/rendered/*
 .Dockerfile*
+secret.key
+.secret.key
