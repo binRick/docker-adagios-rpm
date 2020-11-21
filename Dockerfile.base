@@ -22,9 +22,9 @@ RUN sed -i 's/^installonly_limit=3/installonly_limit=10/g' /etc/yum.conf
 # First install the opensource.is and consol labs repositories
 RUN rpm -ihv http://opensource.is/repo/ok-release.rpm \
 	&& rpm -Uvh https://labs.consol.de/repo/stable/rhel7/x86_64/labs-consol-stable.rhel7.noarch.rpm \
-	&& yum update -y ok-release \
-    && rpm -Uvh https://repo.nagios.com/nagios/8/nagios-repo-8-1.el8.noarch.rpm \
-	&& yum update -y ncpa
+	&& yum update -y ok-release
+#    && rpm -Uvh https://repo.nagios.com/nagios/8/nagios-repo-8-1.el8.noarch.rpm \
+#	&& yum update -y ncpa
 
 # Redhat/Centos users need to install the epel repositories (fedora users skip this step)
 RUN yum install -y epel-release dnf && yum clean all && yum -y update
@@ -36,18 +36,34 @@ RUN dnf -y install \
 	zsh telnet openssh-server ansible-python3 openvpn openvpn-devel rpm-build tinyproxy nodejs
 RUN dnf -y install \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump ngrep bind-utils nmap-ncat at tar npm \
-    fail2ban certbot tree naemon-devel redis
+    fail2ban certbot tree naemon-devel redis tmux ngrep make automake net-tools
+
+RUN dnf -y install \
+    nagios-plugins-tcp nagios-plugins-http nagios-plugins-users nagios-plugins-smtp nagios-plugins-procs nagios-plugins-mysql nagios-plugins-mailq nagios-plugins-load nagios-plugins-dns nagios-plugins-dig nagios-plugins-disk nagios-plugins-ssh nagios-plugins-ping nagios-plugins-http nagios-plugins-fping nagios-plugins-by_ssh nagios-plugins-check_cpu nagios-plugins-file_age nagios-plugins-icmp nagios-plugins-nagios nagios-plugins-time nagios-plugins-swap
+
+RUN dnf -y install \
+    strace sqlite-devel jansson-devel mariadb-devel which
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
+RUN sed -i 's/^MinSpareServers 5/MinSpareServers 1/g' /etc/yum.conf
+RUN sed -i 's/^MaxSpareServers 20/MaxSpareServers 2/g' /etc/yum.conf
+RUN sed -i 's/^StartServers 10/StartServers 1/g' /etc/yum.conf
 RUN sed -i 's/^installonly_limit=3/installonly_limit=10/g' /etc/dnf/dnf.conf
 RUN sh -c 'dnf list > /root/.dnf'
 
+COPY monitoring-plugins.tar.gz /usr/src
 RUN git clone https://github.com/binRick/daemontools-encore-rpm /usr/src/daemontools-encore-rpm
 RUN git clone https://github.com/binRick/jo-rpm /usr/src/jo
+RUN git clone --depth 1 https://github.com/drwetter/testssl.sh.git /opt/testssl
+RUN git clone https://github.com/CISOfy/lynis /usr/src/lynis
+RUN git clone https://github.com/nojhan/liquidprompt.git /opt/liquidprompt
+RUN git clone https://github.com/auzias/my-public-ip /opt/my-public-ip
+RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt" >> /etc/bashrc'
+RUN sh -c 'cd /usr/src && tar zxf monitoring-plugins.tar.gz && cd monitoring-plugins && ./tools/setup && ./configure --prefix=/opt/monitoring-plugins && make -j && make install'
 RUN sh -c 'cd /usr/src/daemontools-encore-rpm && ./build.sh 1.11 && rpm -ivh /root/rpmbuild/RPMS/x86_64/daemontools-encore-1.11-1.el7.x86_64.rpm'
+RUN sh -c 'cd /usr/src/jo && ./build.sh 1.4 && rpm -ivh /root/rpmbuild/RPMS/x86_64/jo-1.4-1.el7.x86_64.rpm'
 RUN updatedb
-#RUN sh -c 'locate daemontools-encore|grep rpm$'
 
 
 # Now all the packages have been installed, and we need to do a little bit of
@@ -175,11 +191,11 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 	rm -f /etc/nagios/passwd ;\
 	ln -s /etc/thruk/htpasswd /etc/nagios/passwd
 
-RUN dnf -y install \
-    nagios-plugins-tcp nagios-plugins-http nagios-plugins-users nagios-plugins-smtp nagios-plugins-procs nagios-plugins-mysql nagios-plugins-mailq nagios-plugins-load nagios-plugins-dns nagios-plugins-dig nagios-plugins-disk nagios-plugins-ssh nagios-plugins-ping nagios-plugins-http nagios-plugins-fping nagios-plugins-by_ssh nagios-plugins-check_cpu nagios-plugins-file_age nagios-plugins-icmp nagios-plugins-nagios nagios-plugins-time nagios-plugins-swap
+
+COPY bin/ttyd /usr/bin/ttyd
 
 # Enable services
-RUN systemctl enable httpd naemon npcd postfix sshd daemontools haproxy rngd fail2ban redis tmux
+RUN systemctl enable httpd naemon npcd postfix sshd daemontools haproxy rngd fail2ban redis firewalld
 
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum

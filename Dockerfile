@@ -29,7 +29,10 @@ RUN pynag add command command_name=process-service-perfdata-file command_line='/
 #RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
 RUN unlink /etc/naemon/conf.d/windows.cfg ;\
     unlink /etc/naemon/conf.d/switch.cfg ;\
-    unlink /etc/naemon/conf.d/printer.cfg
+    unlink /etc/naemon/conf.d/printer.cfg ;\
+    unlink /etc/naemon/conf.d/localhost.cfg
+
+COPY configs/localhost.cfg /etc/naemon/conf.d
 
 #RUN pynag list host_name WHERE object_type=host --quiet|grep -v '^null'|sort -u
 
@@ -48,7 +51,6 @@ RUN mkdir -p /etc/naemon/commands \
 COPY configs/whmcs/commands.cfg  /etc/nagios/okconfig/commands/whmcs
 COPY configs/whmcs/services.cfg  /etc/nagios/okconfig/services/whmcs
 
-COPY monitoring-plugins.tar.gz /usr/src
 
 #RUN sh -c 'id'
 
