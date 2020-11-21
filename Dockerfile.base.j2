@@ -194,7 +194,7 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 COPY bin/ttyd /usr/bin/ttyd
 
 # Enable services
-RUN systemctl enable httpd naemon npcd postfix sshd daemontools haproxy rngd fail2ban redis
+RUN systemctl enable {{enabled_services|join(' ')}}
 
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum

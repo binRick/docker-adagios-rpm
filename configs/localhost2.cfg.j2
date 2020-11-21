@@ -1,4 +1,11 @@
-
+define command {
+    command_name    okc-check_tcp
+    command_line    $USER1$/check_tcp -H 127.0.0.1 -p 22 -w 5 -c 10
+}
+define command {
+    command_name    okc-check_local_systemd_service
+    command_line    $USER1$/check_systemd_service.sh $ARG1$
+}
 define command {
     command_name    okc-check_tcpcount
     command_line    $USER1$/check_tcpcount $ARG1$
@@ -28,11 +35,24 @@ define service {
 {%endfor%}
 
 {%for lp in local_processes%}
+
+{%if lp.service is defined %}
+define service {
+  service_description            {{lp.name}} Service
+  host_name                      localhost
+  use                            local-service
+  check_command                  okc-check_local_systemd_service!{{lp.service}}
+  notifications_enabled          0
+}
+{%endif%}
+
+{%if lp.exec is defined%}
 define service {
   service_description            {{lp.service_description|default(lp.name)}} Process
   host_name                      localhost
   use                            local-service
-  check_command                  okc-check_procs!-C {{lp.name}}
+  check_command                  okc-check_procs!-C {{lp.exec}}
   notifications_enabled          0
 }
+{%endif%}
 {%endfor%}

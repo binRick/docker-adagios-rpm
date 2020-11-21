@@ -66,23 +66,23 @@ RUN pynag config --append cfg_dir=/etc/nagios/okconfig/commands/whmcs
 #RUN okconfig addhost --host linuxhost.example.com --address 127.1.1.1 --template linux
 #RUN okconfig addtemplate linuxhost.example.com --template=http
 
-RUN okconfig addgroup whmcs_interfaces --alias "WHMCS Interfaces"
-RUN okconfig addgroup whmcs_database_interfaces --alias "WHMCS Database Interfaces"
-RUN okconfig addgroup whmcs_api_interfaces --alias "WHMCS API Interfaces"
-RUN okconfig addgroup whmcs_servers --alias "WHMCS Servers"
+#RUN okconfig addgroup whmcs_interfaces --alias "WHMCS Interfaces"
+#RUN okconfig addgroup whmcs_database_interfaces --alias "WHMCS Database Interfaces"
+#RUN okconfig addgroup whmcs_api_interfaces --alias "WHMCS API Interfaces"
+#RUN okconfig addgroup whmcs_servers --alias "WHMCS Servers"
 
-RUN okconfig addhost --host web1.vpnservice.company --address 50.116.46.88 \
-    --group whmcs_interfaces
-RUN okconfig addservice host_name=web1.vpnservice.company \
-                        use=okc-whmcs-http-api-tcp
-RUN okconfig addservice host_name=web1.vpnservice.company \
-                        use=okc-whmcs-http-api-tls
-RUN okconfig addservice host_name=web1.vpnservice.company \
-                        use=okc-whmcs-http-api-http
-RUN okconfig addservice host_name=web1.vpnservice.company \
-                        use=okc-whmcs-http-api-auth
-RUN okconfig addservice host_name=web1.vpnservice.company \
-                        use=okc-whmcs-http-api-cert
+#RUN okconfig addhost --host web1.vpnservice.company --address 50.116.46.88 \
+#    --group whmcs_interfaces
+#RUN okconfig addservice host_name=web1.vpnservice.company \
+#                        use=okc-whmcs-http-api-tcp
+#RUN okconfig addservice host_name=web1.vpnservice.company \
+#                        use=okc-whmcs-http-api-tls
+#RUN okconfig addservice host_name=web1.vpnservice.company \
+#                        use=okc-whmcs-http-api-http
+#RUN okconfig addservice host_name=web1.vpnservice.company \
+#                        use=okc-whmcs-http-api-auth
+#RUN okconfig addservice host_name=web1.vpnservice.company \
+#                        use=okc-whmcs-http-api-cert
 
 #RUN okconfig addhost --host db1.vpnservice.company --address 127.1.50.3 \
 #    --group whmcs_database_interfaces
@@ -127,19 +127,23 @@ RUN okconfig addservice host_name=web1.vpnservice.company \
 #    okconfig listtemplates;\
 #    okconfig verify
 
+{%for p in added_plugins%}
+COPY {{p.path}} /usr/lib64/nagios/plugins
+{%endfor%}
 
-RUN mkdir -p /service/s1/log
-RUN echo -e "#!/bin/bash\necho OK\nsleep 60" > /service/s1/run
-COPY bin/run /service/s1/log
-RUN chmod +x /service/s1/run /service/s1/log
+{%for s in daemontools_services%}
+RUN mkdir -p /service/{{s.name}}/log
+RUN echo -e "#!/bin/bash\n{{s.run}}" > /service/{{s.name}}/run
+COPY bin/run /service/{{s.name}}/log
+RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log
+{%endfor%}
 
-RUN echo "source /opt/liquidprompt/liquidprompt" > /root/.zshrc
 
+RUN echo "source /opt/liquidprompt/liquidprompt" >> /root/.zshrc
+RUN echo "source /opt/liquidprompt/liquidprompt" >> /root/.bashrc
 
+RUN naemon-ctl configtest || echo config failed && sleep 600
 
-RUN naemon-ctl configtest || sleep 600
-
-#RUN naemonstats|grep 'Total Services' -A 4
 WORKDIR /etc/naemon
 
 EXPOSE 80
