@@ -3,6 +3,10 @@ define command {
     command_line    $USER1$/check_tcp -H 127.0.0.1 -p 22 -w 5 -c 10
 }
 define command {
+    command_name    okc-check_disk
+    command_line    $USER1$/check_disk -w 500 -c 1000 -m -p /
+}
+define command {
     command_name    okc-check_local_systemd_service
     command_line    $USER1$/check_systemd_service.sh $ARG1$
 }

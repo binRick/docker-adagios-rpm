@@ -40,7 +40,7 @@ RUN dnf -y install \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump ngrep bind-utils nmap-ncat at tar npm \
     fail2ban certbot tree naemon-devel redis tmux ngrep make automake net-tools \
     nagios-plugins-tcp nagios-plugins-http nagios-plugins-users nagios-plugins-smtp nagios-plugins-procs nagios-plugins-mysql nagios-plugins-mailq nagios-plugins-load nagios-plugins-dns nagios-plugins-dig nagios-plugins-disk nagios-plugins-ssh nagios-plugins-ping nagios-plugins-http nagios-plugins-fping nagios-plugins-by_ssh nagios-plugins-check_cpu nagios-plugins-file_age nagios-plugins-icmp nagios-plugins-nagios nagios-plugins-time nagios-plugins-swap \
-    strace sqlite-devel jansson-devel mariadb-devel which go vim lsof psmisc
+    strace sqlite-devel jansson-devel mariadb-devel which go vim lsof psmisc aide sysstat
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
@@ -60,6 +60,23 @@ RUN git clone --depth 1 https://github.com/drwetter/testssl.sh.git /opt/testssl
 RUN git clone https://github.com/CISOfy/lynis /usr/src/lynis
 RUN git clone https://github.com/nojhan/liquidprompt.git /opt/liquidprompt
 RUN git clone https://github.com/auzias/my-public-ip /opt/my-public-ip
+RUN git clone https://github.com/akrherz/nagios-checks.git /usr/src/nagios-checks
+RUN git clone https://github.com/centreon/centreon-plugins.git /usr/src/centreon-plugins
+RUN git clone https://github.com/HariSekhon/Nagios-Plugins.git /usr/src/Nagios-Plugins
+RUN git clone https://github.com/hobbyquaker/check_os_release.git /usr/src/check_os_release
+RUN git clone https://github.com/bebehei/check_dnsserials.git /usr/src/check_dnsserials
+RUN git clone https://github.com/seffparker/nagios-plugins.git /usr/src/nagios-plugins1
+RUN git clone https://github.com/enzote84/nagios-plugins.git /usr/src/nagios-plugins2
+RUN git clone https://github.com/ikus060/nagios-plugins.git /usr/src/nagios-plugins3
+RUN git clone https://github.com/binRick/nagios-plugins.git /usr/src/nagios-plugins4
+RUN git clone https://github.com/PagerDuty/pdagent.git  /usr/src/pdagent
+RUN git clone https://github.com/matteocorti/check_rbl.git  /usr/src/check_rbl
+RUN git clone https://github.com/bebehei/nagios-plugin-check_borg.git /usr/src/check_borg
+RUN git clone https://github.com/jrottenberg/check_rss.git  /usr/src/check_rss
+RUN git clone https://github.com/StewLG/check_static_ip.git /usr/src/check_static_ip
+RUN git clone https://github.com/matteocorti/check_nagios_latency.git   /usr/src/check_nagios_latency
+
+
 RUN wget https://github.com/madrisan/nagios-plugins-linux/releases/download/v27/nagios-plugins-linux-27.tar.bz2 -O /usr/src/nagios-plugins-linux-27.tar.bz2
 RUN sh -c 'cd /usr/src && tar jxf nagios-plugins-linux-27.tar.bz2 && cd nagios-plugins-linux-27 && ./configure --prefix=/opt/nagios-plugins-linux && make -j install'
 RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt" >> /etc/bashrc'
@@ -197,15 +214,8 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 COPY bin/ttyd /usr/bin/ttyd
 
 # Enable services
+RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable {{enabled_services|join(' ')}}
 
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum
-WORKDIR /etc/naemon
-
-#EXPOSE 80
-
-#VOLUME ["/etc/naemon", "/var/log/naemon"]
-#CMD ["/usr/sbin/init"]
-
-#HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1

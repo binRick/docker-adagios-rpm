@@ -133,16 +133,16 @@ COPY {{p.path}} {{paths.plugins}}
 
 {%for s in daemontools_services%}
 RUN mkdir -p /service/{{s.name}}/log
-RUN echo -e '#!/bin/bash\n{{s.run}}' > /service/{{s.name}}/run
+RUN echo -e '#!/bin/bash\nsleep 60' > /service/{{s.name}}/run
 COPY bin/run /service/{{s.name}}/log
 RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log
 {%endfor%}
 
 
-RUN echo "source /opt/liquidprompt/liquidprompt" >> /root/.zshrc
-RUN echo "source /opt/liquidprompt/liquidprompt" >> /root/.bashrc
+RUN echo '[[ $- == *i* ]] && source /opt/liquidprompt/liquidprompt' >> /root/.zshrc
+RUN echo '[[ $- == *i* ]] && source /opt/liquidprompt/liquidprompt' >> /root/.bashrc
 
-RUN naemon-ctl configtest || echo config failed && sleep 600
+RUN naemon-ctl configtest || echo config failed
 
 RUN updatedb
 
