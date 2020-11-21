@@ -19,3 +19,5 @@ sleep 1
 
 sleep 1
 ./curl.sh
+
+./thruk_rest_api.sh
