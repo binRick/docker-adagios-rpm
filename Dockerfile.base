@@ -32,7 +32,7 @@ RUN yum install -y epel-release dnf
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/dnf/dnf.conf
 RUN dnf clean all && dnf -y update
 
-# Install naemon, adagios and other needed packages
+# DNF
 RUN dnf -y install \
 	gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
 	git postfix python-pip python3-pip python3-devel python-devel acl python-setuptools \
@@ -40,7 +40,7 @@ RUN dnf -y install \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump ngrep bind-utils nmap-ncat at tar npm \
     fail2ban certbot tree naemon-devel redis tmux ngrep make automake net-tools \
     nagios-plugins-tcp nagios-plugins-http nagios-plugins-users nagios-plugins-smtp nagios-plugins-procs nagios-plugins-mysql nagios-plugins-mailq nagios-plugins-load nagios-plugins-dns nagios-plugins-dig nagios-plugins-disk nagios-plugins-ssh nagios-plugins-ping nagios-plugins-http nagios-plugins-fping nagios-plugins-by_ssh nagios-plugins-check_cpu nagios-plugins-file_age nagios-plugins-icmp nagios-plugins-nagios nagios-plugins-time nagios-plugins-swap \
-    strace sqlite-devel jansson-devel mariadb-devel which
+    strace sqlite-devel jansson-devel mariadb-devel which go vim lsof psmisc
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
@@ -194,7 +194,7 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 COPY bin/ttyd /usr/bin/ttyd
 
 # Enable services
-RUN systemctl enable httpd naemon npcd postfix sshd daemontools haproxy rngd fail2ban redis firewalld
+RUN systemctl enable httpd naemon npcd postfix sshd daemontools haproxy rngd fail2ban redis
 
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum

@@ -128,8 +128,12 @@ RUN okconfig addservice host_name=web1.vpnservice.company \
 #    okconfig verify
 
 
+RUN mkdir -p /service/s1/log
+RUN echo -e "#!/bin/bash\necho OK\nsleep 60" > /service/s1/run
+COPY bin/run /service/s1/log
+RUN chmod +x /service/s1/run /service/s1/log
 
-
+RUN echo "source /opt/liquidprompt/liquidprompt" > /root/.zshrc
 
 
 
