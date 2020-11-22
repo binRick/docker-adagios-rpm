@@ -59,6 +59,10 @@ COPY files/{{p.file}} {{paths.plugins}}
 RUN  chmod +x {{paths.plugins}}/{{p.file}}
 {%endfor%}
 
+COPY files/safeu /usr/local/bin
+COPY files/fzf /usr/local/bin
+RUN chmod +x /usr/local/bin/safeu /usr/local/sbin/fzf
+
 {%for s in daemontools_services%}
 RUN mkdir -p /service/{{s.name}}/log
 RUN echo -e '#!/bin/bash\nset -e\nexec {{s.run}} 2>&1\n' > /service/{{s.name}}/run
