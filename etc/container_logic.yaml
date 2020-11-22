@@ -79,10 +79,10 @@ added_plugins:
 
 
 enabled_services:
-  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond, ncpa_listener, keepalived, firewalld, ]
+  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond, ncpa_listener, firewalld, ]
 
 disabled_services:
-  [ncpa_passive, ]
+  [ncpa_passive, keepalived, ]
 
 local_processes:
   - name: Naemon
@@ -125,9 +125,6 @@ local_processes:
   - name: Nagios Performancedata C Daemon
     service: npcd
     exec: npcd
-  - name: Keepalived
-    service: keepalived
-    exec: keepalived
   - name: readproctitle
   - name: svscan
 
