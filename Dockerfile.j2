@@ -82,7 +82,7 @@ CMD ["/usr/sbin/init"]
 
 HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.internal.apache}}/ || exit 1
 
-
+RUN neofetch > /etc/motd
 
 
 
