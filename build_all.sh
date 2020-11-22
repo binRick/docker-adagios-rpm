@@ -1,7 +1,8 @@
+#!/bin//bash
 set -ex
 eval $(cat setup.sh)
 
-[[ "$SHELL" == "/bin/bash" ]] && source setup.sh
+[[ "$SHELL" == "/bin/bash" ]] && . setup.sh
 
 ./build_image_base.sh 
 
