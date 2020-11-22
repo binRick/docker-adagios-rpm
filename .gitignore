@@ -8,3 +8,4 @@ secret.key
 .secret.key
 .envrc
 .envrc.enc
+.envrc.saved
