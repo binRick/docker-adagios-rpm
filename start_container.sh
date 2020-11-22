@@ -1,5 +1,5 @@
 
-set -ex
+set -e
 
 ./start_pod.sh
 
@@ -9,7 +9,7 @@ cmd="sudo podman run \
     --security-opt label=type:spc_t \
     --privileged=true \
     --restart=always \
-    --pod=$MY_POD_UUID \
+    --pod='$MY_POD_UUID' \
     --tmpfs /tmp \
     -d adagios_systemd_image"
 
@@ -23,4 +23,4 @@ eval $cmd
 #./curl.sh
 
 ./thruk_rest_api.sh
-set +ex
+set +e
