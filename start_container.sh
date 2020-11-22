@@ -1,6 +1,10 @@
+
 set -ex
 
-#./start_pod.sh
+
+set +x
+./start_pod.sh
+set -x
 
 
 
