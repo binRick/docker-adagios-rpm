@@ -6,7 +6,7 @@ my_pod=$MY_UUID
 
 
 cmd="sudo podman run \
-    --name adagios \
+    --name '$MY_CONTAINER_1_UUID' \
     --security-opt label=type:spc_t \
     --privileged=true \
     --restart=always \
