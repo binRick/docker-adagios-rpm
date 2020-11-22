@@ -1,24 +1,34 @@
+#!/bin/bash
 
 set -e
+source setup.sh
 
 ./start_pod.sh
 
 ./ls_container.sh >/dev/null && exit 1
 
-cmd="sudo podman run \
-    --name '$MY_CONTAINER_1_UUID' \
+
+start_named_container_from_image_in_pod(){
+  CONTAINER_NAME="$1"
+  IMAGE_NAME="$2"
+  POD_NAME="$3"
+
+  cmd="sudo podman run \
+    --name '$CONTAINER_NAME' \
     --security-opt label=type:spc_t \
     --privileged=true \
     --restart=always \
-    --pod='$MY_POD_UUID' \
+    --pod='$POD_NAME' \
     --tmpfs /tmp \
     --cap-add=SYS_ADMIN \
     --userns=keep-id \
     -v /sys/fs/cgroup:/sys/fs/cgroup \
-    -d '$MY_CONTAINER_1_IMAGE_UUID'"
+    -d '$IMAGE_NAME'"
 
-#    --userns=keep-id \
-eval $cmd
+    eval $cmd
+}
+
+start_named_container_from_image_in_pod "$MY_CONTAINER_1_UUID" "$MY_CONTAINER_1_IMAGE_UUID" "$MY_POD_UUID"
 
 #sleep 1
 #./iptables.sh
