@@ -135,7 +135,7 @@ COPY {{p.path}} {{paths.plugins}}
 RUN mkdir -p /service/{{s.name}}/log
 RUN echo -e '#!/bin/bash\nset -e\nexec {{s.run}} 2>&1\n' > /service/{{s.name}}/run
 COPY bin/run /service/{{s.name}}/log
-RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log
+RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log/run
 {%endfor%}
 
 
