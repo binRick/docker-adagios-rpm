@@ -26,6 +26,62 @@ define command {
     command_name    okc-check_mailq
     command_line    $USER1$/check_mailq $ARG1$
 }
+define command {
+    command_name    okc-check_package_updates
+    command_line    $USER1$/check_package_updates $ARG1$
+}
+define command {
+    command_name    okc-check_firewall_active
+    command_line    $USER1$/check_firewall_active.sh $ARG1$
+}
+define command {
+    command_name    okc-list_interfaces
+    command_line    $USER1$/check_ifoperstate -l
+}
+define command {
+    command_name    okc-check_eth0_interface_state
+    command_line    $USER1$/check_ifoperstate -I eth0
+}
+define command {
+    command_name    okc-get_network_stat
+    command_line    $USER1$/okc-get_network_stat $ARG1$
+}
+define command {
+    command_name    okc-check_disks
+    command_line    $USER1$/check_disks.pl
+}
+define command {
+    command_name    okc-check_public_websites
+    command_line    $USER1$/check_http_multi -u https://google.com -u https://yahoo.com
+}
+define command {
+    command_name    okc-bubblewrap_check_public_websites
+    command_line    $USER2$/bwrap_exec_with_network.sh $USER1$/check_http_multi -u https://google.com -u https://yahoo.com
+}
+define command {
+    command_name    okc-bubblewrap_check_ping
+    command_line    $USER2$/bwrap_exec_with_network.sh $USER1$/check_ping -H 4.2.2.1 -4 -w 3000.0,80% -c 5000.0,100% -p 1
+}
+define command {
+    command_name    okc-display_alternatives_ansible
+    command_line    update-alternatives --display ansible
+}
+define command {
+    command_name    okc-display_alternatives_ansible-playbook
+    command_line    update-alternatives --display ansible-playbook
+}
+define command {
+    command_name    okc-list_alternatives
+    command_line    update-alternatives --list
+}
+define command {
+    command_name    okc-list_speedtest_servers
+    command_line    speedtest --list
+}
+define command {
+    command_name    okc-check_remote_speedtest
+    command_line    $USER1$/check_speedtest-cli.sh -w 10 -c 7 -W 15 -C 10 -l e -s 8640
+}
 
 
 {%for lms in local_monitored_services%}

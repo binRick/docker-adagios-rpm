@@ -97,4 +97,57 @@ local_monitored_services:
     check_command: check_mailq
     check_args: -w 20 -c 30
 
+  - service_description: Yum Updates
+    use: local-service
+    check_command: check_package_updates
+
+  - service_description: Active Firewall
+    use: local-service
+    check_command: check_firewall_active
+
+  - service_description: Eth0 Interface State
+    use: local-service
+    check_command: check_eth0_interface_state
+
+  - service_description: Local Network Interface Statistics
+    use: local-service
+    check_command: get_network_stat
+
+  - service_description: Local Disks
+    use: local-service
+    check_command: check_disks
+
+  - service_description: Public Websites
+    use: local-service
+    check_command: check_public_websites
+
+  - service_description: Bubblewrap Ping
+    use: local-service
+    check_command: bubblewrap_check_ping
+
+  - service_description: Bubblewrap Public Websites
+    use: local-service
+    check_command: bubblewrap_check_public_websites
+
+  - service_description: Display Alternatives Ansible
+    use: local-service
+    check_command: display_alternatives_ansible
+
+  - service_description: Display Alternatives Ansible Playbook
+    use: local-service
+    check_command: display_alternatives_ansible-playbook
+
+  - service_description: List Alternatives
+    use: local-service
+    check_command: list_alternatives
+
+  - service_description: List Speedtest Servers
+    use: local-service
+    check_command: list_speedtest_servers
+
+  - service_description: Remote Speedtest
+    use: local-service
+    check_command: check_remote_speedtest
+
+
 ...

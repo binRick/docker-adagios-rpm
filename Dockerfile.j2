@@ -41,6 +41,9 @@ RUN mkdir -p /etc/naemon/commands \
              /etc/nagios/okconfig/commands/whmcs
 
 
+COPY files/check_speedtest-cli.sh /usr/lib64/nagios/plugins
+RUN chmod +x /usr/lib64/nagios/plugins/files/check_speedtest-cli.sh
+
 COPY configs/resource.cfg       /etc/naemon
 #COPY configs/whmcs/commands.cfg  /etc/nagios/okconfig/commands/whmcs
 #COPY configs/whmcs/services.cfg  /etc/nagios/okconfig/services/whmcs

@@ -5,6 +5,7 @@ cmd="exec bwrap --ro-bind /usr /usr \
        --proc /proc \
        --dev /dev \
        --ro-bind /etc/resolv.conf /etc/resolv.conf \
+       --ro-bind /etc/pki /etc/pki \
        --symlink usr/lib /lib \
        --symlink usr/lib64 /lib64 \
        --symlink usr/bin /bin \

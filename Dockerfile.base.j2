@@ -30,7 +30,10 @@ RUN dnf -y install \
     nagios-plugins-mailq nagios-plugins-load nagios-plugins-dns nagios-plugins-dig nagios-plugins-disk nagios-plugins-ssh \
     nagios-plugins-ping nagios-plugins-http nagios-plugins-fping nagios-plugins-by_ssh nagios-plugins-check_cpu nagios-plugins-file_age \
     nagios-plugins-icmp nagios-plugins-nagios nagios-plugins-time nagios-plugins-swap \
-    strace sqlite-devel jansson-devel mariadb-devel which go vim lsof psmisc aide sysstat chkconfig bubblewrap dstat socat
+    strace sqlite-devel jansson-devel mariadb-devel which go vim lsof psmisc aide sysstat chkconfig bubblewrap dstat socat \
+    nagios-okplugin-check_firewall_active nagios-okplugin-check_package_updates nagios-okplugin-check_ifoperstate \
+    nagios-okplugin-get_network_stat nagios-okplugin-check_disks perl-Net-DNS nagios-okplugin-check_http_multi \
+    python2-speedtest-cli
 
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
@@ -266,3 +269,8 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable {{' '.join(enabled_services)}}
 RUN systemctl disable {{' '.join(disabled_services)}}
+
+# Configure Ansible Paths
+RUN update-alternatives --install /usr/bin/ansible          ansible          /usr/bin/ansible-3            1; \
+    update-alternatives --install /usr/bin/ansible-playbook ansible-playbook /usr/bin/ansible-playbook-3   1; \
+    update-alternatives --list
