@@ -38,6 +38,9 @@ RUN dnf -y install \
 RUN dnf -y install \
     perl-Monitoring-Plugin perl-Switch man-db python-virtualenv libacl-devel
 
+COPY files/ncpa-2.2.2.el7.x86_64.rpm /usr/src
+RUN yum -y install /usr/src/ncpa-2.2.2.el7.x86_64.rpm
+
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
 {%for p in packages.pip3%}
