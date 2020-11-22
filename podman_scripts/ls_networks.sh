@@ -1,7 +1,7 @@
 set -e
 
 
-cmd="sudo podman network inspect podman|jq"
+cmd="sudo podman network inspect podman"
 
 eval $cmd
 
