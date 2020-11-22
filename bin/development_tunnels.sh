@@ -4,6 +4,8 @@ dur=10
 podman_cmd="echo -e; echo -e Containers; sudo podman ps; echo -e Pods; sudo podman pod ps"
 xpanes_args="-s -l ev"
 
+pod_stats_cmd="sudo podman pod stats --no-reset --no-stream -a"
+
 tmux_cmd=""
 for index in $(seq 1 $MAX_DEV_DOMAIN_INDEX); do
   tf=$(mktemp)
@@ -16,7 +18,7 @@ for index in $(seq 1 $MAX_DEV_DOMAIN_INDEX); do
   ADG_PORT="${!varname}"
   DEV_URL_1="http://$DEV_DOMAIN_USERNAME:$DEV_DOMAIN_PASSWORD@localhost:${index}${DEV_PORT_1}/adagios/status"
   ssh_args="-tt -oStrictHostKeyChecking=no -oLogLevel=ERROR -oControlMaster=no -L ${index}$DEV_PORT_2:127.0.0.1:$DEV_PORT_2 -L ${index}$DEV_PORT_1:127.0.0.1:$ADG_PORT"
-  remote_cmd="bash -c \"while [[ 1 ]]; do clear; hostname -f; $podman_cmd; echo -e \\\"\\\n\\\n$DEV_URL_1\\\n\\\n\\\";netstat -alntp|egrep \\\":$MY_ADAGIOS_PORT|:$DEV_PORT_2\\\"|head -n5; sleep $dur; done\""
+  remote_cmd="bash -c \"while [[ 1 ]]; do clear; hostname -f; $podman_cmd; echo -e \\\"\\\n\\\n$DEV_URL_1\\\n\\\n\\\";netstat -alntp|egrep \\\":$MY_ADAGIOS_PORT|:$DEV_PORT_2\\\"|head -n5; echo -e \\\"\\\n\\\"; $pod_stats_cmd; sleep $dur; done\""
   cmd="command ssh -oHostName='$DEV_IP' $ssh_args '$DEV_DOMAIN' '$remote_cmd'"
 
   echo -e "$cmd" > $tf
