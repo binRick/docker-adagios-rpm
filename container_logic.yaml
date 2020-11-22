@@ -6,7 +6,7 @@ auth:
 
 ports:
   internal:
-    haproxy: 5001
+    haproxy: 7126
     apache: 80
     ttyd1_socket: 41992
 
