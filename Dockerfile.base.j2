@@ -44,6 +44,10 @@ RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okco
 RUN pip3 install {{p}}
 {%endfor%}
 
+COPY files/install_borg.sh /root/install_borg.sh
+RUN /root/install_borg.sh
+RUN unlink /root/install_borg.sh
+
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum
 RUN sh -c 'dnf list > /root/.dnf'
