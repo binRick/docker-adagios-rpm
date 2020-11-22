@@ -1,4 +1,4 @@
-#!/bin/bash
+eval $(cat setup.sh)
 data_file=data.yaml
 get_templates(){
   find configs -name "*.j2"
