@@ -39,7 +39,8 @@ RUN dnf -y install \
     perl-Monitoring-Plugin perl-Switch man-db python-virtualenv libacl-devel
 
 COPY files/ncpa-2.2.2.el7.x86_64.rpm /usr/src
-RUN yum -y install /usr/src/ncpa-2.2.2.el7.x86_64.rpm
+RUN dnf -y install /usr/src/ncpa-2.2.2.el7.x86_64.rpm;\ 
+    unlink /usr/src/ncpa-2.2.2.el7.x86_64.rpm
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
@@ -50,6 +51,7 @@ RUN pip3 install {{p}}
 COPY files/install_borg.sh /root/install_borg.sh
 RUN /root/install_borg.sh
 RUN unlink /root/install_borg.sh
+RUN cd /opt && tar -czf borg.tar.gz borg
 
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum

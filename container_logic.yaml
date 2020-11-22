@@ -32,6 +32,7 @@ daemontools_services:
 added_plugins:
   - name: check systemd service
     file: check_systemd_service.sh
+
   - name: check haproxy
     file: check_haproxy
 
