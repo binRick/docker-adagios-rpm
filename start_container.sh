@@ -1,6 +1,6 @@
 set -ex
 
-./ls_pod.sh || ./start_pod.sh
+#./start_pod.sh
 
 
 
