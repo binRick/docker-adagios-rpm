@@ -61,7 +61,7 @@ RUN  chmod +x {{paths.plugins}}/{{p.file}}
 
 COPY files/safeu /usr/local/bin
 COPY files/fzf /usr/local/bin
-RUN chmod +x /usr/local/bin/safeu /usr/local/sbin/fzf
+RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 
 {%for s in daemontools_services%}
 RUN mkdir -p /service/{{s.name}}/log
