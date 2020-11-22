@@ -3,7 +3,6 @@
 .venv
 .envrc
 configs/rendered/*
-.Dockerfile*
 secret.key
 .secret.key
 .envrc
@@ -13,3 +12,6 @@ secret.key
 .*.key
 .haproxy.cfg
 *-*-*-*.service
+.Dockerfile
+.Dockerfile.base
+.Dockerfile.base_rpms
