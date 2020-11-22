@@ -32,17 +32,9 @@ start_named_container_from_image_in_pod(){
 
     eval $cmd
 }
-#    -v /sys/fs/cgroup:/sys/fs/cgroup \
 
 
 start_named_container_from_image_in_pod "$MY_CONTAINER_1_UUID" "$MY_CONTAINER_1_IMAGE_UUID" "$MY_POD_UUID"
-
-
-
-
-
-
-
 
 sleep 1
 iptables.sh
@@ -50,15 +42,16 @@ iptables.sh
 #sleep 1
 #curl.sh
 
-
-
-
-
-
-
-
 sleep 1
 thruk_rest_api.sh
 set +e
 
 generate_new_key.sh > $NEW_KEY_FILE
+
+
+
+
+
+
+
+
