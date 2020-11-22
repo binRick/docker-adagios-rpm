@@ -11,20 +11,20 @@ curl_thruk(){
   METHOD="${2:-GET}"
   cmd="curl -X '$METHOD' -H 'X-Thruk-Auth-Key: $K' \
           -H 'X-Thruk-Auth-User: thrukadmin' \
-          -sk 'http://localhost:7125/thruk/r/$1'"
+          -sk 'http://localhost:$MY_ADAGIOS_PORT/thruk/r/$1'"
 
   eval $cmd
 }
 
 cmd="curl -H 'X-Thruk-Auth-Key: $K' \
           -H 'X-Thruk-Auth-User: thrukadmin' \
-          -sk 'http://localhost:7125/thruk/r/hosts'"
+          -sk 'http://localhost:$MY_ADAGIOS_PORT/thruk/r/hosts'"
 
 #eval $cmd
 
 cmd="curl -H 'X-Thruk-Auth-Key: $K' \
           -H 'X-Thruk-Auth-User: thrukadmin' \
-          -sk 'http://localhost:7125/thruk/r/hosts?name=localhost'"
+          -sk 'http://localhost:$MY_ADAGIOS_PORT/thruk/r/hosts?name=localhost'"
 
 
 #eval $cmd
