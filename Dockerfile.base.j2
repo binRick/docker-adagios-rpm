@@ -35,6 +35,8 @@ RUN dnf -y install \
     nagios-okplugin-get_network_stat nagios-okplugin-check_disks perl-Net-DNS nagios-okplugin-check_http_multi \
     python2-speedtest-cli
 
+RUN dnf -y install \
+    perl-Monitoring-Plugin
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 

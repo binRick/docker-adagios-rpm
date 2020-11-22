@@ -90,6 +90,11 @@ define command {
     command_name    okc-check_gmail_smtp
     command_line    $USER1$/check_smtp -H gmail-smtp-in.l.google.com. -p 25 -4 -t 20
 }
+define command {
+    command_name    okc-check_daemontools_service
+    command_line    $USER1$/check_service.pl -s '$ARG1$' -w 5 -c 10
+}
+
 
 
 {%for lms in local_monitored_services%}

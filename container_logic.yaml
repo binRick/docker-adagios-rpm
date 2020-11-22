@@ -157,5 +157,15 @@ local_monitored_services:
     use: local-service
     check_command: check_gmail_smtp
 
+  - service_description: Check ttyd1_socat Service
+    use: local-service
+    check_command: check_daemontools_service
+    check_args: ttyd1_socat
+
+  - service_description: Check ttyd1_socket Service
+    use: local-service
+    check_command: check_daemontools_service
+    check_args: ttyd1_socket
+
 
 ...
