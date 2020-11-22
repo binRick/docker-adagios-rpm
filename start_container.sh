@@ -1,3 +1,6 @@
+#!/bin/bash
+set -ex
+
 PORT=7125
 
 my_pod=$MY_UUID
@@ -8,14 +11,14 @@ cmd="sudo podman run \
     --security-opt label=type:spc_t \
     --privileged=true \
     --restart=always \
-    --pod=$my_pod
-    -p $PORT:80 \
-    -p 5000:5000 \
-    -p 5001:5001 \
+    --pod=$my_pod \
     -d adagios_systemd_image"
 
 #    --tmpfs /tmp \
 #    --userns=keep-id \
+#    -p $PORT:80 \
+#    -p 5000:5000 \
+#    -p 5001:5001 \
 eval $cmd
 
 sleep 1
