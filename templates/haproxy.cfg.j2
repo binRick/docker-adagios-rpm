@@ -28,8 +28,13 @@ defaults
     timeout check           10s
     maxconn                 {{haproxy.maxconn}}
 
-frontend main *:{{ports.internal.haproxy}}
-    default_backend             ttyd_socket
+#frontend main *:{{ports.internal.haproxy}}
+#    default_backend             ttyd_socket
+
+{%for fe in  haproxy.frontends%}
+frontend {{fe.name}} {{fe.host}}:{{fe.port}}
+    default_backend             {{fe.default_backend}}
+{%endfor%}
 
 #backend apache
 #    server apache 127.0.0.1:{{ports.internal.apache}} check

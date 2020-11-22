@@ -22,10 +22,17 @@ haproxy:
   maxconn: 100
   stats:
     path: /var/lib/haproxy/stats
+
+  frontends:
+    - name: main
+      host: '*'
+      port: 31528
+      default_backend: ttyd_socket
+
   backends:
     - name: ttyd_socket
       servers: 
-        - { name: ttyd, host: 127.0.0.1, port: 41992, }
+        - { name: ttyd_socket, host: 127.0.0.1, port: 41992, }
     - name: apache
       servers: 
         - { name: apache, host: 127.0.0.1, port: 80, }
