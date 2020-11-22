@@ -32,7 +32,7 @@ frontend  main *:{{ports.internal.haproxy}}
     default_backend             ttyd_socket
 
 backend apache
-    server  apache 127.0.0.1:80 check
+    server  apache 127.0.0.1:{{ports.internal.apache}} check
 
 backend ttyd
     server  ttyd 127.0.0.1:6001 check
