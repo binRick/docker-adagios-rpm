@@ -1,8 +1,7 @@
-set -ex
-PORT=7125
+set -e
 
-cmd="sudo podman pod ps|grep -q ' $MY_POD_UUID '"
+cmd="sudo podman pod ls --ctr-names |grep -q ' $MY_POD_UUID '"
 
 eval $cmd
 
-set +ex
+set +e
