@@ -1,4 +1,3 @@
-#!/bin/bash
 set -ex
 
 my_pod=$MY_UUID
@@ -9,3 +8,4 @@ cmd="sudo podman pod exists $my_pod && sudo podman pod rm $my_pod"
 
 eval $cmd
 
+set +ex

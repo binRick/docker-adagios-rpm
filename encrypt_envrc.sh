@@ -9,5 +9,5 @@ ls -altr .envrc*
 
 file .envrc | grep -q ASCII || exit 1
 
-git commit .envrc -m 'env updated'
+git commit .envrc.enc.base64 -m 'env updated'
 git push
