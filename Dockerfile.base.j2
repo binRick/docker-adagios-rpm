@@ -1,4 +1,4 @@
-FROM centos:7
+FROM {{env.MY_CONTAINER_1_IMAGE_UUID}}_rpms:latest
 
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/yum.conf
 # First install the opensource.is and consol labs repositories
