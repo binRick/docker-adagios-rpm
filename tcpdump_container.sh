@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
 
-
-cmd="sudo podman exec -it $MY_CONTAINER_1_UUID tcpdump -nvvv $@"
+cmd="./exec_container.sh tcpdump -nvvvvv $@"
 eval $cmd
