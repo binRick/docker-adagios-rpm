@@ -2,9 +2,7 @@
 set -ex
 
 
-set +x
 ./start_pod.sh
-set -x
 
 
 
