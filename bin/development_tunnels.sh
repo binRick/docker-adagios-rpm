@@ -2,7 +2,7 @@
 set -e
 dur=30
 podman_cmd="echo -e; echo -e Containers; sudo podman ps; echo -e Pods; sudo podman pod ps"
-
+xpanes_args="-s -l ev"
 
 tmux_cmd=""
 for index in $(seq 1 $MAX_DEV_DOMAIN_INDEX); do
@@ -22,5 +22,5 @@ for index in $(seq 1 $MAX_DEV_DOMAIN_INDEX); do
   unlink $tf
 done
 
-tmux_cmd="command env DEV_PORT_FWDS=1 command bash -c \"command xpanes -se $tmux_cmd\""
+tmux_cmd="command env DEV_PORT_FWDS=1 command bash -c \"command xpanes $xpanes_args -e $tmux_cmd\""
 echo $tmux_cmd
