@@ -114,6 +114,7 @@ RUN \
 RUN sed -i 's|^.api_keys_enabled .*|api_keys_enabled = 1|g' /etc/thruk/thruk.conf;\
     sed -i 's|^.thruk_verbose .*|thruk_verbose = 1|g' /etc/thruk/thruk.conf;\
     sed -i 's|^.basic_auth_enabled .*|basic_auth_enabled = 1|g' /etc/thruk/thruk.conf;\
+    sed -i 's|^.max_api_keys_per_user .*|max_api_keys_per_user = 1000|g' /etc/thruk/thruk.conf;\
     sed -i 's|^.server_timezone .*|server_timezone = Ammerica/New_York|g' /etc/thruk/thruk.conf
 
 RUN sed -i 's/^MinSpareServers 5/MinSpareServers 1/g' /etc/tinyproxy/tinyproxy.conf;\

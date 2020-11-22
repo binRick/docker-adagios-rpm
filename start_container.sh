@@ -1,5 +1,5 @@
 #!/bin/bash
-
+NEW_KEY_FILE=".${MY_CONTAINER_1_UUID}.key"
 set -e
 source setup.sh
 
@@ -29,12 +29,6 @@ start_named_container_from_image_in_pod(){
 }
 
 
-
-
-
-
-
-
 start_named_container_from_image_in_pod "$MY_CONTAINER_1_UUID" "$MY_CONTAINER_1_IMAGE_UUID" "$MY_POD_UUID"
 
 
@@ -60,3 +54,5 @@ start_named_container_from_image_in_pod "$MY_CONTAINER_1_UUID" "$MY_CONTAINER_1_
 sleep 1
 ./thruk_rest_api.sh
 set +e
+
+./generate_new_key.sh > $NEW_KEY_FILE
