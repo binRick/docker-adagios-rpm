@@ -1,9 +1,8 @@
-#!/bin/bash
 set -ex
-
-PORT=7125
-
 my_pod=$MY_UUID
+
+./ls_pod.sh || ./start_pod.sh
+
 
 
 cmd="sudo podman run \
@@ -27,4 +26,5 @@ sleep 1
 sleep 1
 ./curl.sh
 
-./thruk_rest_api.sh
+#./thruk_rest_api.sh
+set +ex
