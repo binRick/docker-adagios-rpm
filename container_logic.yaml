@@ -33,6 +33,9 @@ daemontools_services:
 added_plugins:
   - name: check systemd service
     path: bin/check_systemd_service.sh
+  - name: check haproxy
+    path: files/check_haproxy
+
 
 enabled_services:
   [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond]
@@ -170,6 +173,14 @@ local_monitored_services:
   - service_description: Check Down Hosts
     use: local-service
     check_command: check_thruk_rest_down_hosts
+
+  - service_description: Check Borg Version
+    use: local-service
+    check_command: check_borg_version
+
+  - service_description: Check Haproxy
+    use: local-service
+    check_command: check_haproxy
 
 
 ...

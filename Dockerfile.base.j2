@@ -36,7 +36,7 @@ RUN dnf -y install \
     python2-speedtest-cli
 
 RUN dnf -y install \
-    perl-Monitoring-Plugin
+    perl-Monitoring-Plugin perl-Switch
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
@@ -49,11 +49,11 @@ RUN yum clean all -y && rm -rf /var/cache/yum
 RUN sh -c 'dnf list > /root/.dnf'
 
 # Setup Shell Environment
-RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt" >> /etc/bashrc'
+RUN grep liquidprompt /etc/bashrc || echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/bashrc
 
 RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/zshrc
-RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt" >> /etc/zshrc'
+RUN grep liquidprompt /etc/zshrc || echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt' >> /etc/zshrc
 
 
 #COPY monitoring-plugins.tar.gz /usr/src

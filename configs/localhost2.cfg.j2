@@ -102,6 +102,15 @@ define command {
     command_name    okc-check_thruk_rest_down_hosts
     command_line    $USER3$/check_thruk_rest -w down:80 -c down:100 /hosts/totals
 }
+define command {
+    command_name    okc-check_borg_version
+    command_line    borg --version
+}
+define command {
+    command_name    okc-check_haproxy
+    command_line    $USER1$/check_haproxy --socket /var/lib/haproxy/stats
+}
+
 
 
 
