@@ -14,4 +14,6 @@ sleep 3
 
 ./thruk_rest_api.sh
 
+./generate_pod_systemd_unit.sh > ${MY_POD_UUID}.service
+
 set +ex
