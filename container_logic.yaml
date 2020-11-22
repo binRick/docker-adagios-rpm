@@ -8,6 +8,7 @@ ports:
   internal:
     haproxy: 5001
     apache: 80
+    ttyd1_socket: 41992
 
 paths:
   plugins: /usr/lib64/nagios/plugins

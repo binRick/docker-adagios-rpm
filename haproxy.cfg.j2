@@ -48,5 +48,5 @@ backend ttyd
     server  ttyd 127.0.0.1:6001 check
 
 backend ttyd_socket
-    server  ttyd 127.0.0.1:41992 check
+    server  ttyd 127.0.0.1:{{ports.internal.ttyd1_socket}} check
 
