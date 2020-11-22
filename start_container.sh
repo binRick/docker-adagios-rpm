@@ -11,7 +11,9 @@ cmd="sudo podman run \
     --restart=always \
     --pod='$MY_POD_UUID' \
     --tmpfs /tmp \
-    -d adagios_systemd_image"
+    --cap-add=SYS_ADMIN \
+    -v /sys/fs/cgroup:/sys/fs/cgroup \
+    -d '$MY_CONTAINER_1_IMAGE_UUID'"
 
 #    --userns=keep-id \
 eval $cmd

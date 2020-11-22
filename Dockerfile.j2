@@ -1,5 +1,5 @@
 #FROM centos:7
-FROM adagios_systemd_image_base:latest
+FROM {{env.MY_CONTAINER_1_IMAGE_UUID}}:latest
 
 ENV container docker
 ENV ADAGIOS_HOST adagios.local

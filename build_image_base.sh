@@ -1,5 +1,8 @@
+set -e
 eval $(cat setup.sh)
 
 ./render_templates.sh
-time sudo podman build -t adagios_systemd_image_base -f .Dockerfile.base $@
+time sudo podman build -t $MY_CONTAINER_1_IMAGE_UUID -f .Dockerfile.base $@
 
+
+set +e
