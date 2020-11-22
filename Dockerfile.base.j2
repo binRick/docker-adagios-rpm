@@ -36,7 +36,7 @@ RUN dnf -y install \
     python2-speedtest-cli
 
 RUN dnf -y install \
-    perl-Monitoring-Plugin perl-Switch man-db
+    perl-Monitoring-Plugin perl-Switch man-db python-virtualenv libacl-devel
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 

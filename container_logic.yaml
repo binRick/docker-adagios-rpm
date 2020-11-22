@@ -16,8 +16,7 @@ paths:
     htpasswd: /etc/thruk/htpasswd
 
 packages:
-  pip3:
-    - borg
+  pip3: []
 
 daemontools_services:
   - name: ttyd1
