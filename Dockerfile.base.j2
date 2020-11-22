@@ -1,15 +1,15 @@
-############################################################
-# Dockerfile to build a Naemon/Adagios server
-# Based on appcontainers/nagios
-############################################################
-
 FROM centos:7
-#FROM adagios:7
 
+RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/yum.conf
 # First install the opensource.is and consol labs repositories
-RUN rpm -ihv http://opensource.is/repo/ok-release.rpm \
-	&& rpm -Uvh https://labs.consol.de/repo/stable/rhel7/x86_64/labs-consol-stable.rhel7.noarch.rpm \
-	&& yum update -y ok-release
+
+COPY files/ok-release.rpm /usr/src
+COPY files/labs-consol-stable.rhel7.noarch.rpm /usr/src
+
+
+RUN rpm -ihv /usr/src/ok-release.rpm \
+	&& rpm -Uvh /usr/src/labs-consol-stable.rhel7.noarch.rpm
+
 #    && rpm -Uvh https://repo.nagios.com/nagios/8/nagios-repo-8-1.el8.noarch.rpm \
 #	&& yum update -y ncpa
 
@@ -26,7 +26,10 @@ RUN dnf -y install \
 	zsh telnet openssh-server ansible-python3 openvpn openvpn-devel rpm-build tinyproxy nodejs \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump ngrep bind-utils nmap-ncat at tar npm \
     fail2ban certbot tree naemon-devel redis tmux ngrep make automake net-tools \
-    nagios-plugins-tcp nagios-plugins-http nagios-plugins-users nagios-plugins-smtp nagios-plugins-procs nagios-plugins-mysql nagios-plugins-mailq nagios-plugins-load nagios-plugins-dns nagios-plugins-dig nagios-plugins-disk nagios-plugins-ssh nagios-plugins-ping nagios-plugins-http nagios-plugins-fping nagios-plugins-by_ssh nagios-plugins-check_cpu nagios-plugins-file_age nagios-plugins-icmp nagios-plugins-nagios nagios-plugins-time nagios-plugins-swap \
+    nagios-plugins-tcp nagios-plugins-http nagios-plugins-users nagios-plugins-smtp nagios-plugins-procs nagios-plugins-mysql \
+    nagios-plugins-mailq nagios-plugins-load nagios-plugins-dns nagios-plugins-dig nagios-plugins-disk nagios-plugins-ssh \
+    nagios-plugins-ping nagios-plugins-http nagios-plugins-fping nagios-plugins-by_ssh nagios-plugins-check_cpu nagios-plugins-file_age \
+    nagios-plugins-icmp nagios-plugins-nagios nagios-plugins-time nagios-plugins-swap \
     strace sqlite-devel jansson-devel mariadb-devel which go vim lsof psmisc aide sysstat chkconfig bubblewrap dstat socat
 
 
@@ -39,6 +42,12 @@ RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okco
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum
 RUN sh -c 'dnf list > /root/.dnf'
+
+# Setup Shell Environment
+RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt" >> /etc/bashrc'
+RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/bashrc
+RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/zshrc
+
 
 #COPY monitoring-plugins.tar.gz /usr/src
 #RUN git clone https://github.com/binRick/daemontools-encore-rpm /usr/src/daemontools-encore-rpm
@@ -66,7 +75,8 @@ RUN git clone https://github.com/nojhan/liquidprompt.git /opt/liquidprompt
 
 #RUN wget https://github.com/madrisan/nagios-plugins-linux/releases/download/v27/nagios-plugins-linux-27.tar.bz2 -O /usr/src/nagios-plugins-linux-27.tar.bz2
 #RUN sh -c 'cd /usr/src && tar jxf nagios-plugins-linux-27.tar.bz2 && cd nagios-plugins-linux-27 && ./configure --prefix=/opt/nagios-plugins-linux && make -j install'
-RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt" >> /etc/bashrc'
+#
+#
 #RUN sh -c 'cd /usr/src && tar zxf monitoring-plugins.tar.gz && cd monitoring-plugins && ./tools/setup && ./configure --prefix=/opt/monitoring-plugins && make -j && make install'
 #RUN sh -c 'cd /usr/src/daemontools-encore-rpm && ./build.sh 1.11 && rpm -ivh /root/rpmbuild/RPMS/x86_64/daemontools-encore-1.11-1.el7.x86_64.rpm'
 #RUN sh -c 'cd /usr/src/jo && ./build.sh 1.4 && rpm -ivh /root/rpmbuild/RPMS/x86_64/jo-1.4-1.el7.x86_64.rpm'
@@ -87,7 +97,6 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 # Systemd - preparation ends
 
 # Configure yum
-RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/yum.conf
 
 # Manual copies
 COPY bin/ttyd /usr/bin
@@ -98,9 +107,6 @@ COPY bin/bwrap_exec_with_network.sh /usr/local/sbin
 COPY configs/.profile.sh /root
 COPY .haproxy.cfg /etc/haproxy/haproxy.cfg
 
-# Setup Shell Environment
-RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/bashrc
-RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/zshrc
 
 ### END SOFTWARE INSTALLS
 

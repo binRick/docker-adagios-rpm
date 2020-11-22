@@ -42,12 +42,12 @@ RUN mkdir -p /etc/naemon/commands \
 
 
 COPY configs/resource.cfg       /etc/naemon
-COPY configs/whmcs/commands.cfg  /etc/nagios/okconfig/commands/whmcs
-COPY configs/whmcs/services.cfg  /etc/nagios/okconfig/services/whmcs
+#COPY configs/whmcs/commands.cfg  /etc/nagios/okconfig/commands/whmcs
+#COPY configs/whmcs/services.cfg  /etc/nagios/okconfig/services/whmcs
 COPY configs/rendered/*.cfg      /etc/naemon/conf.d
 
-RUN pynag config --append cfg_dir=/etc/nagios/okconfig/services/whmcs
-RUN pynag config --append cfg_dir=/etc/nagios/okconfig/commands/whmcs
+#RUN pynag config --append cfg_dir=/etc/nagios/okconfig/services/whmcs
+#RUN pynag config --append cfg_dir=/etc/nagios/okconfig/commands/whmcs
 
 
 {%for p in added_plugins%}
