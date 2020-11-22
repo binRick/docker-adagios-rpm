@@ -1,5 +1,4 @@
 #!/bin/bash
-PORT=7125
 
 my_pod=$MY_UUID
 
@@ -9,7 +8,8 @@ eval $cmd
 
 cmd="sudo podman pod create \
     --name $my_pod \
-    -p 8080:80\
+    -p ${MY_INDEX}$DEV_PORT_1:$DEV_PORT_1 \
+    -p ${MY_INDEX}$DEV_PORT_2:$DEV_PORT_2 \
 "
 eval $cmd
 
