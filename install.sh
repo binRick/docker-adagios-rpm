@@ -1,4 +1,4 @@
-source setup.sh
+eval $(cat setup.sh)
 pip3 install \
 	'j2cli[yaml]' \
 --user --upgrade
