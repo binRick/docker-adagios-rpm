@@ -183,5 +183,9 @@ local_monitored_services:
     use: local-service
     check_command: check_haproxy
 
+  - service_description: Check Certbot Version
+    use: local-service
+    check_command: check_certbot_version
+
 
 ...

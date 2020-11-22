@@ -5,10 +5,9 @@ RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/yum.conf
 
 COPY files/ok-release.rpm /usr/src
 COPY files/labs-consol-stable.rhel7.noarch.rpm /usr/src
-
-
-RUN rpm -ihv /usr/src/ok-release.rpm \
-	&& rpm -Uvh /usr/src/labs-consol-stable.rhel7.noarch.rpm
+RUN dnf -y install /usr/src/ok-release.rpm /usr/src/labs-consol-stable.rhel7.noarch.rpm
+RUN unlink /usr/src/labs-consol-stable.rhel7.noarch.rpm
+RUN unlink /usr/src/ok-release.rpm
 
 #    && rpm -Uvh https://repo.nagios.com/nagios/8/nagios-repo-8-1.el8.noarch.rpm \
 #	&& yum update -y ncpa
@@ -53,7 +52,7 @@ RUN pip3 install {{p}}
 
 COPY files/install_borg.sh /root/install_borg.sh
 RUN /root/install_borg.sh
-RUN unlink /root/install_borg.sh
+RUN unlink /root/install_borg.sh /anaconda-post.log /root/anaconda-ks.cfg 
 #RUN cd /opt && tar -czf borg.tar.gz borg
 
 # Remove yum cache
