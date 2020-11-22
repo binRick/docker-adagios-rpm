@@ -13,6 +13,7 @@ cmd="sudo podman run \
     --pod='$MY_POD_UUID' \
     --tmpfs /tmp \
     --cap-add=SYS_ADMIN \
+    --userns=keep-id \
     -v /sys/fs/cgroup:/sys/fs/cgroup \
     -d '$MY_CONTAINER_1_IMAGE_UUID'"
 
