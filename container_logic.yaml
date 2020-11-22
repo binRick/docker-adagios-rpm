@@ -148,10 +148,12 @@ local_monitored_services:
   - service_description: List Speedtest Servers
     use: local-service
     check_command: list_speedtest_servers
+    is_volatile: 1
 
   - service_description: Remote Speedtest
     use: local-service
     check_command: check_remote_speedtest
+    is_volatile: 1
 
   - service_description: Gmail MX Lookup
     use: local-service

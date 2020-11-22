@@ -125,6 +125,9 @@ define service {
   use                            {{lms.use}}
   check_command                  okc-{{lms.check_command}}!{{lms.check_args|default('')}}
   notifications_enabled          {{lms.notifications_enabled|default('0')}}
+{%if lms.is_volatile is defined%}
+  is_volatile                    {{lms.is_volatile|int}}
+{%endif%}
 }
 {%endfor%}
 
