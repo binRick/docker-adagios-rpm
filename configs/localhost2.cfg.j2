@@ -23,10 +23,6 @@ define command {
     command_line    $USER1$/check_nagios -F /var/lib/naemon/status.dat -e 5 -C naemon
 }
 define command {
-    command_name    okc-check_mailq
-    command_line    $USER1$/check_mailq $ARG1$
-}
-define command {
     command_name    okc-check_package_updates
     command_line    $USER1$/check_package_updates $ARG1$
 }

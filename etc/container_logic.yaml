@@ -129,11 +129,6 @@ local_monitored_services:
     use: local-service
     check_command: check_naemon
 
-  - service_description: Mail Queue
-    use: local-service
-    check_command: check_mailq
-    check_args: -w 20 -c 30
-
   - service_description: Yum Updates
     use: local-service
     check_command: check_package_updates
