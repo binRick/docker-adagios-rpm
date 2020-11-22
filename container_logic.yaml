@@ -19,15 +19,14 @@ packages:
   pip3: []
 
 daemontools_services:
-  - name: ttyd1
-    run: ttyd -p 6001 -i lo zsh
+#  - name: ttyd1
+#    run: ttyd -p 6001 -i lo zsh
 
   - name: ttyd1_socat
     run: socat TCP-LISTEN:41992,reuseaddr,fork UNIX-CONNECT:/var/run/ttyd1.sock
 
   - name: ttyd1_socket
     run: ttyd -p 0 -i /var/run/ttyd1.sock zsh
-
 
 added_plugins:
   - name: check systemd service

@@ -52,17 +52,6 @@ RUN unlink /root/install_borg.sh
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum
 
-# Setup Shell Environment
-#RUN git clone https://github.com/nojhan/liquidprompt.git /opt/liquidprompt
-COPY files/liquidprompt.tar.gz /opt
-RUN cd /opt && tar zxf liquidprompt.tar.gz && unlink liquidprompt.tar.gz
-
-RUN grep liquidprompt /etc/bashrc || echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt' >> /etc/bashrc
-RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/bashrc
-
-RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/zshrc
-RUN grep liquidprompt /etc/zshrc || echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt' >> /etc/zshrc
-
 
 COPY files/lynis.tar.gz /opt
 RUN cd /opt && tar zxf lynis.tar.gz && unlink lynis.tar.gz
@@ -281,6 +270,27 @@ RUN systemctl disable {{' '.join(disabled_services)}}
 RUN update-alternatives --install /usr/bin/ansible          ansible          /usr/bin/ansible-3            1; \
     update-alternatives --install /usr/bin/ansible-playbook ansible-playbook /usr/bin/ansible-playbook-3   1; \
     update-alternatives --list
+
+COPY files/.ansi /etc/.ansi
+
+COPY files/safeu /usr/local/bin
+COPY files/fzf /usr/local/bin
+RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
+RUN chmod 644 /etc/.ansi
+RUN chown root:root /usr/local/bin/safeu /usr/local/bin/fzf /etc/.ansi
+
+
+
+# Setup Shell Environment
+#RUN git clone https://github.com/nojhan/liquidprompt.git /opt/liquidprompt
+COPY files/liquidprompt.tar.gz /opt
+RUN cd /opt && tar zxf liquidprompt.tar.gz && unlink liquidprompt.tar.gz
+
+RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/bashrc
+RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/zshrc
+
+
+
 
 
 RUN sh -c 'dnf list > /root/.dnf'
