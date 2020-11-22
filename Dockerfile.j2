@@ -55,7 +55,7 @@ COPY configs/rendered/*.cfg      /etc/naemon/conf.d
 
 
 {%for p in added_plugins%}
-COPY file/{{p.file}} {{paths.plugins}}
+COPY files/{{p.file}} {{paths.plugins}}
 RUN  chmod +x {{paths.plugins}}/{{p.file}}
 {%endfor%}
 

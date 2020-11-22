@@ -1,2 +1,3 @@
 Defaults:%naemon    !requiretty
 %naemon             ALL = (root) NOPASSWD: /usr/share/thruk/script/check_thruk_rest *
+%naemon             ALL = (root) NOPASSWD: /usr/lib64/nagios/plugins/check_firewall_active.sh *

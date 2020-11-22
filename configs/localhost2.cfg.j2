@@ -32,7 +32,7 @@ define command {
 }
 define command {
     command_name    okc-check_firewall_active
-    command_line    $USER1$/check_firewall_active.sh $ARG1$
+    command_line    $USER4$ $USER1$/check_firewall_active.sh $ARG1$
 }
 define command {
     command_name    okc-list_interfaces
@@ -96,11 +96,11 @@ define command {
 }
 define command {
     command_name    okc-check_thruk_rest
-    command_line    sudo -nu root $USER3$/check_thruk_rest "-o" "{STATUS} - {hits}" "{"hits":5}"
+    command_line    $USER4$ $USER3$/check_thruk_rest "-o" "{STATUS} - {hits}" "{"hits":5}"
 }
 define command {
     command_name    okc-check_thruk_rest_down_hosts
-    command_line    sudo -nu root $USER3$/check_thruk_rest -w down:80 -c down:100 /hosts/totals
+    command_line    $USER4$ $USER3$/check_thruk_rest -w down:80 -c down:100 /hosts/totals
 }
 define command {
     command_name    okc-check_borg_version
