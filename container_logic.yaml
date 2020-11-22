@@ -167,5 +167,9 @@ local_monitored_services:
     check_command: check_daemontools_service
     check_args: ttyd1_socket
 
+  - service_description: Check Down Hosts
+    use: local-service
+    check_command: check_thruk_rest_down_hosts
+
 
 ...
