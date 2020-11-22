@@ -1,10 +1,9 @@
 set -ex
 
-my_pod=$MY_UUID
 
 ./stop_pod.sh
 
-cmd="sudo podman pod exists $my_pod && sudo podman pod rm $my_pod"
+cmd="sudo podman pod exists $MY_POD_UUID && sudo podman pod rm $MY_POD_UUID"
 
 eval $cmd
 

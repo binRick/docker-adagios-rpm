@@ -1,5 +1,4 @@
 set -ex
-my_pod=$MY_UUID
 
 ./ls_pod.sh || ./start_pod.sh
 
@@ -10,7 +9,7 @@ cmd="sudo podman run \
     --security-opt label=type:spc_t \
     --privileged=true \
     --restart=always \
-    --pod=$my_pod \
+    --pod=$MY_POD_UUID \
     -d adagios_systemd_image"
 
 #    --tmpfs /tmp \
