@@ -75,16 +75,16 @@ RUN updatedb
 
 WORKDIR /etc/naemon
 
-EXPOSE 80
+EXPOSE {{ports.internal.apache}}
 
 VOLUME ["/etc/naemon", "/var/log/naemon"]
 CMD ["/usr/sbin/init"]
 
-HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
+HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.internal.apache}}/ || exit 1
 
 
 
 
 
-RUN firewall-cmd --add-port=80/tcp --permanent && \
+RUN firewall-cmd --add-port={{ports.internal.apache}}/tcp --permanent && \
     firewall-cmd --reload
