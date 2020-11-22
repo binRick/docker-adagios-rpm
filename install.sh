@@ -1,8 +1,6 @@
-
-python3 -m venv .venv
-source .venv/bin/activate
+source setup.sh
 pip3 install \
-	j2cli \
+	'j2cli[yaml]' \
 --user --upgrade
 
 sudo dnf -y remove docker\*
