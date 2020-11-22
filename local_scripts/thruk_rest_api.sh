@@ -46,6 +46,7 @@ curl_thruk 'thruk/config'
 curl_thruk 'thruk/jobs'
 curl_thruk 'thruk/users'
 curl_thruk 'thruk/whoami'
+   curl_thruk 'config/files?columns=path,content,mtimme,hex'
 }
 curl_thruk 'config/check' POST
 #curl_thruk 'services/localhost/'
