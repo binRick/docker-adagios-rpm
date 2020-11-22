@@ -63,8 +63,12 @@ RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/zshrc
 RUN grep liquidprompt /etc/zshrc || echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt' >> /etc/zshrc
 
 
-COPY files/files/lynis.tar.gz /opt
+COPY files/lynis.tar.gz /opt
 RUN cd /opt && tar zxf lynis.tar.gz && unlink lynis.tar.gz
+
+COPY files/my-public-ip.tar.gz /opt
+RUN cd /opt && tar zxf my-public-ip.tar.gz && unlink my-public-ip.tar.gz
+
 #COPY monitoring-plugins.tar.gz /usr/src
 #RUN git clone https://github.com/binRick/daemontools-encore-rpm /usr/src/daemontools-encore-rpm
 #RUN git clone https://github.com/binRick/jo-rpm /usr/src/jo
