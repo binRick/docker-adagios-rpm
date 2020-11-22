@@ -41,9 +41,10 @@ RUN mkdir -p /etc/naemon/commands \
              /etc/nagios/okconfig/commands/whmcs
 
 
+COPY files/neofetch /usr/local/bin
 COPY files/check_speedtest-cli.sh /usr/lib64/nagios/plugins
 COPY files/check_service.pl /usr/lib64/nagios/plugins
-RUN chmod +x /usr/lib64/nagios/plugins/check_speedtest-cli.sh /usr/lib64/nagios/plugins/check_service.pl
+RUN chmod +x /usr/lib64/nagios/plugins/check_speedtest-cli.sh /usr/lib64/nagios/plugins/check_service.pl /usr/local/bin/neofetch
 
 COPY configs/resource.cfg       /etc/naemon
 #COPY configs/whmcs/commands.cfg  /etc/nagios/okconfig/commands/whmcs
