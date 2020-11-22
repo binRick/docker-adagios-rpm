@@ -108,7 +108,7 @@ define command {
 }
 define command {
     command_name    okc-check_haproxy
-    command_line    $USER4$ $USER1$/check_haproxy --socket /var/lib/haproxy/stats
+    command_line    $USER4$ $USER1$/check_haproxy --socket /var/lib/haproxy/stats --defaults 'u,1,1,.75,0.85'
 }
 
 
