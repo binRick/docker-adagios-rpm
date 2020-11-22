@@ -38,9 +38,10 @@ added_plugins:
 
 
 enabled_services:
-  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond]
+  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond, ncpa_listener]
+
 disabled_services:
-  [firewalld]
+  [firewalld, ncpa_passive]
 
 local_processes:
   - name: Naemon
