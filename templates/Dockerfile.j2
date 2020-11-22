@@ -25,11 +25,14 @@ RUN pynag add command command_name=process-service-perfdata-file command_line='/
 	pynag add command command_name=process-host-perfdata-file command_line='/bin/mv /var/lib/naemon/host-perfdata /var/spool/pnp4nagios/host-perfdata.$TIMET$' ;\
 	pynag config --append cfg_dir=/etc/naemon/commands/
 
-RUN unlink /etc/naemon/conf.d/windows.cfg ;\
+RUN unlink /etc/naemon/conf.d/windows.cfg;\
+    unlink /etc/nagios/objects/windows.cfg;\
+    unlink /etc/nagios/objects/printer.cfg;\
     unlink /etc/naemon/conf.d/switch.cfg ;\
+    unlink /etc/nagios/objects/switch.cfg;\
     unlink /etc/naemon/conf.d/printer.cfg ;\
-    unlink /etc/naemon/conf.d/localhost.cfg;\
-    unlink /etc/naemon/resource.cfg
+    unlink /etc/naemon/conf.d/localhost.cfg
+
 
 COPY configs/localhost.cfg /etc/naemon/conf.d
 
@@ -53,6 +56,10 @@ COPY configs/rendered/*.cfg      /etc/naemon/conf.d
 
 #RUN pynag config --append cfg_dir=/etc/nagios/okconfig/services/whmcs
 #RUN pynag config --append cfg_dir=/etc/nagios/okconfig/commands/whmcs
+
+#RUN unlink /etc/naemon/objects/templates.cfg
+#RUN unlink /etc/naemon/conf.d/templates.cfg
+#RUN unlink /etc/naemon/resource.cfg
 
 
 {%for p in added_plugins%}
