@@ -1,10 +1,14 @@
 PORT=7125
 
+my_pod=$MY_UUID
+
+
 cmd="sudo podman run \
     --name adagios \
     --security-opt label=type:spc_t \
     --privileged=true \
-    --rm \
+    --restart=always \
+    --pod=$my_pod
     -p $PORT:80 \
     -p 5000:5000 \
     -p 5001:5001 \
