@@ -1,9 +1,7 @@
 
 set -ex
 
-
 ./start_pod.sh
-
 
 
 cmd="sudo podman run \
@@ -16,16 +14,13 @@ cmd="sudo podman run \
     -d adagios_systemd_image"
 
 #    --userns=keep-id \
-#    -p $PORT:80 \
-#    -p 5000:5000 \
-#    -p 5001:5001 \
 eval $cmd
 
-sleep 1
-./iptables.sh
+#sleep 1
+#./iptables.sh
 
-sleep 1
-./curl.sh
+#sleep 1
+#./curl.sh
 
-#./thruk_rest_api.sh
+./thruk_rest_api.sh
 set +ex
