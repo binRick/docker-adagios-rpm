@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-dur=30
+dur=10
 podman_cmd="echo -e; echo -e Containers; sudo podman ps; echo -e Pods; sudo podman pod ps"
 xpanes_args="-s -l ev"
 
