@@ -1,7 +1,7 @@
 set -e
 
-kill_container.sh
+kill_containers.sh
 
-#rm_pod.sh
+rm_pod.sh
 
 set +e

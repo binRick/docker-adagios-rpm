@@ -9,6 +9,7 @@ cmd="sudo podman pod create \
     -p $MY_HAPROXY_PORT:$INTERNAL_HAPROXY_PORT \
     -p $MY_HAPROXY_TTYD_NETWORKED_PORT:$INTERNAL_HAPROXY_TTYD_NETWORKED_PORT \
 "
-ls_pod.sh || eval $cmd
+#ls_pod.sh || 
+eval $cmd
 
 set +ex

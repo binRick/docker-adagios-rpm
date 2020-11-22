@@ -5,7 +5,9 @@ source setup.sh
 
 container_hostname="$MY_CONTAINER_1_UUID"
 
+set +e
 start_pod.sh
+set -e
 
 ls_container.sh >/dev/null && exit 1
 

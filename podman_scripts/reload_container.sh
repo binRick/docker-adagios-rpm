@@ -1,6 +1,6 @@
 set -ex
 
-kill_container.sh || true
+kill_containers.sh || true
 
 stop_pod.sh
 
