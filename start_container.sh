@@ -38,8 +38,8 @@ start_named_container_from_image_in_pod "$MY_CONTAINER_1_UUID" "$MY_CONTAINER_1_
 
 
 
-#sleep 1
-#./iptables.sh
+sleep 1
+./iptables.sh
 
 #sleep 1
 #./curl.sh
