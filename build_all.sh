@@ -1,4 +1,4 @@
-set -e
+set -ex
 eval $(cat setup.sh)
 
 ./build_image_base.sh 
@@ -11,4 +11,4 @@ sleep 3
 
 ./thruk_rest_api.sh
 
-set +e
+set +ex
