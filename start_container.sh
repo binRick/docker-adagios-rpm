@@ -3,6 +3,7 @@ set -e
 
 ./start_pod.sh
 
+./ls_container.sh >/dev/null && exit 1
 
 cmd="sudo podman run \
     --name '$MY_CONTAINER_1_UUID' \
