@@ -60,6 +60,7 @@ COPY configs/rendered/*.cfg      /etc/naemon/conf.d
 #RUN unlink /etc/naemon/objects/templates.cfg
 #RUN unlink /etc/naemon/conf.d/templates.cfg
 #RUN unlink /etc/naemon/resource.cfg
+RUN unlink /etc/naemon/conf.d/templates/services.cfg
 
 
 {%for p in added_plugins%}
