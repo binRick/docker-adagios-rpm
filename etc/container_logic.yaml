@@ -7,6 +7,7 @@ auth:
 ports:
   internal:
     haproxy: 31528
+    haproxy_ttyd1_socket_bwrap_networked: 31529
     apache: 80
     ttyd1_socket: 41992
 
@@ -29,10 +30,20 @@ haproxy:
       port: 31528
       default_backend: ttyd_socket
 
+    - name: fe_ttyd1_socket_bwrap_networked
+      host: '*'
+      port: 31529
+      default_backend: ttyd1_socket_bwrap_networked
+
   backends:
     - name: ttyd_socket
       servers: 
         - { name: ttyd_socket, host: 127.0.0.1, port: 41992, }
+
+    - name: ttyd1_socket_bwrap_networked
+      servers: 
+        - { name: ttyd1_socket_bwrap_networked, host: 127.0.0.1, port: 41993, }
+
     - name: apache
       servers: 
         - { name: apache, host: 127.0.0.1, port: 80, }
