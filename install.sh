@@ -2,6 +2,7 @@
 set -e
 source setup.sh
 
+pip install pip --upgrade
 pip install \
 	'j2cli[yaml]' \
 --upgrade
