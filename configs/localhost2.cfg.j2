@@ -82,6 +82,14 @@ define command {
     command_name    okc-check_remote_speedtest
     command_line    $USER1$/check_speedtest-cli.sh -w 10 -c 7 -W 15 -C 10 -l e -s 8640
 }
+define command {
+    command_name    okc-check_gmail_mx
+    command_line    $USER1$/check_dig -H 8.8.8.8 -4 -l gmail.com -p 53 -T MX -w 5 -c 10 -t 15
+}
+define command {
+    command_name    okc-check_gmail_smtp
+    command_line    $USER1$/check_smtp -H gmail-smtp-in.l.google.com. -p 25 -4 -t 20
+}
 
 
 {%for lms in local_monitored_services%}

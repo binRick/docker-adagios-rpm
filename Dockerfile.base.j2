@@ -49,7 +49,9 @@ RUN sh -c 'dnf list > /root/.dnf'
 # Setup Shell Environment
 RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt" >> /etc/bashrc'
 RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/bashrc
+
 RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/zshrc
+RUN sh -c 'grep liquidprompt /etc/bashrc || echo "[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt" >> /etc/zshrc'
 
 
 #COPY monitoring-plugins.tar.gz /usr/src

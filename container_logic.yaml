@@ -149,5 +149,13 @@ local_monitored_services:
     use: local-service
     check_command: check_remote_speedtest
 
+  - service_description: Gmail MX Lookup
+    use: local-service
+    check_command: check_gmail_mx
+
+  - service_description: Gmail SMTP Connection
+    use: local-service
+    check_command: check_gmail_smtp
+
 
 ...
