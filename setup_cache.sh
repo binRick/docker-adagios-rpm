@@ -6,3 +6,8 @@ cmd="sudo podman run \
     --rm=true \
     --volume=repository-package-cache:/var/cache/nginx:Z \
     docker.io/aesiniath/proxy:latest"
+
+
+
+
+eval $cmd
