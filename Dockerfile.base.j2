@@ -46,7 +46,8 @@ RUN pip3 install {{p}}
 
 COPY files/install_borg.sh /root/install_borg.sh
 RUN /root/install_borg.sh
-RUN unlink /root/install_borg.sh /anaconda-post.log /root/anaconda-ks.cfg 
+RUN unlink /root/install_borg.sh
+# /anaconda-post.log /root/anaconda-ks.cfg 
 
 # Remove yum cache
 RUN yum clean all -y && rm -rf /var/cache/yum
