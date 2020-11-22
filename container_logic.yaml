@@ -186,6 +186,7 @@ local_monitored_services:
   - service_description: Check Haproxy
     use: local-service
     check_command: check_haproxy
+    is_volatile: 1
 
   - service_description: Check Certbot Version
     use: local-service
