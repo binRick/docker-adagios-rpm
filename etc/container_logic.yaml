@@ -23,10 +23,14 @@ daemontools_services:
 #    run: ttyd -p 6001 -i lo zsh
 
   - name: ttyd1_socat
-    run: socat TCP-LISTEN:41992,reuseaddr,fork UNIX-CONNECT:/var/run/ttyd1.sock
+    start: mkdir -p /var/run/ttyd1
+#    pre_exec: mkdir -p /var/run/ttyd1
+    run: socat TCP-LISTEN:41992,reuseaddr,fork UNIX-CONNECT:/var/run/ttyd1/ttyd.sock
 
   - name: ttyd1_socket
-    run: ttyd -p 0 -i /var/run/ttyd1.sock zsh
+    start: mkdir -p /var/run/ttyd1
+#    pre_exec: mkdir -p /var/run/ttyd1
+    run: ttyd -p 0 -i /var/run/ttyd1/ttyd.sock zsh
 
 added_plugins:
   - name: check systemd service
