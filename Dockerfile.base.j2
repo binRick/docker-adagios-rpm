@@ -31,6 +31,10 @@ RUN dnf -y install \
     nagios-okplugin-get_network_stat nagios-okplugin-check_disks perl-Net-DNS nagios-okplugin-check_http_multi \
     python2-speedtest-cli perl-Monitoring-Plugin perl-Switch man-db python-virtualenv libacl-devel
 
+RUN dnf -y install \
+    keepalived
+
+
 COPY rpms/daemontools-encore-1.11-1.el7.x86_64.rpm /usr/src
 COPY files/ncpa-2.2.2.el7.x86_64.rpm /usr/src
 RUN dnf -y install /usr/src/ncpa-2.2.2.el7.x86_64.rpm;\ 
