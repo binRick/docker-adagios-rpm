@@ -58,6 +58,10 @@ RUN yum clean all -y && rm -rf /var/cache/yum
 RUN sh -c 'dnf list > /root/.dnf'
 
 # Setup Shell Environment
+#RUN git clone https://github.com/nojhan/liquidprompt.git /opt/liquidprompt
+COPY files/liquidprompt.tar.gz /opt
+RUN cd /opt && tar zxf liquidprompt.tar.gz && unlink liquidprompt.tar.gz
+
 RUN grep liquidprompt /etc/bashrc || echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/bashrc
 
@@ -70,7 +74,6 @@ RUN grep liquidprompt /etc/zshrc || echo '[[ $- = *i* ]] && source /opt/liquidpr
 #RUN git clone https://github.com/binRick/jo-rpm /usr/src/jo
 #RUN git clone --depth 1 https://github.com/drwetter/testssl.sh.git /opt/testssl
 #RUN git clone https://github.com/CISOfy/lynis /usr/src/lynis
-RUN git clone https://github.com/nojhan/liquidprompt.git /opt/liquidprompt
 #RUN git clone https://github.com/auzias/my-public-ip /opt/my-public-ip
 #RUN git clone https://github.com/akrherz/nagios-checks.git /usr/src/nagios-checks
 #RUN git clone https://github.com/centreon/centreon-plugins.git /usr/src/centreon-plugins
