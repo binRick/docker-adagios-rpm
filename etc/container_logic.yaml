@@ -19,19 +19,26 @@ packages:
   pip3: []
 
 daemontools_services:
-#  - name: ttyd1
-#    run: ttyd -p 6001 -i lo zsh
+  - name: ttyd1
+    run: ttyd -p 6001 -i lo zsh
 
   - name: ttyd1_socat
     start: mkdir -p /var/run/ttyd1
-#    pre_exec: mkdir -p /var/run/ttyd1
+    pre_exec: echo PRE_EXEC
     run: socat TCP-LISTEN:41992,reuseaddr,fork UNIX-CONNECT:/var/run/ttyd1/ttyd.sock
 
   - name: ttyd1_socket
     start: mkdir -p /var/run/ttyd1
-#    pre_exec: mkdir -p /var/run/ttyd1
-#    run: ttyd -p 0 -i /var/run/ttyd1/ttyd.sock zsh
     run: bwrap_exec.sh --bind /var/run/ttyd1 /var/run/ttyd1 ttyd -p 0 -i /var/run/ttyd1/ttyd.sock zsh
+
+  - name: ttyd1_socat_bwrap_networked
+    start: mkdir -p /var/run/ttyd1_socket_bwrap_networked
+    pre_exec: echo PRE_EXEC
+    run: socat TCP-LISTEN:41993,reuseaddr,fork UNIX-CONNECT:/var/run/ttyd1_socket_bwrap_networked/ttyd.sock
+
+  - name: ttyd1_socket_bwrap_networked
+    start: mkdir -p /var/run/ttyd1_socket_bwrap_networked
+    run: bwrap_exec_with_network.sh --bind /var/run/ttyd1_socket_bwrap_networked /var/run/ttyd1_socket_bwrap_networked ttyd -p 0 -i /var/run/ttyd1_socket_bwrap_networked/ttyd.sock zsh
 
 added_plugins:
   - name: check systemd service
