@@ -37,11 +37,7 @@ added_plugins:
 
 
 enabled_services:
-<<<<<<< HEAD
   [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond, ncpa_listener, keepalived, ]
-=======
-  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond, ncpa_listener, keepalived, firewalld, dbus]
->>>>>>> 9bf69728d88cddc986b04fdc17b3f5a9342fe292
 
 disabled_services:
   [ncpa_passive, firewalld, ]
