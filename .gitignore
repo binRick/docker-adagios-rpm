@@ -12,3 +12,4 @@ secret.key
 .venv
 .*.key
 .haproxy.cfg
+*-*-*-*.service
