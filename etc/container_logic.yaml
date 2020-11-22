@@ -20,7 +20,7 @@ packages:
   pip3: []
 
 haproxy:
-  maxconn: 100
+  maxconn: 300
   stats:
     path: /var/lib/haproxy/stats
 
