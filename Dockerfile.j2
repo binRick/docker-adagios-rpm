@@ -86,5 +86,5 @@ HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.inte
 
 
 
-RUN firewall-cmd --add-port={{ports.internal.apache}}/tcp --permanent && \
-    firewall-cmd --reload
+#RUN firewall-cmd --add-port={{ports.internal.apache}}/tcp --permanent && \
+#    firewall-cmd --reload
