@@ -11,3 +11,4 @@ secret.key
 .envrc.saved
 .venv
 .*.key
+.haproxy.cfg

@@ -86,6 +86,7 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 	rm -f /lib/systemd/system/anaconda.target.wants/*;
 # Systemd - preparation ends
 
+# Configure yum
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/yum.conf
 
 # Manual copies
@@ -93,7 +94,11 @@ COPY bin/ttyd /usr/bin
 COPY bin/bwrap_exec.sh /usr/local/sbin
 COPY bin/bwrap_exec_with_network.sh /usr/local/sbin
 
-COPY .profile.sh /root
+# Copy Configs
+COPY configs/.profile.sh /root
+COPY .haproxy.cfg /etc/haproxy/haproxy.cfg
+
+# Setup Shell Environment
 RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source ~/.profile.sh' >> /etc/zshrc
 
@@ -192,9 +197,7 @@ RUN sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/okconfig.con
 	sed 's|/etc/nagios/okconfig/examples|/etc/naemon/okconfig/examples|g' -i /etc/okconfig.conf
 
 
-
-
-RUN okconfig init && okconfig verify
+#RUN okconfig init && okconfig verify
 
 # Add naemon to apache group so it has permissions to pnp4nagios's session files
 RUN usermod -G apache naemon
@@ -244,19 +247,16 @@ RUN chown -R naemon:naemon \
 	/var/spool/pnp4nagios \
 	/etc/pnp4nagios/process_perfdata.cfg \
 	/var/log/okconfig
-RUN mv /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf.disabled
 
+
+# Secure Adagios
+RUN mv /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf.disabled
 RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 	rm -f /etc/nagios/passwd ;\
 	ln -s {{paths.thruk.htpasswd}} /etc/nagios/passwd
 
-COPY .haproxy.cfg /etc/haproxy/haproxy.cfg
-
 
 # Enable services
 RUN chmod a-x /usr/lib/systemd/system/*.service
-
 RUN systemctl enable {{' '.join(enabled_services)}}
 RUN systemctl disable {{' '.join(disabled_services)}}
-
-#RUN thruk r '/csv/hosts?columns=name,state'

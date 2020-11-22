@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
-source setup.sh
-source .venv/bin/activate
+eval $(cat setup.sh)
+eval $(cat .envrc)
 get_templates(){
   find configs -name "*.j2"
 }
@@ -9,10 +9,11 @@ get_templates(){
 rm -rf configs/rendered
 mkdir configs/rendered
 
-j2_args="-f yaml -e env"
+j2_args="-f yaml -eenv"
 
 j2 $j2_args -o .Dockerfile Dockerfile.j2 $LOGIC_FILE
 j2 $j2_args -o .Dockerfile.base Dockerfile.base.j2 $LOGIC_FILE
+j2 $j2_args -o .haproxy.cfg configs/haproxy.cfg.j2 $LOGIC_FILE
 
 get_templates | while read -r template_file; do
   of="configs/rendered/$(echo -e $template_file|sed 's/\.j2$//g'|sed 's/configs\///g')"

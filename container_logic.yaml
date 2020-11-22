@@ -1,4 +1,14 @@
 ---
+auth:
+  adagios:
+    user: thrukadmin
+    pass: thrukadmin
+
+ports:
+  internal:
+    haproxy: 5001
+    apache: 80
+
 paths:
   plugins: /usr/lib64/nagios/plugins
   thruk:
@@ -12,8 +22,12 @@ daemontools_services:
   - name: ttyd1
     run: ttyd -p 6001 -i lo zsh
 
+  - name: ttyd1_socat
+    run: socat TCP-LISTEN:41992,reuseaddr,fork UNIX-CONNECT:/var/run/ttyd1.sock
+
   - name: ttyd1_socket
     run: ttyd -p 0 -i /var/run/ttyd1.sock zsh
+
 
 added_plugins:
   - name: check systemd service
