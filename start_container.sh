@@ -3,6 +3,8 @@ NEW_KEY_FILE=".${MY_CONTAINER_1_UUID}.key"
 set -e
 source setup.sh
 
+container_hostname="$MY_CONTAINER_1_UUID"
+
 ./start_pod.sh
 
 ./ls_container.sh >/dev/null && exit 1
@@ -14,6 +16,9 @@ start_named_container_from_image_in_pod(){
   POD_NAME="$3"
 
   cmd="sudo podman run \
+    --env CONTAINER_UUID='$MY_CONTAINER_1_UUID' \
+    --shm-size=2048m \
+    --hostname '$container_hostname' \
     --name '$CONTAINER_NAME' \
     --security-opt label=type:spc_t \
     --privileged=true \
