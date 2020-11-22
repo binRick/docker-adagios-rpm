@@ -1,4 +1,7 @@
-eval $(cat setup.sh)
+#!/bin/bash
+set -e
+source setup.sh
+source .venv/bin/activate
 data_file=data.yaml
 get_templates(){
   find configs -name "*.j2"
