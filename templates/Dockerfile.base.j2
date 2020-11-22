@@ -7,9 +7,6 @@ RUN pip3 install {{p}}
 COPY files/install_borg.sh /root/install_borg.sh
 RUN /root/install_borg.sh
 RUN unlink /root/install_borg.sh
-# /anaconda-post.log /root/anaconda-ks.cfg 
-
-
 
 COPY files/lynis.tar.gz /opt
 RUN cd /opt && tar zxf lynis.tar.gz && unlink lynis.tar.gz
@@ -38,8 +35,6 @@ RUN cd /opt && tar zxf my-public-ip.tar.gz && unlink my-public-ip.tar.gz
 #RUN git clone https://github.com/jrottenberg/check_rss.git  /usr/src/check_rss
 #RUN git clone https://github.com/StewLG/check_static_ip.git /usr/src/check_static_ip
 #RUN git clone https://github.com/matteocorti/check_nagios_latency.git   /usr/src/check_nagios_latency
-
-
 #RUN wget https://github.com/madrisan/nagios-plugins-linux/releases/download/v27/nagios-plugins-linux-27.tar.bz2 -O /usr/src/nagios-plugins-linux-27.tar.bz2
 #RUN sh -c 'cd /usr/src && tar jxf nagios-plugins-linux-27.tar.bz2 && cd nagios-plugins-linux-27 && ./configure --prefix=/opt/nagios-plugins-linux && make -j install'
 #
@@ -234,7 +229,6 @@ COPY files/fzf /usr/local/bin
 RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 RUN chmod 644 /etc/.ansi
 RUN chown root:root /usr/local/bin/safeu /usr/local/bin/fzf /etc/.ansi
-
 
 
 # Setup Shell Environment
