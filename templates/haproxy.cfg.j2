@@ -3,20 +3,20 @@ global
 
     chroot      /var/lib/haproxy
     pidfile     /var/run/haproxy.pid
-    maxconn     4000
+    maxconn     {{haproxy.maxconn}}
     user        haproxy
     group       haproxy
     daemon
 
-    stats socket /var/lib/haproxy/stats
+    stats socket {{haproxy.stats.path}}
 
 defaults
     mode                    http
     log                     global
     option                  httplog
     option                  dontlognull
-    option http-server-close
-    option forwardfor       except 127.0.0.0/8
+    option                  http-server-close
+    option  forwardfor      except 127.0.0.0/8
     option                  redispatch
     retries                 3
     timeout http-request    10s
@@ -26,14 +26,21 @@ defaults
     timeout server          1m
     timeout http-keep-alive 10s
     timeout check           10s
-    maxconn                 3000
+    maxconn                 {{haproxy.maxconn}}
 
-frontend  main *:{{ports.internal.haproxy}}
+frontend main *:{{ports.internal.haproxy}}
     default_backend             ttyd_socket
 
-backend apache
-    server  apache 127.0.0.1:{{ports.internal.apache}} check
+#backend apache
+#    server apache 127.0.0.1:{{ports.internal.apache}} check
 
-backend ttyd_socket
-    server  ttyd 127.0.0.1:{{ports.internal.ttyd1_socket}} check
+#backend ttyd_socket
+#    server ttyd 127.0.0.1:{{ports.internal.ttyd1_socket}} check
+
+{%for be in  haproxy.backends%}
+backend {{be.name}}
+ {%for bes in  be.servers%}
+    server {{bes.name}} {{bes.host}}:{{bes.port}} check
+ {%endfor%}
+{%endfor%}
 

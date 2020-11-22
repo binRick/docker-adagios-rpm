@@ -18,6 +18,18 @@ paths:
 packages:
   pip3: []
 
+haproxy:
+  maxconn: 100
+  stats:
+    path: /var/lib/haproxy/stats
+  backends:
+    - name: ttyd_socket
+      servers: 
+        - { name: ttyd, host: 127.0.0.1, port: 41992, }
+    - name: apache
+      servers: 
+        - { name: apache, host: 127.0.0.1, port: 80, }
+
 daemontools_services:
   - name: ttyd1
     run: ttyd -p 6001 -i lo zsh
