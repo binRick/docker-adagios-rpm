@@ -223,5 +223,10 @@ local_monitored_services:
     use: local-service
     check_command: check_certbot_version
 
+  - service_description: Check Mail Queue
+    use: local-service
+    check_command: check_mailq
+
+
 
 ...

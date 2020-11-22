@@ -114,6 +114,10 @@ define command {
     command_name    okc-check_certbot_version
     command_line    certbot --version
 }
+define command {
+    command_name    okc-check_mailq
+    command_line    $USER1$/check_mailq -w 30 -c 60 -M postfix
+}
 
 
 
