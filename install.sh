@@ -5,5 +5,5 @@ pip3 install \
 	j2cli \
 --user --upgrade
 
-dnf -y remove docker\*
-dnf -y install podman;
+sudo dnf -y remove docker\*
+sudo dnf -y install podman;
