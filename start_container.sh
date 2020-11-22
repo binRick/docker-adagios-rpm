@@ -14,9 +14,9 @@ cmd="sudo podman run \
     --privileged=true \
     --restart=always \
     --pod=$MY_POD_UUID \
+    --tmpfs /tmp \
     -d adagios_systemd_image"
 
-#    --tmpfs /tmp \
 #    --userns=keep-id \
 #    -p $PORT:80 \
 #    -p 5000:5000 \
