@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 AUTH_USER=thrukadmin
-AUTH_KEY="$(./get_container_key.sh)"
+AUTH_KEY="$(get_container_key.sh)"
 
 get_secret_key(){
     sudo podman cp $(sudo podman ps -q):/var/lib/thruk/secret.key . && sudo chmod 755 secret.key && cat secret.key

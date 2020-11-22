@@ -5,9 +5,9 @@ source setup.sh
 
 container_hostname="$MY_CONTAINER_1_UUID"
 
-./start_pod.sh
+start_pod.sh
 
-./ls_container.sh >/dev/null && exit 1
+ls_container.sh >/dev/null && exit 1
 
 
 start_named_container_from_image_in_pod(){
@@ -45,10 +45,10 @@ start_named_container_from_image_in_pod "$MY_CONTAINER_1_UUID" "$MY_CONTAINER_1_
 
 
 sleep 1
-./iptables.sh
+iptables.sh
 
 #sleep 1
-#./curl.sh
+#curl.sh
 
 
 
@@ -58,7 +58,7 @@ sleep 1
 
 
 sleep 1
-./thruk_rest_api.sh
+thruk_rest_api.sh
 set +e
 
-./generate_new_key.sh > $NEW_KEY_FILE
+generate_new_key.sh > $NEW_KEY_FILE

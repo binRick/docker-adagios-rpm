@@ -2,7 +2,7 @@
 set -e
 cd $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-cmd="./build_image.sh $@ && ./reload_container.sh && echo OK"
+cmd="build_image.sh $@ && reload_container.sh && echo OK"
 cmd="time /bin/bash -c '$cmd'"
 killall node||true
 $(command -v nodemon) \

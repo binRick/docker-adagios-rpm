@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 AUTH_USER=thrukadmin
-AUTH_KEY="$(./get_container_key.sh)"
+AUTH_KEY="$(get_container_key.sh)"
 
 source curl_thruk.sh
 
