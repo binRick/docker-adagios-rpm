@@ -9,5 +9,7 @@ ls -altr .envrc*
 
 file .envrc | grep -q ASCII || exit 1
 
-git commit .envrc.enc.base64 -m 'env updated'
+cat .envrc|md5sum|cut -d' ' -f1 > .envrc.md5sum
+
+git commit .envrc.md5sum .envrc.enc.base64 -m 'env updated'
 git push
