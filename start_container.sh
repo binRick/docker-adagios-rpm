@@ -22,7 +22,7 @@ start_named_container_from_image_in_pod(){
     --tmpfs /tmp \
     --cap-add=SYS_ADMIN \
     --userns=keep-id \
-    –v /sys/fs/cgroup:/sys/fs/cgroup:ro
+    -v '/sys/fs/cgroup:/sys/fs/cgroup:ro' \
     -d '$IMAGE_NAME'"
 
     eval $cmd
