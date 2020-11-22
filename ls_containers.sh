@@ -1,4 +1,4 @@
-set -ex
+set -e
 PORT=7125
 
 cmd="sudo podman ps -a"
