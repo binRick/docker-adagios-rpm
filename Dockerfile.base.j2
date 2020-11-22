@@ -38,9 +38,12 @@ RUN dnf -y install \
 RUN dnf -y install \
     perl-Monitoring-Plugin perl-Switch man-db python-virtualenv libacl-devel
 
+COPY rpms/daemontools-encore-1.11-1.el7.x86_64.rpm /usr/src
 COPY files/ncpa-2.2.2.el7.x86_64.rpm /usr/src
 RUN dnf -y install /usr/src/ncpa-2.2.2.el7.x86_64.rpm;\ 
-    unlink /usr/src/ncpa-2.2.2.el7.x86_64.rpm
+    dnf -y install /usr/src/daemontools-encore-1.11-1.el7.x86_64.rpm;\
+    unlink /usr/src/ncpa-2.2.2.el7.x86_64.rpm;\
+    unlink /usr/src/daemontools-encore-1.11-1.el7.x86_64.rpm
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
@@ -102,8 +105,6 @@ RUN grep liquidprompt /etc/zshrc || echo '[[ $- = *i* ]] && source /opt/liquidpr
 COPY files/naemon_plugins /etc/sudoers.d
 RUN chmod 600 /etc/sudoers.d/naemon_plugins
 
-COPY rpms/daemontools-encore-1.11-1.el7.x86_64.rpm /usr/src
-RUN dnf -y install /usr/src/daemontools-encore-1.11-1.el7.x86_64.rpm
 
 # Systemd - preparation
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
