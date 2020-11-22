@@ -245,4 +245,5 @@ RUN cd /opt && tar zxf liquidprompt.tar.gz && unlink liquidprompt.tar.gz
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/zshrc
 
+COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
 
