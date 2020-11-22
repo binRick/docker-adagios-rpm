@@ -1,1 +1,1 @@
-sudo podman generate systemd 67b7cb03-817f-4bfa-b838-aa0e442275f1
+sudo podman generate systemd $MY_POD_UUID
