@@ -6,3 +6,5 @@ configs/rendered/*
 .Dockerfile*
 secret.key
 .secret.key
+.envrc
+.envrc.enc
