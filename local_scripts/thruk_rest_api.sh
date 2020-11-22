@@ -3,10 +3,6 @@ set -e
 AUTH_USER=thrukadmin
 AUTH_KEY="$(get_container_key.sh)"
 
-get_secret_key(){
-    sudo podman cp $(sudo podman ps -q):/var/lib/thruk/secret.key . && sudo chmod 755 secret.key && cat secret.key
-}
-
 curl_thruk(){
   METHOD="${2:-GET}"
   cmd="curl -X '$METHOD' -H 'X-Thruk-Auth-Key: $AUTH_KEY' \
