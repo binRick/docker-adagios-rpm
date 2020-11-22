@@ -27,7 +27,7 @@ RUN dnf -y install \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump ngrep bind-utils nmap-ncat at tar npm \
     fail2ban certbot tree naemon-devel redis tmux ngrep make automake net-tools \
     nagios-plugins-tcp nagios-plugins-http nagios-plugins-users nagios-plugins-smtp nagios-plugins-procs nagios-plugins-mysql nagios-plugins-mailq nagios-plugins-load nagios-plugins-dns nagios-plugins-dig nagios-plugins-disk nagios-plugins-ssh nagios-plugins-ping nagios-plugins-http nagios-plugins-fping nagios-plugins-by_ssh nagios-plugins-check_cpu nagios-plugins-file_age nagios-plugins-icmp nagios-plugins-nagios nagios-plugins-time nagios-plugins-swap \
-    strace sqlite-devel jansson-devel mariadb-devel which go vim lsof psmisc aide sysstat chkconfig bubblewrap dstat
+    strace sqlite-devel jansson-devel mariadb-devel which go vim lsof psmisc aide sysstat chkconfig bubblewrap dstat socat
 
 
 RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
