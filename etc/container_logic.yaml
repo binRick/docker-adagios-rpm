@@ -30,7 +30,8 @@ daemontools_services:
   - name: ttyd1_socket
     start: mkdir -p /var/run/ttyd1
 #    pre_exec: mkdir -p /var/run/ttyd1
-    run: ttyd -p 0 -i /var/run/ttyd1/ttyd.sock zsh
+#    run: ttyd -p 0 -i /var/run/ttyd1/ttyd.sock zsh
+    run: bwrap_exec.sh --bind /var/run/ttyd1 /var/run/ttyd1 ttyd -p 0 -i /var/run/ttyd1/ttyd.sock zsh
 
 added_plugins:
   - name: check systemd service
