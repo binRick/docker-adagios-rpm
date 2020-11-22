@@ -247,3 +247,6 @@ RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc
 
 COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
 
+
+COPY files/ops-dashboard.tar.gz /var/www
+RUN cd /var/www && tar zxf ops-dashboard.tar.gz && unlink ops-dashboard.tar.gz

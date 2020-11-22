@@ -89,8 +89,4 @@ HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.inte
 
 RUN neofetch > /etc/motd
 
-COPY files/ops-dashboard.tar.gz /var/www
-RUN cd /var/www && tar zxf ops-dashboard.tar.gz && unlink ops-dashboard.tar.gz
 
-#RUN firewall-cmd --add-port={{ports.internal.apache}}/tcp --permanent && \
-#    firewall-cmd --reload
