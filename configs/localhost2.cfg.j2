@@ -92,7 +92,7 @@ define command {
 }
 define command {
     command_name    okc-check_daemontools_service
-    command_line    $USER1$/check_service.pl -s '$ARG1$' -w 5 -c 10
+    command_line    $USER4$ $USER1$/check_service.pl -s '$ARG1$' -w 5 -c 10
 }
 define command {
     command_name    okc-check_thruk_rest

@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 eval $(cat setup.sh)
-eval $(cat .envrc)
+source .ansi
+source .envrc
+
 get_templates(){
   find configs -name "*.j2"
 }
