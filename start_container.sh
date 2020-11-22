@@ -25,5 +25,6 @@ eval $cmd
 #sleep 1
 #./curl.sh
 
+sleep 1
 ./thruk_rest_api.sh
 set +e
