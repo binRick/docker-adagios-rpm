@@ -125,11 +125,27 @@ define service {
   use                            {{lms.use}}
   check_command                  okc-{{lms.check_command}}!{{lms.check_args|default('')}}
   notifications_enabled          {{lms.notifications_enabled|default('0')}}
-{%if lms.is_volatile is defined%}
+{%if lms.is_volatile is defined-%}
   is_volatile                    {{lms.is_volatile|int}}
 {%endif%}
+{%-if lms.parents is defined-%}
+  parents                    {{lms.parents}}
+{%-endif%}
 }
-{%endfor%}
+
+{%-if lms.servicedependency is defined%}
+#define servicedependency {
+#    host_name                           localhost
+#    service_description                 List Speedtest Servers
+#    dependent_host_name                 localhost
+#    dependent_service_description       Remote Speedtest
+#    execution_failure_criteria          w,u,c,p,n
+#    notification_failure_criteria       w,u,c,p,n
+#    inherits_parent                     1
+#}
+{%endif-%}
+
+{%-endfor%}
 
 {%for lp in local_processes%}
 

@@ -9,7 +9,6 @@ def grabJson(options):
       nagios_host,
       URI,
     )
-    print(url)
     params = (
             ('columns', 'path,content'),
     )

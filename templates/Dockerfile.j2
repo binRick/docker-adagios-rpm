@@ -43,6 +43,9 @@ RUN mkdir -p /etc/naemon/commands \
              /etc/nagios/okconfig/services/whmcs \
              /etc/nagios/okconfig/commands/whmcs
 
+RUN touch /var/log/naemon/livestatus.log && chown naemon:naemon /var/log/naemon/livestatus.log
+RUN touch /var/log/naemon/debug.log && chown naemon:naemon /var/log/naemon/debug.log
+
 
 COPY files/neofetch /usr/local/bin
 COPY files/check_speedtest-cli.sh /usr/lib64/nagios/plugins

@@ -1,0 +1,59 @@
+10029  sudo yum install -y podman httpd-tools
+10030  sudo mkdir -p /opt/registry/{auth,certs,data}
+10031  sudo htpasswd -bBc /opt/registry/auth/htpasswd registryuser
+10032  ls /opt/registry/auth/
+10033  sudo htpasswd -bBc /opt/registry/auth/htpasswd registryuser
+10034  sudo htpasswd -Bc /opt/registry/auth/htpasswd registryuser
+10035  # openssl req -newkey rsa:4096 -nodes -sha256 -keyout /opt/registry/certs/domain.key -x509 -days 365 -out /opt/registry/certs/domain.crt
+10036  # cp /opt/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
+10037  sudo  openssl req -newkey rsa:4096 -nodes -sha256 -keyout /opt/registry/certs/domain.key -x509 -days 365 -out /opt/registry/certs/domain.crt
+10038  cp /opt/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
+10039  sudo cp /opt/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
+10040  sudo # update-ca-trust
+10041  sudo  update-ca-trust
+10042  trust list
+10043  trust list|grep vpn
+10044  trust list|grep domai
+10045  sudo podman run --name myregistry \\n-p 5000:5000 \\n-v /opt/registry/data:/var/lib/registry:z \\n-v /opt/registry/auth:/auth:z \\n-e "REGISTRY_AUTH=htpasswd" \\n-e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \\n-e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \\n-v /opt/registry/certs:/certs:z \\n-e "REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt" \\n-e "REGISTRY_HTTP_TLS_KEY=/certs/domain.key" \\n-e REGISTRY_COMPATIBILITY_SCHEMA1_ENABLED=true \\n-d \\ndocker.io/library/registry:latest
+10046  # curl https://hostname:5000/v2/_catalog
+10047  podman ps
+10048  podman login localhost 5000
+10049  podman login localhost:5000
+10050  sudo vim /etc/containers/registries.conf
+10051  podman login localhost:5000
+10052  podman login --help
+10053  podman login --tls-verify=false localhost:5000
+10054  cat /run/user/0/containers/auth.json
+10055  sudo cat /run/user/0/containers/auth.json
+10056  podman run --name myregistry -p 5000:5000 -v
+10057  /opt/registry/data:/var/lib/registry:z -v /opt/registry/auth:/auth:z -e
+10058  "REGISTRY_AUTH=htpasswd"
+10059  -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" -e
+10060  REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -v /opt/registry/certs:/certs:z -e
+10061  vi registery
+10062  sudo bash registery
+10063  podman kill mymregistry
+10064  podman ps
+10065  podman kill myregistry
+10066  podman rm myregistry
+10067  sudo bash registery
+10068  # curl https://hostname:5000/v2/_catalog
+10069  podman ps
+10070  podman pull registry.access.redhat.com/ubi8/ubi:latest
+10071  podman login --tls-verify=false localhost:5000
+10072  # podman tag registry.access.redhat.com/ubi8/ubi:latest <registry
+10073  podman push localhost:5000/ubi8/ubi:latest
+10074  podman push http://localhost:5000/ubi8/ubi:latest
+10075  podman push localhost:5000/ubi8/ubi:latest
+10076  # curl https://hostname:5000/v2/_catalog
+10077  podman login --tls-verify=false localhost:5000
+10078  podman images
+10079  podman tag docker.io/library/centos:7 localhost:5000/library/centos:7
+10080  podman push localhost:5000/library/centos
+10081  podman push localhost:5000/library/centos:7
+10082  podman push localhost:5000/library/centos:7 --help
+10083  podman push --tls-verify=false localhost:5000/library/centos:7
+10084  # curl https://hostname:5000/v2/_catalog
+10085  podman tag localhost/624a393e-b2e5-4e5f-a25c-5c65d25015f2:latest localhost:5000/624a393e-b2e5-4e5f-a25c-5c65d25015f2:latest
+10086  podman push --tls-verify=false localhost:5000/624a393e-b2e5-4e5f-a25c-5c65d25015f2:latest
+10087  podman ps

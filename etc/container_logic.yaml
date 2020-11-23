@@ -190,6 +190,9 @@ local_monitored_services:
     use: local-service
     check_command: check_remote_speedtest
     is_volatile: 1
+    parents: List Speedtest Servers
+    servicedependency: 
+      - xxxx: 123
 
   - service_description: Gmail MX Lookup
     use: local-service
