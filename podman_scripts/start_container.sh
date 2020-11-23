@@ -17,7 +17,7 @@ memory_plus_swap_limit=2524m
 memory_swappiness=50  #  0 - 100
 oom_score_adj=0       #  -1000 - 1000
 pids_limit=500
-add_host_ip="yahoo.com:1.2.3.4"
+add_host_ip="yahoo1.com:1.2.3.4"
 
 set +e
 start_pod.sh
