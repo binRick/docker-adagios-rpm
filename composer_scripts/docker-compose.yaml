@@ -110,7 +110,6 @@ services:
 
 
 
-_____________services:
     egress1:
       <<: *DEFAULT_CONTAINER
       container_name: EGRESS1
@@ -119,6 +118,7 @@ _____________services:
         - env1.sh
       depends_on: [logs1]
 
+_____________services:
     ingress1:
       <<: *DEFAULT_CONTAINER
       container_name: INGRESS1
