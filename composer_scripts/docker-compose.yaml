@@ -1,5 +1,6 @@
 ---
 version: "3.8"
+domainname: foo.com
 
 RESTART_POLICIES:
  restart_policy: &DEFAULT_RESTART_POLICY
@@ -70,7 +71,8 @@ HEALTH_CHECKS:
 CONTAINER_TYPES:
   default: &DEFAULT_CONTAINER
     network_mode: bridge
-    networks: [overlay_network]
+    #networks: [overlay_network]
+    networks: [bridged_network]
     init: yes
     securityContext: *DEFAULT_SECURITY_CONTEXT
     workingDir: /root
@@ -123,15 +125,17 @@ services:
       ports: ['8998:80']
       depends_on: [db1, redis]
       links:
-        - "db1:DATABASE"
+        - "db1"
         - "redis1:REDIS"
 
     redis1:
       <<: *DEFAULT_CONTAINER
       container_name: REDIS1
+      hostname: REDIS1
+      domainname: xxxxxxxxxxxxx
       image: redis:alpine
       command: 
-      ports: ['6379:6379']
+      export: ["6379"]
 
 
     db1:
@@ -139,7 +143,7 @@ services:
       container_name: DB1
       image: mariadb/server:10.3
       command: 
-      ports: ['3306:3306']
+      expose: ['127.0.0.1:3306']
       environment:
         MARIADB_ROOT_PASSWORD: 703CD6F4-9766-4DC9-AF81-ECADF357D946
         MARIADB_DATABASE: mydb1
@@ -149,13 +153,6 @@ services:
         - db_data:/var/lib/mysql
 
 
-#tmpfs: /run
-#tmpfs:
-#  - /run
-#  - /tmp
-#user: postgresql
-#working_dir: /code
-#domainname: foo.com
 #hostname: foo
 #ipc: host
 #mac_address: 02:42:ac:11:65:43
@@ -209,7 +206,6 @@ ports:
     published: 8080
     protocol: tcp
     mode: host
-
 
 ulimits:
   nproc: 65535
