@@ -1,0 +1,6 @@
+
+FROM mariadb/server:10.3 as phase_1
+
+
+
+CMD ["/usr/sbin/init"]

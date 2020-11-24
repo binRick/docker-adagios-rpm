@@ -1,0 +1,7 @@
+Defaults:%naemon    !requiretty
+%naemon             ALL = (root) NOPASSWD: /usr/share/thruk/script/check_thruk_rest *
+%naemon             ALL = (root) NOPASSWD: /usr/lib64/nagios/plugins/check_firewall_active.sh *
+%naemon             ALL = (root) NOPASSWD: /usr/local/sbin/bwrap_exec_with_network.sh /usr/lib64/nagios/plugins/check_ping *
+%naemon             ALL = (root) NOPASSWD: /usr/local/sbin/bwrap_exec_with_network.sh /usr/lib64/nagios/plugins/check_http_multi *
+%naemon             ALL = (root) NOPASSWD: /usr/lib64/nagios/plugins/check_service.pl *
+%naemon             ALL = (root) NOPASSWD: /usr/lib64/nagios/plugins/check_haproxy *
