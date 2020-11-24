@@ -28,7 +28,7 @@ RUN dnf -y install \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump ngrep bind-utils nmap-ncat at tar npm \
     fail2ban certbot tree redis tmux ngrep make automake net-tools
 
-RUN sh -c '[[ "$ADDED_PACKAGES" != "" ]] && dnf -y install haproxy $ADDED_PACKAGES'
+#RUN sh -c '[[ "$ADDED_PACKAGES" != "" ]] && dnf -y install haproxy $ADDED_PACKAGES'
 
 # Remove yum cache
 from phase_2 as phase_3
