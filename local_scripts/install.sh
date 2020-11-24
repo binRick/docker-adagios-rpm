@@ -8,9 +8,9 @@ pip install \
 	'podman-compose' \
 --upgrade
 
-id | grep -q root || sudo -u root pip install \
+id | grep -q root || sudo -u root pip3 install \
 	'podman-compose' \
---upgrade
+--upgrade --user
 
 sudo dnf -y remove docker docker-common
 sudo dnf -y install podman

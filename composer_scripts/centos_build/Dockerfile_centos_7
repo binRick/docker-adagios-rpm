@@ -2,10 +2,8 @@ ARG CENTOS_VERSION=7
 
 FROM centos:${CENTOS_VERSION} as phase_1
 
-
-
 RUN touch /1
-RUN echo $gitcommithash > /DEBUG.txt
+RUN echo "CENTOS_VERSION=$CENTOS_VERSION" > /CENTOS_VERSION.txt
 
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/yum.conf
 # First install the opensource.is and consol labs repositories
@@ -14,10 +12,10 @@ RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/yum.conf
 RUN yum install -y epel-release dnf
 
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/dnf/dnf.conf
-RUN dnf clean all && dnf -y update
+#RUN dnf clean all && dnf -y update
 
 
-from phase_1 as centos_2
+from phase_1 as phase_2
 
 # DNF
 RUN dnf -y install \
@@ -31,9 +29,10 @@ RUN dnf -y install \
 
 # Remove yum cache
 from phase_2 as phase_3
-RUN yum clean all -y && rm -rf /var/cache/yum
+#RUN yum clean all -y && rm -rf /var/cache/yum
+RUN echo "CENTOS_VERSION=$CENTOS_VERSION" > /CENTOS_VERSION_POST.txt
 
 
-RUN sh -c 'dnf list > /root/.dnf'
+#RUN sh -c 'dnf list > /root/.dnf'
 
 CMD ["/usr/sbin/init"]

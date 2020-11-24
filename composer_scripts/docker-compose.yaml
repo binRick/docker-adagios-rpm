@@ -1,131 +1,153 @@
 ---
-version: "2"
-DEFAULTS:
- restart_policy: &RESTART_POLICY_1
-  condition: on-failure
-  delay: 5s
-  max_attempts: 3
-  window: 120s
+version: "3.8"
 
-BUILD:
- centos_7: &BUILD_CENTOS_7
-   context: centos_build
-   dockerfile: Dockerfile
+RESTART_POLICIES:
+ restart_policy: &DEFAULT_RESTART_POLICY
+  condition: always
+  delay: 5s
+  max_attempts: 5
+  window: 10s
+
+LOGGING_POLICIES:
+  logging: &JSON_LOGGING_POLICY
+    driver: json-file
+    options:
+      max-size: '12m'
+      max-file: '5'
+
+BUILD_TYPES:
+ base: &BUILD_BASE
    target: phase_1
+   links:
+     - "db1:DATABASE"
+     - "logs:LOGS"
+
+ centos: &BUILD_CENTOS
+   <<: *BUILD_BASE
+
+ centos_7: &BUILD_CENTOS_7
+   <<: *BUILD_CENTOS
+   dockerfile: centos_build/Dockerfile_centos_7
    args:
      CENTOS_VERSION: 7
+
+ centos_8: &BUILD_CENTOS_8
+   <<: *BUILD_CENTOS
+   dockerfile: centos_build/Dockerfile_centos_8
+   target: phase_1
+   args:
+     CENTOS_VERSION: 8
+
+ ingress: &BUILD_INGRESS
+   <<: *BUILD_CENTOS_8
+   args:
+     CENTOS_VERSION: 8
+     ADDED_PACKAGES: haproxy
+
+
+ log: &BUILD_LOGS
+   <<: *BUILD_CENTOS_8
+   args:
+     CENTOS_VERSION: 8
+     ADDED_PACKAGES: rsyslog
+
+SECURITY_CONTEXTS:
+   securityContext: &DEFAULT_SECURITY_CONTEXT
+     allowPrivilegeEscalation: true
+     capabilities: {}
+     privileged: false
+     readOnlyRootFilesystem: false
+     seLinuxOptions: {}
+
+HEALTH_CHECKS:
+    healthcheck: &WEBSERVER_HEALTH_CHECK
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+CONTAINER_TYPES:
+  default: &DEFAULT_CONTAINER
+    network_mode: bridge
+    networks: [overlay_network]
+    init: yes
+    securityContext: *DEFAULT_SECURITY_CONTEXT
+    workingDir: /root
+    command: ["/usr/sbin/init"]
+    deploy:
+      restart_policy: *DEFAULT_RESTART_POLICY
+    logging: 
+      <<: *JSON_LOGGING_POLICY
+    working_dir: /
+    tmpfs:
+      - /run
+      - /tmp
+    ulimits:
+      nproc: 1002:2002
+      nofile: 1002
+      nproc:
+        soft: 50
+        hard: 100
 
 services:
 
     egress1:
+      <<: *DEFAULT_CONTAINER
       container_name: EGRESS1
-      network_mode: bridge
-      build: 
-        context: centos_build
-        dockerfile: Dockerfile
-        target: phase_2
-        args:
-          CENTOS_VERSION: 7
-          buildno: 1
-          gitcommithash: cdc3b19
-      command: ["/usr/sbin/init"]
-      init: yes
+      build:  *BUILD_CENTOS_8
+      env_file:
+        - env1.sh
+      depends_on: [logs1]
 
-    egress2:
-      container_name: EGRESS2
-      network_mode: bridge
-      build: 
-        context: centos_build
-        dockerfile: Dockerfile
-        target: phase_1
-        args:
-          CENTOS_VERSION: 8
-          buildno: 1
-          gitcommithash: cdc3b19
-      command: ["/usr/sbin/init"]
-      init: yes
-#      networks:
-#        - bridged_network
-
-__services:
-    egress:
-      container_name: EGRESS
-      hostname: EGRESS
-      network_mode: bridge
-      build: 
-        network: none
-        shm_size: '2gb'
-        dockerfile: centos_build/Dockerfile
-#        target: centos_7_mid
-        target: phase_1
-        args:
-          buildno: 1
-          gitcommithash: cdc3b19
-
-      command: ["/usr/sbin/init"]
-      init: yes
-      logging:
-        driver: "json-file"
-      image: centos:7
-
-    web:
-      container_name: WEB
-      network_mode: bridge
-      init: yes
-      logging:
-        driver: "json-file"
-      deploy:
-       restart_policy: *RESTART_POLICY_1
-        
-       resources:
-        limits:
-          cpus: '0.50'
-          memory: 256M
-        reservations:
-          cpus: '0.25'
-          memory: 100M
-
-      image: centos:7
-      command: ["/usr/sbin/init"]
-      build: 
-        context: centos7_build/
-        dockerfile: centos7_build/Dockerfile
-
-    redis:
-      container_name: REDIS
-      hostname: redis-123
-      user: root
-      image: redis:alpine
-      network_mode: bridge
-#      networks:
-#        - bridged_network
-      ports:
-        - "6379"
-      environment:
-        - SECRET_KEY=aabbcc
-        - ENV_IS_SET
-#      networks:
-#        - nonet
-
-    frontend:
-      container_name: FRONTEND
-#      network_mode: bridge
-      networks:
-        - mynet1
-      image: busybox
-      command: ["/bin/busybox", "httpd", "-f", "-p", "8099"]
-#      image: centos:7
-#      command: ["/usr/sbin/init"]
-      working_dir: /
-      environment:
-        SECRET_KEY2: aabbcc
-        ENV_IS_SET2:
-#      ports:
-#        - "8099:8099"
+    ingress1:
+      <<: *DEFAULT_CONTAINER
+      container_name: INGRESS1
+      build:  *BUILD_INGRESS
+      depends_on: [web1, logs1]
       links:
-        - redis:myredis
-      labels:
-        my.label: my_value
+        - "web1:WEB1"
+
+    logs1:
+      <<: *DEFAULT_CONTAINER
+      container_name: LOGS1
+      build:  *BUILD_LOGS
+      expose: ["514"]
+      command: ["/usr/sbin/rsyslogd", "-n"]
+
+    web1:
+      <<: *DEFAULT_CONTAINER
+      container_name: WEB1
+      build:  *BUILD_CENTOS_8
+      command: ["/usr/sbin/httpd", "-DFOREGROUND"]
+      ports: ['8998:80']
+      depends_on: [db1, redis]
+      links:
+        - "db1:DATABASE"
+        - "redis1:REDIS"
+
+    redis1:
+      <<: *DEFAULT_CONTAINER
+      container_name: REDIS1
+      image: redis:alpine
+      command: 
+      ports: ['6379:6379']
+
+
+    db1:
+      <<: *DEFAULT_CONTAINER
+      container_name: DB1
+      image: mariadb/server:10.3
+      command: 
+      ports: ['3306:3306']
+      environment:
+        MARIADB_ROOT_PASSWORD: 703CD6F4-9766-4DC9-AF81-ECADF357D946
+        MARIADB_DATABASE: mydb1
+        MARIADB_USER: mydbuser1
+        MARIADB_PASSWORD: mydbpass1
+      volumes: 
+        - db_data:/var/lib/mysql
+
 
 #tmpfs: /run
 #tmpfs:
@@ -143,8 +165,10 @@ __services:
 #stdin_open: true
 #tty: no
 #restart: always
-#
-#
+
+volumes:
+    db_data: {}
+
 networks:
   overlay_network:
     name: OVERLAY_NETWORK
@@ -173,8 +197,8 @@ dns_search:
   - dc1.example.com
   - dc2.example.com
 
-#external_links:
-#  - web:http
+external_links:
+  - ingress1:http
 
 extra_hosts:
   - "somehost:162.242.195.82"
@@ -197,9 +221,18 @@ sysctls:
   net.core.somaxconn: 1024
   net.ipv4.tcp_syncookies: 0
 
-
 configs:
   my_config:
     file: ./my_config.txt
   my_other_config:
     external: true
+
+volumes:
+    db_data:
+
+secrets:
+  - source: my_secrets.txt
+    target: redis_secret
+    uid: '103'
+    gid: '103'
+    mode: 0440
