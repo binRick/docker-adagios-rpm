@@ -103,8 +103,7 @@ services:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
       ports:
-        - '80'
-#        - 38232:80
+        - 38232:80
 
 
 _________________sodsd:
