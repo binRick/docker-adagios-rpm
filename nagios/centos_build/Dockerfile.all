@@ -18,7 +18,8 @@ RUN unlink /usr/src/labs-consol-stable.rhel7.noarch.rpm
 RUN unlink /usr/src/ok-release.rpm
 
 # DNF
-RUN dnf -y install -x nagios \
+#-x nagios-common \
+RUN dnf -y install -x nagios \ 
 	gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
 	git postfix python-pip python3-pip python3-devel python-devel acl python-setuptools \
 	zsh telnet openssh-server ansible-python3 openvpn openvpn-devel rpm-build tinyproxy nodejs \
