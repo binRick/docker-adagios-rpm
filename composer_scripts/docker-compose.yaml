@@ -108,8 +108,6 @@ services:
       volumes: 
         - db_data:/var/lib/mysql
 
-
-
     egress1:
       <<: *DEFAULT_CONTAINER
       container_name: EGRESS1
@@ -139,11 +137,15 @@ services:
       build:  *BUILD_CENTOS_8
       command: ["/usr/sbin/httpd", "-DFOREGROUND"]
       ports: ['8998:80']
-      depends_on: [db1, redis]
+      depends_on: [db1]
       links:
         - "db1"
-        - "redis1:REDIS"
+#        - "redis1:REDIS"
 
+
+
+
+_________________sodsd:
     redis1:
       <<: *DEFAULT_CONTAINER
       container_name: REDIS1
