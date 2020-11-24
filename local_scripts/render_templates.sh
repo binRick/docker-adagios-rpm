@@ -19,6 +19,8 @@ j2 $j2_args -o .Dockerfile templates/Dockerfile.j2 $LOGIC_FILE
 j2 $j2_args -o .Dockerfile.all templates/Dockerfile.all.j2 $LOGIC_FILE
 j2 $j2_args -o .haproxy.cfg templates/haproxy.cfg.j2 $LOGIC_FILE
 
+cp -prvf .Dockerfile.all nagios/centos_build/Dockerfile.all
+
 get_templates | while read -r template_file; do
   of="configs/rendered/$(echo -e $template_file|sed 's/\.j2$//g'|sed 's/configs\///g')"
   cmd="j2 -f yaml -o '$of' '$template_file' $LOGIC_FILE"

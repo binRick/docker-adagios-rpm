@@ -103,16 +103,14 @@ services:
     2e911329-2bc7-4c71-84b9-2fd3b2525b4c:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
-
-    nag1:
-      <<: *DEFAULT_CONTAINER
-      build:  *BUILD_CENTOS_8
-
-
-
+      expose: 
+        - "80"
 
 
 _________________sodsd:
+    nag1:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_CENTOS_8
     db1:
       <<: *DEFAULT_CONTAINER
       image: mariadb/server:10.3

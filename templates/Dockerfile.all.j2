@@ -9,6 +9,8 @@ RUN yum install -y epel-release dnf
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/dnf/dnf.conf
 RUN dnf clean all && dnf -y update
 
+RUN dnf -y remove nagios
+
 COPY files/ok-release.rpm /usr/src
 COPY files/labs-consol-stable.rhel7.noarch.rpm /usr/src
 RUN dnf -y install /usr/src/ok-release.rpm /usr/src/labs-consol-stable.rhel7.noarch.rpm
@@ -16,7 +18,7 @@ RUN unlink /usr/src/labs-consol-stable.rhel7.noarch.rpm
 RUN unlink /usr/src/ok-release.rpm
 
 # DNF
-RUN dnf -y install \
+RUN dnf -y install -x nagios \
 	gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
 	git postfix python-pip python3-pip python3-devel python-devel acl python-setuptools \
 	zsh telnet openssh-server ansible-python3 openvpn openvpn-devel rpm-build tinyproxy nodejs \
@@ -33,14 +35,14 @@ RUN dnf -y install \
 
 
 
-COPY rpms/daemontools-encore-1.11-1.el7.x86_64.rpm /usr/src
+COPY files/daemontools-encore-1.11-1.el7.x86_64.rpm /usr/src
 COPY files/ncpa-2.2.2.el7.x86_64.rpm /usr/src
 RUN dnf -y install /usr/src/ncpa-2.2.2.el7.x86_64.rpm;\ 
     dnf -y install /usr/src/daemontools-encore-1.11-1.el7.x86_64.rpm;\
     unlink /usr/src/ncpa-2.2.2.el7.x86_64.rpm;\
     unlink /usr/src/daemontools-encore-1.11-1.el7.x86_64.rpm
 
-RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
+RUN dnf --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
 
 
 # Remove yum cache
@@ -109,9 +111,9 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 # Systemd - preparation ends
 
 # Manual copies
-COPY bin/ttyd /usr/bin
-COPY bin/bwrap_exec.sh /usr/local/sbin
-COPY bin/bwrap_exec_with_network.sh /usr/local/sbin
+COPY files//ttyd /usr/bin
+COPY files/bwrap_exec.sh /usr/local/sbin
+COPY files/bwrap_exec_with_network.sh /usr/local/sbin
 
 # Copy Configs
 COPY configs/.profile.sh /root
@@ -375,7 +377,7 @@ RUN mkdir -p /service/{{s.name}}/log
 RUN echo -e '#!/bin/bash\nset -e\nexec {{s.start}} 2>&1\n' > /service/{{s.name}}/start && chmod +x /service/{{s.name}}/start
 {%endif%}
 RUN echo -e '#!/bin/bash\nset -e\n{{s.pre_exec|default('sleep 0')}}; exec {{s.run}} 2>&1\n' > /service/{{s.name}}/run
-COPY bin/run /service/{{s.name}}/log
+COPY files/run /service/{{s.name}}/log
 RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log/run
 {%endfor%}
 
