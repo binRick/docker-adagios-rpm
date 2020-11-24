@@ -12,7 +12,4 @@ secret.key
 .*.key
 .haproxy.cfg
 *-*-*-*.service
-.Dockerfile
-.Dockerfile.base
-.Dockerfile.base_rpms
 .haproxy.cfg
