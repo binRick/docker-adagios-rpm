@@ -17,8 +17,11 @@ podman run --name myregistry \
     -e "REGISTRY_HTTP_TLS_KEY=/certs/domain.key" \
     -e REGISTRY_COMPATIBILITY_SCHEMA1_ENABLED=true \
     -d \
+    --rm \
     docker.io/library/registry:latest
 
+
+sleep 3
 
 podman login -u registryuser -p registryuserpassword --tls-verify=false localhost:5009
 
