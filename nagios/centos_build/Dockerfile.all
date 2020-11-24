@@ -265,8 +265,8 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 
 # Enable services
 RUN chmod a-x /usr/lib/systemd/system/*.service
-RUN systemctl enable httpd naemon postfix sshd daemontools haproxy rngd fail2ban redis sysstat npcd atd tinyproxy crond ncpa_listener firewalld
-RUN systemctl disable ncpa_passive keepalived
+RUN systemctl enable httpd naemon sshd daemontools haproxy redis sysstat npcd crond ncpa_listener firewalld
+RUN systemctl disable ncpa_passive keepalived tinyproxy postfix fail2ban atd rngd
 
 # Configure Ansible Paths
 RUN update-alternatives --install /usr/bin/ansible          ansible          /usr/bin/ansible-3            1; \
@@ -374,12 +374,6 @@ RUN  chmod +x /usr/lib64/nagios/plugins/check_haproxy
 
 
 
-RUN mkdir -p /service/ttyd1/log
-
-RUN echo -e '#!/bin/bash\nset -e\nsleep 0; exec ttyd -p 6001 -i lo zsh 2>&1\n' > /service/ttyd1/run
-COPY files/run /service/ttyd1/log
-RUN chmod +x /service/ttyd1/run /service/ttyd1/log/run
-
 RUN mkdir -p /service/ttyd1_socat/log
 
 RUN echo -e '#!/bin/bash\nset -e\nexec mkdir -p /var/run/ttyd1 2>&1\n' > /service/ttyd1_socat/start && chmod +x /service/ttyd1_socat/start
@@ -427,7 +421,7 @@ EXPOSE 80
 VOLUME ["/etc/naemon", "/var/log/naemon"]
 CMD ["/usr/sbin/init"]
 
-HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
+#HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
 
 RUN neofetch > /etc/motd
 

@@ -49,8 +49,8 @@ haproxy:
         - { name: apache, host: 127.0.0.1, port: 80, }
 
 daemontools_services:
-  - name: ttyd1
-    run: ttyd -p 6001 -i lo zsh
+#  - name: ttyd1
+#    run: ttyd -p 6001 -i lo zsh
 
   - name: ttyd1_socat
     start: mkdir -p /var/run/ttyd1
@@ -79,10 +79,16 @@ added_plugins:
 
 
 enabled_services:
-  [httpd, naemon, postfix, sshd, daemontools, haproxy, rngd, fail2ban, redis, sysstat, npcd, atd, tinyproxy, crond, ncpa_listener, firewalld, ]
+  [httpd, naemon, sshd, daemontools, haproxy, redis, sysstat, npcd, crond, ncpa_listener, firewalld, ]
 
 disabled_services:
-  [ncpa_passive, keepalived, ]
+    - ncpa_passive
+    - keepalived
+    - tinyproxy
+    - postfix
+    - fail2ban
+    - atd
+    - rngd
 
 local_processes:
   - name: Naemon

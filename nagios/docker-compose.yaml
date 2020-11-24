@@ -76,9 +76,9 @@ HEALTH_CHECKS:
 
 CONTAINER_TYPES:
   default: &DEFAULT_CONTAINER
-    network_mode: bridge
-    #networks: [overlay_network]
-    networks: [bridged_network]
+#    networks: [overlay_network]
+#    network_mode: bridge
+#    networks: [bridged_network]
     init: yes
     securityContext: *DEFAULT_SECURITY_CONTEXT
     workingDir: /root
@@ -92,19 +92,18 @@ CONTAINER_TYPES:
       - /run
       - /tmp
     ulimits:
-      nproc: 1002:2002
-      nofile: 1002
+      nofile: 500000
       nproc:
-        soft: 50
-        hard: 100
+        soft: 150
+        hard: 250
 
 
 services:
     2e911329-2bc7-4c71-84b9-2fd3b2525b4c:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
-      expose: 
-        - "80"
+      ports:
+        - 38232:80
 
 
 _________________sodsd:
@@ -181,7 +180,8 @@ _________________sodsd:
 volumes:
     db_data: {}
 
-networks:
+
+_______networks:
   overlay_network:
     name: OVERLAY_NETWORK
     driver: overlay
@@ -218,7 +218,7 @@ extra_hosts:
 
 #ports:
 #  - target: 80
-#    published: 8080
+#    published: 38232
 #    protocol: tcp
 #    mode: host
 
