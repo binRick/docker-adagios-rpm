@@ -1,0 +1,56 @@
+version: "2"
+services:
+
+    redis:
+      container_name: REDIS
+      hostname: redis-123
+      user: root
+      image: redis:alpine
+      ports:
+        - "6379"
+      environment:
+        - SECRET_KEY=aabbcc
+        - ENV_IS_SET
+
+    frontend:
+      container_name: FRONTEND
+      network_mode: bridge
+      image: busybox
+      #entrypoint: []
+      command: ["/bin/busybox", "httpd", "-f", "-p", "8080"]
+      working_dir: /
+      environment:
+        SECRET_KEY2: aabbcc
+        ENV_IS_SET2:
+      ports:
+        - "8099:8080"
+      links:
+        - redis:myredis
+      labels:
+        my.label: my_value
+
+#tmpfs: /run
+tmpfs:
+  - /run
+  - /tmp
+#user: postgresql
+#working_dir: /code
+domainname: foo.com
+#hostname: foo
+#ipc: host
+#mac_address: 02:42:ac:11:65:43
+#privileged: true
+#read_only: true
+#shm_size: 64M
+#stdin_open: true
+tty: false
+restart: always
+
+networks:
+  nonet:
+    external: no
+    enable_ipv6: no
+    name: MYNET1
+    attachable: true
+
+

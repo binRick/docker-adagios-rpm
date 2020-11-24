@@ -1,0 +1,205 @@
+---
+version: "2"
+DEFAULTS:
+ restart_policy: &RESTART_POLICY_1
+  condition: on-failure
+  delay: 5s
+  max_attempts: 3
+  window: 120s
+
+BUILD:
+ centos_7: &BUILD_CENTOS_7
+   context: centos_build
+   dockerfile: Dockerfile
+   target: phase_1
+   args:
+     CENTOS_VERSION: 7
+
+services:
+
+    egress1:
+      container_name: EGRESS1
+      network_mode: bridge
+      build: 
+        context: centos_build
+        dockerfile: Dockerfile
+        target: phase_2
+        args:
+          CENTOS_VERSION: 7
+          buildno: 1
+          gitcommithash: cdc3b19
+      command: ["/usr/sbin/init"]
+      init: yes
+
+    egress2:
+      container_name: EGRESS2
+      network_mode: bridge
+      build: 
+        context: centos_build
+        dockerfile: Dockerfile
+        target: phase_1
+        args:
+          CENTOS_VERSION: 8
+          buildno: 1
+          gitcommithash: cdc3b19
+      command: ["/usr/sbin/init"]
+      init: yes
+#      networks:
+#        - bridged_network
+
+__services:
+    egress:
+      container_name: EGRESS
+      hostname: EGRESS
+      network_mode: bridge
+      build: 
+        network: none
+        shm_size: '2gb'
+        dockerfile: centos_build/Dockerfile
+#        target: centos_7_mid
+        target: phase_1
+        args:
+          buildno: 1
+          gitcommithash: cdc3b19
+
+      command: ["/usr/sbin/init"]
+      init: yes
+      logging:
+        driver: "json-file"
+      image: centos:7
+
+    web:
+      container_name: WEB
+      network_mode: bridge
+      init: yes
+      logging:
+        driver: "json-file"
+      deploy:
+       restart_policy: *RESTART_POLICY_1
+        
+       resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 100M
+
+      image: centos:7
+      command: ["/usr/sbin/init"]
+      build: 
+        context: centos7_build/
+        dockerfile: centos7_build/Dockerfile
+
+    redis:
+      container_name: REDIS
+      hostname: redis-123
+      user: root
+      image: redis:alpine
+      network_mode: bridge
+#      networks:
+#        - bridged_network
+      ports:
+        - "6379"
+      environment:
+        - SECRET_KEY=aabbcc
+        - ENV_IS_SET
+#      networks:
+#        - nonet
+
+    frontend:
+      container_name: FRONTEND
+#      network_mode: bridge
+      networks:
+        - mynet1
+      image: busybox
+      command: ["/bin/busybox", "httpd", "-f", "-p", "8099"]
+#      image: centos:7
+#      command: ["/usr/sbin/init"]
+      working_dir: /
+      environment:
+        SECRET_KEY2: aabbcc
+        ENV_IS_SET2:
+#      ports:
+#        - "8099:8099"
+      links:
+        - redis:myredis
+      labels:
+        my.label: my_value
+
+#tmpfs: /run
+#tmpfs:
+#  - /run
+#  - /tmp
+#user: postgresql
+#working_dir: /code
+#domainname: foo.com
+#hostname: foo
+#ipc: host
+#mac_address: 02:42:ac:11:65:43
+#privileged: true
+#read_only: true
+#shm_size: 64M
+#stdin_open: true
+#tty: no
+#restart: always
+#
+#
+networks:
+  overlay_network:
+    name: OVERLAY_NETWORK
+    driver: overlay
+    external: no
+    enable_ipv6: no
+    attachable: true
+
+  bridged_network:
+    name: BRIDGED_NETWORK
+    driver: bridge
+    external: no
+    enable_ipv6: no
+    attachable: true
+
+  restricted:
+    external: no
+    enable_ipv6: no
+    name: MYNET1
+    attachable: true
+#dns:
+#  - 8.8.8.8
+#  - 9.9.9.9
+
+dns_search:
+  - dc1.example.com
+  - dc2.example.com
+
+#external_links:
+#  - web:http
+
+extra_hosts:
+  - "somehost:162.242.195.82"
+  - "otherhost:50.31.209.229"
+
+ports:
+  - target: 80
+    published: 8080
+    protocol: tcp
+    mode: host
+
+
+ulimits:
+  nproc: 65535
+  nofile:
+    soft: 20000
+    hard: 40000
+
+sysctls:
+  net.core.somaxconn: 1024
+  net.ipv4.tcp_syncookies: 0
+
+
+configs:
+  my_config:
+    file: ./my_config.txt
+  my_other_config:
+    external: true
