@@ -1,8 +1,11 @@
 FROM centos:8 as phase_1
 
 
-RUN yum -y install  gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
+RUN dnf -y install  gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
     git postfix \
     zsh telnet openssh-server rpm-build nodejs \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump bind-utils nmap-ncat at tar  \
-    npm
+    npm httpd tcpdump socat
+
+
+RUN dnf -y reinstall --downloadonly --destdir /var/cache/repo git tar

@@ -103,7 +103,8 @@ services:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
       ports:
-        - 38232:80
+        - '80'
+#        - 38232:80
 
 
 _________________sodsd:
@@ -216,11 +217,11 @@ extra_hosts:
   - "somehost:162.242.195.82"
   - "otherhost:50.31.209.229"
 
-#ports:
-#  - target: 80
-#    published: 38232
-#    protocol: tcp
-#    mode: host
+ports:
+  - target: 80
+    published: 38232
+    protocol: tcp
+    mode: host
 
 ulimits:
   nproc: 65535
