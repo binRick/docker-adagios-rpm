@@ -99,7 +99,7 @@ services:
       container_name: DB1
       image: mariadb/server:10.3
       command: 
-      expose: ['127.0.0.1:3306']
+      expose: ['3306']
       environment:
         MARIADB_ROOT_PASSWORD: 703CD6F4-9766-4DC9-AF81-ECADF357D946
         MARIADB_DATABASE: mydb1
