@@ -27,6 +27,9 @@ time sudo podman build \
 #        dnf -y reinstall --downloadonly --destdir /var/cache/repo haproxy
 
 
+sudo podman run --rm -v $(pwd)/customrepo.repo:/customrepo.repo -v /var/cache/repos/centos/dnf/8:/var/cache/repo -ti centos:8 dnf -y --repofrompath local,file:///customrepo.repo  --repo local --nogpgcheck \
+    install tcpdump git nmap-ncat
+
 
 set +x
 find /var/cache/centos/yum/7|wc -l

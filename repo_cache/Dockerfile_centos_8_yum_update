@@ -8,4 +8,6 @@ RUN dnf -y install  gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-
     npm httpd tcpdump socat
 
 
-RUN dnf -y reinstall --downloadonly --destdir /var/cache/repo git tar
+RUN dnf -y reinstall --downloadonly --destdir /var/cache/repo '*'
+
+RUN createrepo /var/cache/repo

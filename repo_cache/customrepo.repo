@@ -1,0 +1,5 @@
+[local]
+name=My RPM System Package Repo
+baseurl=file:////var/cache/repo
+enabled=1
+gpgcheck=0
