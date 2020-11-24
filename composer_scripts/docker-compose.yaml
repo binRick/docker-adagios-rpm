@@ -118,7 +118,6 @@ services:
         - env1.sh
       depends_on: [logs1]
 
-_____________services:
     ingress1:
       <<: *DEFAULT_CONTAINER
       container_name: INGRESS1
@@ -145,7 +144,6 @@ _____________services:
         - "db1"
         - "redis1:REDIS"
 
-_____disabled_services:
     redis1:
       <<: *DEFAULT_CONTAINER
       container_name: REDIS1
