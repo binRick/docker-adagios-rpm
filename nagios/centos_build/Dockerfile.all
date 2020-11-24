@@ -416,6 +416,8 @@ RUN updatedb
 
 WORKDIR /etc/naemon
 
+FROM phase_3 as phase_final
+
 EXPOSE 80
 
 VOLUME ["/etc/naemon", "/var/log/naemon"]

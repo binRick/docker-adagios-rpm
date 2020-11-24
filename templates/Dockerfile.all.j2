@@ -391,6 +391,8 @@ RUN updatedb
 
 WORKDIR /etc/naemon
 
+FROM phase_3 as phase_final
+
 EXPOSE {{ports.internal.apache}}
 
 VOLUME ["/etc/naemon", "/var/log/naemon"]

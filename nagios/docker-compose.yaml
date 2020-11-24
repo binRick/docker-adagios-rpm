@@ -34,9 +34,8 @@ BUILD_TYPES:
      CENTOS_VERSION: 7
 
  centos_nagios: &BUILD_CENTOS_NAGIOS
-   <<: *BUILD_CENTOS_NAGIOS
    dockerfile: centos_build/Dockerfile.all
-   target: phase_1
+#   target: phase_final
 
  centos_8: &BUILD_CENTOS_8
    <<: *BUILD_CENTOS
@@ -103,7 +102,8 @@ services:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
       ports:
-        - 38232:80
+        - '80'
+#        - 38232:80
 
 
 _________________sodsd:
@@ -220,7 +220,7 @@ ports:
   - target: 80
     published: 38232
     protocol: tcp
-    mode: host
+#    mode: host
 
 ulimits:
   nproc: 65535
