@@ -92,8 +92,25 @@ CONTAINER_TYPES:
         soft: 50
         hard: 100
 
-services:
 
+services:
+    db1:
+      <<: *DEFAULT_CONTAINER
+      container_name: DB1
+      image: mariadb/server:10.3
+      command: 
+      expose: ['127.0.0.1:3306']
+      environment:
+        MARIADB_ROOT_PASSWORD: 703CD6F4-9766-4DC9-AF81-ECADF357D946
+        MARIADB_DATABASE: mydb1
+        MARIADB_USER: mydbuser1
+        MARIADB_PASSWORD: mydbpass1
+      volumes: 
+        - db_data:/var/lib/mysql
+
+
+
+_____________services:
     egress1:
       <<: *DEFAULT_CONTAINER
       container_name: EGRESS1
@@ -128,7 +145,7 @@ services:
         - "db1"
         - "redis1:REDIS"
 
-disabled_services:
+_____disabled_services:
     redis1:
       <<: *DEFAULT_CONTAINER
       container_name: REDIS1
@@ -139,19 +156,6 @@ disabled_services:
       export: ["6379"]
 
 
-    db1:
-      <<: *DEFAULT_CONTAINER
-      container_name: DB1
-      image: mariadb/server:10.3
-      command: 
-      expose: ['127.0.0.1:3306']
-      environment:
-        MARIADB_ROOT_PASSWORD: 703CD6F4-9766-4DC9-AF81-ECADF357D946
-        MARIADB_DATABASE: mydb1
-        MARIADB_USER: mydbuser1
-        MARIADB_PASSWORD: mydbpass1
-      volumes: 
-        - db_data:/var/lib/mysql
 
 
 #hostname: foo
@@ -195,18 +199,18 @@ dns_search:
   - dc1.example.com
   - dc2.example.com
 
-external_links:
-  - ingress1:http
+#external_links:
+#  - ingress1:http
 
 extra_hosts:
   - "somehost:162.242.195.82"
   - "otherhost:50.31.209.229"
 
-ports:
-  - target: 80
-    published: 8080
-    protocol: tcp
-    mode: host
+#ports:
+#  - target: 80
+#    published: 8080
+#    protocol: tcp
+#    mode: host
 
 ulimits:
   nproc: 65535
