@@ -56,6 +56,7 @@ rsync $rsync_opts configs/rendered/templates.cfg nagios/configs/rendered/.
 for f in daemontools-encore-1.11-1.el7.x86_64.rpm labs-consol-stable.rhel7.noarch.rpm ok-release.rpm ncpa-2.2.2.el7.x86_64.rpm; do
     rsync $rsync_opts rpms/$f nagios/files/.
 done
+
 for f in check_haproxy neofetch check_speedtest-cli.sh check_service.pl check_systemd_service.sh log_run \
          install_borg.sh \
          naemon_plugins \

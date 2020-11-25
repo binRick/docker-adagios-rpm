@@ -1,0 +1,28 @@
+- hosts: localhost
+  remote_user: root
+  connection: local
+  become: true
+  tasks:
+    - include_role:
+        name: python
+      tags: python
+
+    - include_role:
+        name: cni_plugins
+      tags: cni_plugins
+
+    - include_role:
+        name: containers_common
+      tags: containers_common
+
+    - include_role:
+        name: runc
+      tags: runc
+
+    - include_role:
+        name: conmon
+      tags: conmon
+
+    - include_role:
+        name: podman
+      tags: podman

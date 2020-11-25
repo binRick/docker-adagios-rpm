@@ -1,3 +1,6 @@
 [submodule "ansible-podman-collections"]
 	path = ansible-podman-collections
 	url = git@github.com:containers/ansible-podman-collections.git
+[submodule "ansible-role-podman"]
+	path = ansible-role-podman
+	url = git@github.com:binRick/ansible-role-podman.git

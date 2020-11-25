@@ -19,7 +19,7 @@ id | grep -q ^root$ || sudo -u root pip3 install \
 	'json2yaml' \
 --upgrade --user --force
 
-sudo dnf -y remove docker docker-common
+sudo dnf -y remove docker docker-common libselinux-python3
 sudo dnf -y install podman iptables podman-remote podman-docker
 systemctl enable io.podman
 systemctl start io.podman
