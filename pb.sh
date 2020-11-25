@@ -11,6 +11,6 @@ ansible-playbook  -i localhost, pb.yaml -v
 
 which podman
 podman --version
-systemctl status podman
 systemctl is-enabled podman || systemctl enable podman --now
+systemctl status podman
 
