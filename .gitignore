@@ -16,3 +16,6 @@ secret.key
 unit_files/
 .Dockerfile .Dockerfile.all .Dockerfile.base .Dockerfile.base_rpms
 .Dockerfile*
+.firewalld_zones_public.xml
+nagios/rendered_templates
+nagios/files
