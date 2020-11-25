@@ -19,10 +19,10 @@ get_templates(){
   find configs -name "*.j2" -type f
 }
 
-sudo chown vpntech configs nagios -R
+sudo chown $BUILD_USER configs nagios -R
 
-rm -rf configs/rendered
-mkdir configs/rendered
+rm -rf configs/rendered nagios/rendered_templates
+mkdir configs/rendered nagios/rendered_templates
 
 j2 $j2_args -o .firewalld_zones_public.xml templates/firewalld_zones_public.xml.j2 $LOGIC_FILE
 j2 $j2_args -o .Dockerfile.base_rpms templates/Dockerfile.base_rpms.j2 $LOGIC_FILE
