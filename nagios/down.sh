@@ -18,22 +18,34 @@ container_exists(){
 ensure_down(){
  (
   set +ex
+
+  podman ps -aq|xargs -I % podman kill %
+
   podman container exists $CONTAINER_NAME && podman kill $CONTAINER_NAME
   podman container exists $CONTAINER_NAME && podman rm $CONTAINER_NAME
+
+  podman pod exists $PROJECT_NAME && podman pod stop $PROJECT_NAME
   podman pod exists $PROJECT_NAME && podman pod rm $PROJECT_NAME
+
   podman container exists $CONTAINER_NAME && podman kill $CONTAINER_NAME
   podman container exists $CONTAINER_NAME && podman rm $CONTAINER_NAME
+
+  podman pod exists $PROJECT_NAME && podman pod stop $PROJECT_NAME
   podman pod exists $PROJECT_NAME && podman pod rm $PROJECT_NAME
+
+  sudo podman pod ps -q|xargs -I % sudo podman pod rm %
+  podman ps -aq|xargs -I % podman rm %
+
   true
   set -ex
  ) 2>/dev/null
 }
 
-trap ensure_down EXIT
+#trap ensure_down EXIT
 
 ensure_down
 
-podman-compose -f container-compose.yaml down
+#podman-compose -f container-compose.yaml down
 
 #../podman_scripts/rm_pods.sh
 #../podman_scripts/rm_all.sh

@@ -1,6 +1,5 @@
-FROM nagios_centos_7_base:latest as phase_1
+FROM {{env.DEV_DOMAIN_2_POD_UUID}}_centos_7_base:latest as phase_1
 
-ENV container docker
 ENV ADAGIOS_HOST adagios.local
 ENV ADAGIOS_USER {{auth.adagios.user}}
 ENV ADAGIOS_PASS {{auth.adagios.pass}}
@@ -25,27 +24,27 @@ RUN pynag add command command_name=process-service-perfdata-file command_line='/
 	pynag add command command_name=process-host-perfdata-file command_line='/bin/mv /var/lib/naemon/host-perfdata /var/spool/pnp4nagios/host-perfdata.$TIMET$' ;\
 	pynag config --append cfg_dir=/etc/naemon/commands/
 
-RUN unlink /etc/naemon/conf.d/windows.cfg;\
-    unlink /etc/nagios/objects/windows.cfg;\
-    unlink /etc/nagios/objects/printer.cfg;\
-    unlink /etc/naemon/conf.d/switch.cfg ;\
-    unlink /etc/nagios/objects/switch.cfg;\
-    unlink /etc/naemon/conf.d/printer.cfg ;\
-    unlink /etc/naemon/conf.d/localhost.cfg
-
-
-COPY configs/localhost.cfg /etc/naemon/conf.d
+RUN rm -f /etc/naemon/conf.d/windows.cfg \
+    /etc/nagios/objects/windows.cfg \
+    /etc/nagios/objects/printer.cfg \
+    /etc/naemon/conf.d/switch.cfg \
+    /etc/nagios/objects/switch.cfg \
+    /etc/naemon/conf.d/printer.cfg  \
+    /etc/naemon/conf.d/localhost.cfg \
+    /etc/naemon/conf.d/templates/services.cfg
 
 RUN mkdir -p /etc/naemon/commands \
              /etc/naemon/services \
              /usr/share/okconfig/templates/whmcs \
              /etc/nagios/okconfig/examples \
              /etc/nagios/okconfig/services/whmcs \
-             /etc/nagios/okconfig/commands/whmcs
+             /etc/nagios/okconfig/commands/whmcs \
+             /etc/naemon/conf.d
+
+COPY configs/localhost.cfg /etc/naemon/conf.d
 
 RUN touch /var/log/naemon/livestatus.log && chown naemon:naemon /var/log/naemon/livestatus.log
 RUN touch /var/log/naemon/debug.log && chown naemon:naemon /var/log/naemon/debug.log
-
 
 COPY files/neofetch /usr/local/bin
 COPY files/check_speedtest-cli.sh /usr/lib64/nagios/plugins
@@ -63,7 +62,7 @@ COPY configs/rendered/*.cfg      /etc/naemon/conf.d
 #RUN unlink /etc/naemon/objects/templates.cfg
 #RUN unlink /etc/naemon/conf.d/templates.cfg
 #RUN unlink /etc/naemon/resource.cfg
-RUN unlink /etc/naemon/conf.d/templates/services.cfg
+
 
 
 {%for p in added_plugins%}
@@ -72,32 +71,26 @@ RUN  chmod +x {{paths.plugins}}/{{p.file}}
 {%endfor%}
 
 
-{%for s in daemontools_services%}
-RUN mkdir -p /service/{{s.name}}/log
-{%if s.start is defined and s.start|length > 0%}
-RUN echo -e '#!/bin/bash\nset -e\nexec {{s.start}} 2>&1\n' > /service/{{s.name}}/start && chmod +x /service/{{s.name}}/start
-{%endif%}
-RUN echo -e '#!/bin/bash\nset -e\n{{s.pre_exec|default('sleep 0')}}; exec {{s.run}} 2>&1\n' > /service/{{s.name}}/run
-COPY files/log_run /service/{{s.name}}/log/run
-RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log/run
-{%endfor%}
 
-RUN echo '[[ $- = *i* ]] && svstat /service/*' > /etc/profile.d/daemontools.sh && chmod 755 /etc/profile.d/daemontools.sh
+#   CREDENTIALS
+RUN rm -f /etc/thruk/htpasswd; htpasswd -cb /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
+    rm -f /etc/nagios/passwd ;\
+    ln -s {{paths.thruk.htpasswd}} /etc/nagios/passwd
+
 
 
 RUN naemon-ctl configtest
-
+RUN neofetch > /etc/motd
 RUN updatedb
 
-WORKDIR /etc/naemon
+#WORKDIR /etc/naemon
 
-EXPOSE {{ports.internal.apache}}
+#EXPOSE {{ports.internal.apache}}
 
-VOLUME ["/etc/naemon", "/var/log/naemon"]
-CMD ["/usr/sbin/init"]
+#VOLUME ["/etc/naemon", "/var/log/naemon"]
+#CMD ["/usr/sbin/init"]
 
-HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.internal.apache}}/ || exit 1
+#HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.internal.apache}}/ || exit 1
 
-RUN neofetch > /etc/motd
 
 

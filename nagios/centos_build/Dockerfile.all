@@ -116,7 +116,7 @@ COPY files/bwrap_exec_with_network.sh /usr/local/sbin
 
 # Copy Configs
 COPY configs/.profile.sh /root
-COPY .haproxy.cfg /etc/haproxy/haproxy.cfg
+COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 
 
 ### END SOFTWARE INSTALLS

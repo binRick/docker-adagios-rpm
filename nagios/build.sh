@@ -8,7 +8,7 @@ CONTAINER_NAME=${PROJECT_NAME}_${MY_CONTAINER_1_UUID}
 
 cd $EXEC_PATH
 
-(cat container-compose.yaml|yaml2json|json2yaml ) 2>/dev/null
+cat container-compose.yaml|yaml2json 2>/dev/null |json2yaml >/dev/null
 
 cd ../
 #render_templates.sh

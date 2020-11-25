@@ -9,6 +9,11 @@ security_opt:
   - label:role:ROLE
   - label:type:spc_t
 
+build_volumes: &BUILD_VOLUMES
+  - rpms_cache:/var/cache/rpms:z
+  - yum_cache:/var/cache/yum:z
+  - dnf_cache:/var/cache/dnf:z
+
 RESTART_POLICIES:
  restart_policy: &DEFAULT_RESTART_POLICY
   condition: always
@@ -52,6 +57,13 @@ BUILD_TYPES:
  centos_nagios: &BUILD_CENTOS_NAGIOS
    dockerfile: centos_build/Dockerfile
    target: phase_1
+   privileged: yes
+   working_dir: /etc/naemon
+   restart: always
+   volumes: 
+     - etc_naemon:/etc/naemon
+     - var_log_naemon:/var/log/naemon
+   healthcheck: '--interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.internal.apache}}/ || exit 1'
 
  centos_8: &BUILD_CENTOS_8
    <<: *BUILD_CENTOS
@@ -131,13 +143,6 @@ CONTAINER_TYPES:
         - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
 
 build_services:
-    centos_7_base_rpms:
-      <<: *DEFAULT_CONTAINER
-      build:  *BUILD_CENTOS_NAGIOS_BASE_RPMS
-
-    centos_7_base:
-      <<: *DEFAULT_CONTAINER
-      build:  *BUILD_CENTOS_NAGIOS_BASE
 
 #      privileged: yes
 
@@ -209,13 +214,22 @@ _________________sodsd:
 
 
 services:
+    centos_7_base_rpms:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_CENTOS_NAGIOS_BASE_RPMS
+      command: ["/usr/sbin/init"]
+      volumes: *BUILD_VOLUMES
+
+    centos_7_base:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_CENTOS_NAGIOS_BASE
+      volumes: *BUILD_VOLUMES
+
     2e911329-2bc7-4c71:
       <<: *PRIVILEGED_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
       ports: ['5923:80','5924:31528']
-      privileged: yes
-#      volumes: 
-#        - db_data:/var/lib/mysql
+      hostname: naemon
 
 
 #hostname: foo
@@ -226,10 +240,6 @@ services:
 #stdin_open: true
 #tty: no
 #restart: always
-
-volumes:
-    db_data: {}
-
 
 _______networks:
   overlay_network:
@@ -289,6 +299,8 @@ configs:
     external: true
 
 volumes:
+    etc_naemon:
+    var_log_naemon:
     db_data:
     dnf_cache:
     yum_cache:

@@ -50,3 +50,4 @@ thruk_rest_api.sh
 
 backup_configs.sh
 
+summary.sh

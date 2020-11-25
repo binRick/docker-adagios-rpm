@@ -35,6 +35,7 @@ RUN dnf -4 -y install --exclude=nagiosxx --enablerepo=ok-testing \
 from phase_1 as phase_cache
 
 #RUN dnf -y makecache && yum -y makecache
+#RUN dnf -y reinstall --downloadonly --destdir /var/cache/rpms '*'
 
 
 

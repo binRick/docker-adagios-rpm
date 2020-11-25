@@ -90,6 +90,8 @@ disabled_services:
     - atd
     - rngd
 
+masked_services: [nagios]
+
 local_processes:
   - name: Naemon
     service: naemon

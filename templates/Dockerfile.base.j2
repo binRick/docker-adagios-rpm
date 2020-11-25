@@ -1,4 +1,5 @@
-FROM nagios_centos_7_base_rpms:latest as phase_1
+FROM {{env.DEV_DOMAIN_2_POD_UUID}}_centos_7_base_rpms:latest as phase_1
+WORKDIR /etc/naemon
 
 {%for p in packages.pip3%}
 RUN pip3 install {{p}}
@@ -61,12 +62,13 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 
 # Manual copies
 COPY files/ttyd /usr/bin
-COPY files/bwrap_exec.sh /usr/local/sbin
-COPY files/bwrap_exec_with_network.sh /usr/local/sbin
+COPY files/bwrap_exec.sh files/bwrap_exec_with_network.sh /usr/local/sbin
+#COPY files/bwrap_exec_with_network.sh /usr/local/sbin
 
 # Copy Configs
-COPY configs/.profile.sh /root
-COPY .haproxy.cfg /etc/haproxy/haproxy.cfg
+COPY files/.profile.sh /root
+COPY rendered_templates/haproxy.cfg /etc/haproxy/haproxy.cfg
+RUN chmod 0700 /root/.profile.sh
 
 ### END SOFTWARE INSTALLS
 
@@ -93,11 +95,11 @@ RUN sed -i 's/^MinSpareServers 5/MinSpareServers 1/g' /etc/tinyproxy/tinyproxy.c
     sed -i 's/^StartServers 10/StartServers 1/g' /etc/tinyproxy/tinyproxy.conf
 
 # it is a valid git repo so we have audit trail
-#RUN	git init /etc/naemon ;\
-#	git config user.name "admin" ;\
-#	git config user.email "admin@adagios.local" ;\
-#	git add . ;\
-#	git commit -a -m "Initial commit"
+RUN	git init /etc/naemon; \
+	git config user.name "admin" ;\
+	git config user.email "admin@adagios.local" ;\
+    git add . ;\
+	git commit -a -m "Initial commit"
 
 # Fix permissions for naemon and pnp4nagios
 RUN chown -R naemon:naemon \
@@ -109,6 +111,7 @@ RUN chown -R naemon:naemon \
 	/var/spool/pnp4nagios \
 	/etc/pnp4nagios/process_perfdata.cfg \
 	/var/log/okconfig
+
 # ACL group permissions need g+rwx
 RUN	chmod g+rwx -R \
 	/etc/naemon \
@@ -166,10 +169,12 @@ RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
 	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
 
 # Make naemon use nagios plugins, more people are doing it like that. And configure pnp4nagios
-RUN sed -i 's|/usr/lib64/naemon/plugins|{{paths.plugins}}|g' /etc/naemon/resource.cfg ;\
-	sed -i 's|/etc/nagios/passwd|{{paths.thruk.htpasswd}}|g' /etc/httpd/conf.d/pnp4nagios.conf ;\
+RUN \
+    sed -i 's|/usr/lib64/naemon/plugins|{{paths.plugins}}|g' /etc/naemon/resource.cfg ;\
 	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
+	sed -i 's|/etc/nagios/passwd|{{paths.thruk.htpasswd}}|g' /etc/httpd/conf.d/pnp4nagios.conf ;\
 	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
+
 
 # ACL group permissions need g+rwx
 RUN	chmod g+rwx -R \
@@ -207,14 +212,12 @@ RUN chown -R naemon:naemon \
 
 # Secure Adagios
 RUN mv /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf /etc/httpd/conf.d/thruk_cookie_auth_vhost.conf.disabled
-RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
-	rm -f /etc/nagios/passwd ;\
-	ln -s {{paths.thruk.htpasswd}} /etc/nagios/passwd
 
 # Enable services
 RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable {{' '.join(enabled_services)}}
 RUN systemctl disable {{' '.join(disabled_services)}}
+RUN systemctl mask {{' '.join(masked_services)}}
 
 # Configure Ansible Paths
 RUN update-alternatives --install /usr/bin/ansible          ansible          /usr/bin/ansible-3            1; \
@@ -237,7 +240,23 @@ RUN cd /opt && tar zxf liquidprompt.tar.gz && unlink liquidprompt.tar.gz
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/zshrc
 
-COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
+COPY rendered_templates/firewalld_zones_public.xml /etc/firewalld/zones/public.xml
 
 #COPY files/ops-dashboard.tar.gz /var/www
 #RUN cd /var/www && tar zxf ops-dashboard.tar.gz && unlink ops-dashboard.tar.gz
+
+
+{%for s in daemontools_services%}
+RUN mkdir -p /service/{{s.name}}/log
+{%if s.start is defined and s.start|length > 0%}
+RUN echo -e '#!/bin/bash\nset -e\nexec {{s.start}} 2>&1\n' > /service/{{s.name}}/start && chmod +x /service/{{s.name}}/start
+{%endif%}
+RUN echo -e '#!/bin/bash\nset -e\n{{s.pre_exec|default('sleep 0')}}; exec {{s.run}} 2>&1\n' > /service/{{s.name}}/run
+COPY files/log_run /service/{{s.name}}/log/run
+RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log/run
+{%endfor%}
+
+
+RUN echo '[[ $- = *i* ]] && svstat /service/*' > /etc/profile.d/daemontools.sh && chmod 755 /etc/profile.d/daemontools.sh
+
+
