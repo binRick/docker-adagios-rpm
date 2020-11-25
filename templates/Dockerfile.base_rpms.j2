@@ -1,23 +1,23 @@
-FROM centos:7
+FROM centos:7 as phase_1
+
+#RUN head -c 5 /dev/random > random_bytes && find /var/cache/rpms -type f | wc -l && \
+#    find /var/cache/dnf -type f | wc -l  && \
+#    find /var/cache/yum -type f | wc -l 
+
+COPY files/*.rpm /usr/src
 
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/yum.conf
-# First install the opensource.is and consol labs repositories
+RUN yum install -y epel-release dnf && \
+    sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/dnf/dnf.conf && \
+    dnf -4 -y install \
+                    /usr/src/ok-release.rpm /usr/src/labs-consol-stable.rhel7.noarch.rpm \
+                    /usr/src/ncpa-2.2.2.el7.x86_64.rpm /usr/src/daemontools-encore-1.11-1.el7.x86_64.rpm && \
+    rm -f /usr/src/*.rpm
 
-# Redhat/Centos users need to install the epel repositories (fedora users skip this step)
-RUN yum install -y epel-release dnf
-
-RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/dnf/dnf.conf
-RUN dnf clean all && dnf -y update
-
-COPY files/ok-release.rpm /usr/src
-COPY files/labs-consol-stable.rhel7.noarch.rpm /usr/src
-RUN dnf -y install /usr/src/ok-release.rpm /usr/src/labs-consol-stable.rhel7.noarch.rpm
-RUN unlink /usr/src/labs-consol-stable.rhel7.noarch.rpm
-RUN unlink /usr/src/ok-release.rpm
-
-# DNF
-RUN dnf -y install \
+# INSTALL PACKAGES
+RUN dnf -4 -y install --exclude=nagiosxx --enablerepo=ok-testing \
 	gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
+    naemon naemon-livestatus adagios okconfig pnp4nagios \
 	git postfix python-pip python3-pip python3-devel python-devel acl python-setuptools \
 	zsh telnet openssh-server ansible-python3 openvpn openvpn-devel rpm-build tinyproxy nodejs \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump ngrep bind-utils nmap-ncat at tar npm \
@@ -32,19 +32,18 @@ RUN dnf -y install \
     python2-speedtest-cli perl-Monitoring-Plugin perl-Switch man-db python-virtualenv libacl-devel keepalived
 
 
+from phase_1 as phase_cache
 
-COPY rpms/daemontools-encore-1.11-1.el7.x86_64.rpm /usr/src
-COPY files/ncpa-2.2.2.el7.x86_64.rpm /usr/src
-RUN dnf -y install /usr/src/ncpa-2.2.2.el7.x86_64.rpm;\ 
-    dnf -y install /usr/src/daemontools-encore-1.11-1.el7.x86_64.rpm;\
-    unlink /usr/src/ncpa-2.2.2.el7.x86_64.rpm;\
-    unlink /usr/src/daemontools-encore-1.11-1.el7.x86_64.rpm
-
-RUN yum --enablerepo=ok-testing install -y naemon naemon-livestatus adagios okconfig pnp4nagios
+#RUN dnf -y makecache && yum -y makecache
 
 
-# Remove yum cache
-RUN yum clean all -y && rm -rf /var/cache/yum
 
 
-RUN sh -c 'dnf list > /root/.dnf'
+
+from phase_cache as phase_summary
+
+#RUN dnf list > /root/.dnf && wc -l /root/.dnf && rpm -qa|wc -l
+
+#RUN head -c 5 /dev/random > random_bytes && find /var/cache/rpms -type f | wc -l && \
+#    find /var/cache/dnf -type f | wc -l  && \
+#    find /var/cache/yum -type f | wc -l 

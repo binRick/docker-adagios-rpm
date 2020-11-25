@@ -1,4 +1,4 @@
-FROM {{env.MY_CONTAINER_1_IMAGE_UUID}}:latest
+FROM nagios_centos_7_base:latest as phase_1
 
 ENV container docker
 ENV ADAGIOS_HOST adagios.local
@@ -78,7 +78,7 @@ RUN mkdir -p /service/{{s.name}}/log
 RUN echo -e '#!/bin/bash\nset -e\nexec {{s.start}} 2>&1\n' > /service/{{s.name}}/start && chmod +x /service/{{s.name}}/start
 {%endif%}
 RUN echo -e '#!/bin/bash\nset -e\n{{s.pre_exec|default('sleep 0')}}; exec {{s.run}} 2>&1\n' > /service/{{s.name}}/run
-COPY bin/run /service/{{s.name}}/log
+COPY files/log_run /service/{{s.name}}/log/run
 RUN chmod +x /service/{{s.name}}/run /service/{{s.name}}/log/run
 {%endfor%}
 

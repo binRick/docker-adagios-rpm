@@ -1,0 +1,261 @@
+---
+version: "3.8"
+domainname: foo.com
+
+RESTART_POLICIES:
+ restart_policy: &DEFAULT_RESTART_POLICY
+  condition: always
+  delay: 5s
+  max_attempts: 5
+  window: 10s
+
+LOGGING_POLICIES:
+  logging: &JSON_LOGGING_POLICY
+    driver: json-file
+    options:
+      max-size: '12m'
+      max-file: '5'
+
+BUILD_TYPES:
+ base: &BUILD_BASE
+   target: phase_1
+   links:
+     - "db1:DATABASE"
+     - "logs:LOGS"
+
+ centos: &BUILD_CENTOS
+   <<: *BUILD_BASE
+
+ centos_7: &BUILD_CENTOS_7
+   <<: *BUILD_CENTOS
+   dockerfile: centos_build/Dockerfile_centos_7
+   target: phase_1
+   args:
+     CENTOS_VERSION: 7
+
+ centos_nagios: &BUILD_CENTOS_NAGIOS
+   dockerfile: centos_build/Dockerfile.all
+#   target: phase_final
+
+ centos_8: &BUILD_CENTOS_8
+   <<: *BUILD_CENTOS
+   dockerfile: centos_build/Dockerfile_centos_8
+   target: phase_1
+   args:
+     CENTOS_VERSION: 8
+
+ ingress: &BUILD_INGRESS
+   <<: *BUILD_CENTOS_8
+   args:
+     CENTOS_VERSION: 8
+     ADDED_PACKAGES: haproxy
+
+
+ log: &BUILD_LOGS
+   <<: *BUILD_CENTOS_8
+   args:
+     CENTOS_VERSION: 8
+     ADDED_PACKAGES: rsyslog
+
+SECURITY_CONTEXTS:
+   securityContext: &DEFAULT_SECURITY_CONTEXT
+     allowPrivilegeEscalation: true
+     capabilities: {}
+     privileged: false
+     readOnlyRootFilesystem: false
+     seLinuxOptions: {}
+
+HEALTH_CHECKS:
+    healthcheck: &WEBSERVER_HEALTH_CHECK
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+CONTAINER_TYPES:
+  default: &DEFAULT_CONTAINER
+#    networks: [overlay_network]
+#    network_mode: bridge
+#    networks: [bridged_network]
+    init: yes
+    securityContext: *DEFAULT_SECURITY_CONTEXT
+    workingDir: /root
+    command: ["/usr/sbin/init"]
+    deploy:
+      restart_policy: *DEFAULT_RESTART_POLICY
+    logging: 
+      <<: *JSON_LOGGING_POLICY
+    working_dir: /
+    tmpfs:
+      - /run
+      - /tmp
+    ulimits:
+      nofile: 500000
+      nproc:
+        soft: 150
+        hard: 250
+
+
+services:
+    centos7_cache:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_CENTOS_7
+#      volumes: 
+#        - yum_cache:/var/cache/yum:z
+#        - dnf_cache:/var/cache/dnf:z
+#        - rpms_cache:/var/cache/rpms:z
+
+
+_________________sodsd:
+    nag1:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_CENTOS_8
+    db1:
+      <<: *DEFAULT_CONTAINER
+      image: mariadb/server:10.3
+      command: 
+      expose: ['3306']
+      environment:
+        MARIADB_ROOT_PASSWORD: 703CD6F4-9766-4DC9-AF81-ECADF357D946
+        MARIADB_DATABASE: mydb1
+        MARIADB_USER: mydbuser1
+        MARIADB_PASSWORD: mydbpass1
+      volumes: 
+        - db_data:/var/lib/mysql
+
+    egress1:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_CENTOS_8
+      env_file:
+        - env1.sh
+      depends_on: [logs1]
+
+    ingress1:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_INGRESS
+      depends_on: [web1, logs1]
+      links:
+        - "web1:WEB1"
+
+    logs1:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_LOGS
+      expose: ["514"]
+      command: ["/usr/sbin/rsyslogd", "-n"]
+
+    web1:
+      <<: *DEFAULT_CONTAINER
+      build:  *BUILD_CENTOS_8
+      command: ["/usr/sbin/httpd", "-DFOREGROUND"]
+      ports: ['8998:80']
+      depends_on: [db1]
+      links:
+        - "db1"
+#        - "redis1:REDIS"
+
+
+
+
+    redis1:
+      <<: *DEFAULT_CONTAINER
+      hostname: REDIS1
+      domainname: xxxxxxxxxxxxx
+      image: redis:alpine
+      command: 
+      export: ["6379"]
+
+
+
+
+#hostname: foo
+#ipc: host
+#mac_address: 02:42:ac:11:65:43
+#privileged: true
+#read_only: true
+#shm_size: 64M
+#stdin_open: true
+#tty: no
+#restart: always
+
+volumes:
+  yum_cache:
+  dnf_cache:
+  rpms_cache:
+  myvol2:
+    labels:
+      mylabel: myval
+  data:
+    name: my-app-data
+    external: true
+  data2:
+    external:
+      name: actual-name-of-volume
+
+  db_data: {}
+
+
+_______networks:
+  overlay_network:
+    name: OVERLAY_NETWORK
+    driver: overlay
+    external: no
+    enable_ipv6: no
+    attachable: true
+
+  bridged_network:
+    name: BRIDGED_NETWORK
+    driver: bridge
+    external: no
+    enable_ipv6: no
+    attachable: true
+
+  restricted:
+    external: no
+    enable_ipv6: no
+    name: MYNET1
+    attachable: true
+#dns:
+#  - 8.8.8.8
+#  - 9.9.9.9
+
+dns_search:
+  - dc1.example.com
+  - dc2.example.com
+
+#external_links:
+#  - ingress1:http
+
+extra_hosts:
+  - "somehost:162.242.195.82"
+  - "otherhost:50.31.209.229"
+
+ports:
+  - target: 80
+    published: 38232
+    protocol: tcp
+#    mode: host
+
+ulimits:
+  nproc: 65535
+  nofile:
+    soft: 20000
+    hard: 40000
+
+sysctls:
+  net.core.somaxconn: 1024
+  net.ipv4.tcp_syncookies: 0
+
+configs:
+  my_config:
+    file: ./my_config.txt
+  my_other_config:
+    external: true
+
+
+secrets:
+  - source: my_secrets.txt
+    target: redis_secret
+    uid: '103'
+    gid: '103'
+    mode: 0440

@@ -1,0 +1,3 @@
+[submodule "ansible-podman-collections"]
+	path = ansible-podman-collections
+	url = git@github.com:containers/ansible-podman-collections.git

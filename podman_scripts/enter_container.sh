@@ -1,5 +1,8 @@
 SHELL=zsh
 
-cmd="sudo podman exec -it $MY_CONTAINER_1_UUID $SHELL"
+PROJECT_NAME=$MY_POD_UUID
+CONTAINER_NAME=${PROJECT_NAME}_${MY_CONTAINER_1_UUID}_1
+
+cmd="sudo podman exec -it $CONTAINER_NAME $SHELL"
 
 eval $cmd

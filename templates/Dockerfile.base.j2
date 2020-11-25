@@ -1,12 +1,12 @@
-FROM {{env.MY_CONTAINER_1_IMAGE_UUID}}_rpms:latest
+FROM nagios_centos_7_base_rpms:latest as phase_1
 
 {%for p in packages.pip3%}
 RUN pip3 install {{p}}
 {%endfor%}
 
 COPY files/install_borg.sh /root/install_borg.sh
-RUN /root/install_borg.sh
-RUN unlink /root/install_borg.sh
+RUN /root/install_borg.sh && \
+    unlink /root/install_borg.sh
 
 COPY files/lynis.tar.gz /opt
 RUN cd /opt && tar zxf lynis.tar.gz && unlink lynis.tar.gz
@@ -42,9 +42,10 @@ RUN cd /opt && tar zxf my-public-ip.tar.gz && unlink my-public-ip.tar.gz
 #RUN sh -c 'cd /usr/src && tar zxf monitoring-plugins.tar.gz && cd monitoring-plugins && ./tools/setup && ./configure --prefix=/opt/monitoring-plugins && make -j && make install'
 #RUN sh -c 'cd /usr/src/daemontools-encore-rpm && ./build.sh 1.11 && rpm -ivh /root/rpmbuild/RPMS/x86_64/daemontools-encore-1.11-1.el7.x86_64.rpm'
 #RUN sh -c 'cd /usr/src/jo && ./build.sh 1.4 && rpm -ivh /root/rpmbuild/RPMS/x86_64/jo-1.4-1.el7.x86_64.rpm'
+
+
 COPY files/naemon_plugins /etc/sudoers.d
 RUN chmod 600 /etc/sudoers.d/naemon_plugins
-
 
 # Systemd - preparation
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
@@ -59,14 +60,13 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 # Systemd - preparation ends
 
 # Manual copies
-COPY bin/ttyd /usr/bin
-COPY bin/bwrap_exec.sh /usr/local/sbin
-COPY bin/bwrap_exec_with_network.sh /usr/local/sbin
+COPY files/ttyd /usr/bin
+COPY files/bwrap_exec.sh /usr/local/sbin
+COPY files/bwrap_exec_with_network.sh /usr/local/sbin
 
 # Copy Configs
 COPY configs/.profile.sh /root
 COPY .haproxy.cfg /etc/haproxy/haproxy.cfg
-
 
 ### END SOFTWARE INSTALLS
 
@@ -211,7 +211,6 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 	rm -f /etc/nagios/passwd ;\
 	ln -s {{paths.thruk.htpasswd}} /etc/nagios/passwd
 
-
 # Enable services
 RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable {{' '.join(enabled_services)}}
@@ -223,16 +222,15 @@ RUN update-alternatives --install /usr/bin/ansible          ansible          /us
     update-alternatives --list
 
 COPY files/.ansi /etc/.ansi
-
 COPY files/safeu /usr/local/bin
 COPY files/fzf /usr/local/bin
+
 RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 RUN chmod 644 /etc/.ansi
 RUN chown root:root /usr/local/bin/safeu /usr/local/bin/fzf /etc/.ansi
 
 
 # Setup Shell Environment
-#RUN git clone https://github.com/nojhan/liquidprompt.git /opt/liquidprompt
 COPY files/liquidprompt.tar.gz /opt
 RUN cd /opt && tar zxf liquidprompt.tar.gz && unlink liquidprompt.tar.gz
 
@@ -241,6 +239,5 @@ RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc
 
 COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
 
-
-COPY files/ops-dashboard.tar.gz /var/www
-RUN cd /var/www && tar zxf ops-dashboard.tar.gz && unlink ops-dashboard.tar.gz
+#COPY files/ops-dashboard.tar.gz /var/www
+#RUN cd /var/www && tar zxf ops-dashboard.tar.gz && unlink ops-dashboard.tar.gz

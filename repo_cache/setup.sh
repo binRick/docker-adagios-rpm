@@ -1,17 +1,35 @@
 #!/bin/bash
 set -e
-sudo mkdir -p \
-    /var/cache/centos/yum/7 \
-    /var/cache/centos/yum/8 \
-    /var/cache/centos/dnf/7 \
-    /var/cache/centos/dnf/8  \
-    /var/cache/repos/centos/dnf/8 
+CENTOS_VERSION="${1:-7}"
+YUM_DIR="/var/cache/centos/$CENTOS_VERSION/yum"
+DNF_DIR="/var/cache/centos/$CENTOS_VERSION/dnf"
+RPM_DIR="/var/cache/centos/$CENTOS_VERSION/rpms"
+YUM_CACHE="/var/cache/yum"
+DNF_CACHE="/var/cache/dnf"
+RPM_CACHE="/var/cache/rpms"
+WRITABLE_VOLUMES="-v ${YUM_DIR}:${YUM_CACHE}:z -v ${DNF_DIR}:${DNF_CACHE}:z -v ${RPM_DIR}:${RPM_CACHE}:z"
+READABLE_VOLUMES="-v $YUM_DIR:$YUM_CACHE:z -v $DNF_DIR:$DNF_CACHE:z -v $RPM_DIR:$RPM_CACHE:z"
+IMAGE="centos:$CENTOS_VERSION"
+
+sudo mkdir -p $YUM_DIR $DNF_DIR $RPM_DIR
+
+cmd="echo -ne 'RPMs: '; sudo podman run --rm $WRITABLE_VOLUMES -it $IMAGE rpm -qa|wc -l"
+eval $cmd
+
+cmd="sudo podman run --rm $WRITABLE_VOLUMES -it $IMAGE yum -y install dnf"
+eval $cmd
+
+cmd="sudo podman run --rm $WRITABLE_VOLUMES -it $IMAGE yum makecache"
+eval $cmd
+
+cmd="sudo podman run --rm $WRITABLE_VOLUMES -it $IMAGE dnf makecache"
+eval $cmd
 
 
-#sudo podman run --rm -v /var/cache/centos/yum/7:/var/cache/yum:z -ti centos:7 yum makecache
-sudo podman run --rm -v /var/cache/centos/dnf/8:/var/cache/dnf:z -ti centos:8 dnf -y makecache
-#sudo podman run --rm -v /var/cache/centos/yum/8:/var/cache/yum:z -ti centos:8 yum -y makecache
+sudo podman run --rm $WRITABLE_VOLUMES -ti $IMAGE yum -y makecache
+sudo podman run --rm $WRITABLE_VOLUMES -ti $IMAGE dnf -y makecache
 
+exit
 #time sudo podman build \
 #    -v /var/cache/centos/yum/7:/var/cache/yum:O \
 #        -f Dockerfile_centos_7_yum_update
