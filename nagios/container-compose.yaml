@@ -213,18 +213,19 @@ _________________sodsd:
       export: ["6379"]
 
 
-services:
     centos_7_base_rpms:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS_BASE_RPMS
       command: ["/usr/sbin/init"]
       volumes: *BUILD_VOLUMES
 
+__services:
     centos_7_base:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS_BASE
       volumes: *BUILD_VOLUMES
 
+services:
     2e911329-2bc7-4c71:
       <<: *PRIVILEGED_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
