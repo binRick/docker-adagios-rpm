@@ -1,4 +1,4 @@
-FROM {{env.DEV_DOMAIN_2_POD_UUID}}_centos_7_base_rpms:latest as phase_1
+FROM centos_7_base_rpms:latest as phase_1
 WORKDIR /etc/naemon
 
 {%for p in packages.pip3%}
