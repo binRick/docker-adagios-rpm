@@ -117,10 +117,10 @@ CONTAINER_TYPES:
 #    networks: [overlay_network]
 #    network_mode: bridge
 #    networks: [bridged_network]
-    init: no
+    init: yes
     securityContext: *DEFAULT_SECURITY_CONTEXT
     workingDir: /root
-    init-path: ["/usr/sbin/init"]
+#    init-path: ["/usr/sbin/init"]
     deploy:
       restart_policy: *DEFAULT_RESTART_POLICY
     logging: 
@@ -213,11 +213,10 @@ _________________sodsd:
       export: ["6379"]
 
 
-services:
+xxservices:
     centos_7_base_rpms:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS_BASE_RPMS
-      command: ["/usr/sbin/init"]
       volumes: *BUILD_VOLUMES
 
     centos_7_base:
@@ -225,11 +224,13 @@ services:
       build:  *BUILD_CENTOS_NAGIOS_BASE
       volumes: *BUILD_VOLUMES
 
-#ssservices:
-    2e911329-2bc7-4c71:
+services:
+    nagios:
       <<: *PRIVILEGED_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
       ports: ['5923:80','5924:31528']
+      init: yes
+      command: ["/usr/sbin/init"]
       hostname: naemon
 
 

@@ -83,14 +83,14 @@ RUN naemon-ctl configtest
 RUN neofetch > /etc/motd
 RUN updatedb
 
-#WORKDIR /etc/naemon
+WORKDIR /etc/naemon
 
-#EXPOSE {{ports.internal.apache}}
+EXPOSE {{ports.internal.apache}}
 
-#VOLUME ["/etc/naemon", "/var/log/naemon"]
-#CMD ["/usr/sbin/init"]
+VOLUME ["/etc/naemon", "/var/log/naemon"]
+CMD ["/usr/sbin/init"]
 
-#HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.internal.apache}}/ || exit 1
+HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.internal.apache}}/ || exit 1
 
 
 
