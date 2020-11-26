@@ -22,4 +22,4 @@ podman --version
 systemctl is-enabled podman || systemctl enable podman
 systemctl is-active podman | grep ^active || systemctl start podman
 systemctl status podman
-
+ls /bin/podman || ln -s $(which podman) /bin/
