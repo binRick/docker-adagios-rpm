@@ -1,8 +1,8 @@
 FROM {{env.DEV_DOMAIN_2_POD_UUID}}_centos_7_base:latest as phase_1
 
-ENV ADAGIOS_HOST adagios.local
-ENV ADAGIOS_USER {{auth.adagios.user}}
-ENV ADAGIOS_PASS {{auth.adagios.pass}}
+#ENV ADAGIOS_HOST adagios.local
+#ENV ADAGIOS_USER {{auth.adagios.user}}
+#ENV ADAGIOS_PASS {{auth.adagios.pass}}
 
 # Enable Naemon performance data and service performance data
 RUN pynag config --set "process_performance_data=1" ;\
