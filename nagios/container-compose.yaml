@@ -225,7 +225,7 @@ services:
       build:  *BUILD_CENTOS_NAGIOS_BASE
       volumes: *BUILD_VOLUMES
 
-ssservices:
+#ssservices:
     2e911329-2bc7-4c71:
       <<: *PRIVILEGED_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
