@@ -3,13 +3,6 @@ version: "3.8"
 domainname: foo.com
 userns: keep-id
 
-cap_add:
-  - ALL
-
-security_opt:
-  - label:user:USER
-  - label:role:ROLE
-  - label:type:spc_t
 
 build_volumes: &BUILD_VOLUMES
   - rpms_cache:/var/cache/rpms:z
@@ -143,6 +136,13 @@ CONTAINER_TYPES:
     rm: yes
     volumes: 
         - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    cap_add:
+      - ALL
+
+#    security_opt:
+#      - user:USER
+#      - role:ROLE
+#      - type:spc_t
 
 build_services:
 
