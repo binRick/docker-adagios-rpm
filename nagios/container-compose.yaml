@@ -2,8 +2,10 @@
 version: "3.8"
 domainname: foo.com
 userns: keep-id
+
 cap_add:
   - ALL
+
 security_opt:
   - label:user:USER
   - label:role:ROLE
