@@ -112,7 +112,7 @@ CONTAINER_TYPES:
 #    networks: [overlay_network]
 #    network_mode: bridge
 #    networks: [bridged_network]
-    init: yes
+    init: no
     securityContext: *DEFAULT_SECURITY_CONTEXT
     workingDir: /root
 #    init-path: ["/usr/sbin/init"]
@@ -231,7 +231,7 @@ services:
       <<: *PRIVILEGED_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
       ports: ['5923:80','5924:31528']
-      init: yes
+      init: no
       command: ["/usr/sbin/init"]
       hostname: naemon
 
