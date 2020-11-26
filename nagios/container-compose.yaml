@@ -225,6 +225,7 @@ services:
       build:  *BUILD_CENTOS_NAGIOS_BASE
       volumes: *BUILD_VOLUMES
 
+ssservices:
     2e911329-2bc7-4c71:
       <<: *PRIVILEGED_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS
@@ -233,7 +234,7 @@ services:
 
 
 #hostname: foo
-#ipc: host
+#ipc: hostxxxxxxxx
 #mac_address: 02:42:ac:11:65:43
 #read_only: true
 #shm_size: 64M
