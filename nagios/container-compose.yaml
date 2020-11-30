@@ -3,7 +3,6 @@ version: "3.8"
 domainname: foo.com
 userns: keep-id
 
-
 build_volumes: &BUILD_VOLUMES
   - rpms_cache:/var/cache/rpms:z
   - yum_cache:/var/cache/yum:z
@@ -73,7 +72,6 @@ BUILD_TYPES:
      CENTOS_VERSION: 8
      ADDED_PACKAGES: haproxy
 
-
  log: &BUILD_LOGS
    <<: *BUILD_CENTOS_8
    args:
@@ -94,10 +92,6 @@ SECURITY_CONTEXTS:
      privileged: yes
      readOnlyRootFilesystem: false
      seLinuxOptions: {}
-#     userns: keep-id
-#     cap-add: SYS_ADMIN
-#     privileged: yes
-#     cap-add: SYS_ADMIN
 
 HEALTH_CHECKS:
     healthcheck: &WEBSERVER_HEALTH_CHECK
@@ -204,8 +198,6 @@ _________________sodsd:
 #        - "redis1:REDIS"
 
 
-
-
     redis1:
       <<: *DEFAULT_CONTAINER
       hostname: REDIS1
@@ -236,55 +228,13 @@ services:
       hostname: naemon
 
 
-#hostname: foo
-#ipc: hostxxxxxxxx
-#mac_address: 02:42:ac:11:65:43
-#read_only: true
-#shm_size: 64M
-#stdin_open: true
-#tty: no
-#restart: always
-
-_______networks:
-  overlay_network:
-    name: OVERLAY_NETWORK
-    driver: overlay
-    external: no
-    enable_ipv6: no
-    attachable: true
-
-  bridged_network:
-    name: BRIDGED_NETWORK
-    driver: bridge
-    external: no
-    enable_ipv6: no
-    attachable: true
-
-  restricted:
-    external: no
-    enable_ipv6: no
-    name: MYNET1
-    attachable: true
-#dns:
-#  - 8.8.8.8
-#  - 9.9.9.9
-
 dns_search:
   - dc1.example.com
   - dc2.example.com
 
-#external_links:
-#  - ingress1:http
-
 extra_hosts:
   - "somehost:162.242.195.82"
   - "otherhost:50.31.209.229"
-
-#ports:
-#  - target: 80
-#    published: 38232
-#    protocol: tcp
-#    mode: host
 
 ulimits:
   nproc: 65535
