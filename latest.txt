@@ -16,7 +16,8 @@ sudo dnf -y install 'dnf-command(copr)'
 sudo dnf -y copr enable rhcontainerbot/container-selinux
 sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/devel:kubic:libcontainers:stable.repo
 sudo dnf -y install podman podman-docker slirp4netns
-
+echo "net.ipv4.ping_group_range=0 2000000" > /etc/sysctl.d/ping_group_range.conf
+sysctl -p /etc/sysctl.d/ping_group_range.conf
 
 
 
