@@ -1,6 +1,6 @@
 # CentOS 7
 sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_7/devel:kubic:libcontainers:stable.repo
-sudo yum -y install podman
+sudo yum -y install podman* slirp4netns
 
 # CentOS 8
 sudo dnf -y module disable container-tools
