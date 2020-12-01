@@ -2,9 +2,28 @@
 sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_7/devel:kubic:libcontainers:stable.repo
 sudo yum -y install podman* slirp4netns
 
+echo "user.max_user_namespaces=28633" > /etc/sysctl.d/userns.conf      
+sysctl -p /etc/sysctl.d/userns.conf
+systemctl daemon-reload
+systemctl enable podman.socket
+systemctl restart podman.socket
+systemctl status podman.socket
+
+
 # CentOS 8
 sudo dnf -y module disable container-tools
 sudo dnf -y install 'dnf-command(copr)'
 sudo dnf -y copr enable rhcontainerbot/container-selinux
 sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/devel:kubic:libcontainers:stable.repo
-sudo dnf -y install podman
+sudo dnf -y install podman podman-docker slirp4netns
+
+
+
+
+
+
+
+
+
+useradd monitoruser1
+podman unshare cat /proc/self/uid_map
