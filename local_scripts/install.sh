@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 source setup.sh
+alias pip=pip3
 
 pip install pip --upgrade
 pip install \
