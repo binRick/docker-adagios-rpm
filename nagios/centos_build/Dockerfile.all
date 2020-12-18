@@ -374,38 +374,6 @@ RUN  chmod +x /usr/lib64/nagios/plugins/check_haproxy
 
 
 
-RUN mkdir -p /service/ttyd1_socat/log
-
-RUN echo -e '#!/bin/bash\nset -e\nexec mkdir -p /var/run/ttyd1 2>&1\n' > /service/ttyd1_socat/start && chmod +x /service/ttyd1_socat/start
-
-RUN echo -e '#!/bin/bash\nset -e\necho PRE_EXEC; exec socat TCP-LISTEN:41992,reuseaddr,fork UNIX-CONNECT:/var/run/ttyd1/ttyd.sock 2>&1\n' > /service/ttyd1_socat/run
-COPY files/run /service/ttyd1_socat/log
-RUN chmod +x /service/ttyd1_socat/run /service/ttyd1_socat/log/run
-
-RUN mkdir -p /service/ttyd1_socket/log
-
-RUN echo -e '#!/bin/bash\nset -e\nexec mkdir -p /var/run/ttyd1 2>&1\n' > /service/ttyd1_socket/start && chmod +x /service/ttyd1_socket/start
-
-RUN echo -e '#!/bin/bash\nset -e\nsleep 0; exec bwrap_exec.sh --unshare-uts --bind /var/run/ttyd1 /var/run/ttyd1 ttyd -p 0 -i /var/run/ttyd1/ttyd.sock zsh 2>&1\n' > /service/ttyd1_socket/run
-COPY files/run /service/ttyd1_socket/log
-RUN chmod +x /service/ttyd1_socket/run /service/ttyd1_socket/log/run
-
-RUN mkdir -p /service/ttyd1_socat_bwrap_networked/log
-
-RUN echo -e '#!/bin/bash\nset -e\nexec mkdir -p /var/run/ttyd1_socket_bwrap_networked 2>&1\n' > /service/ttyd1_socat_bwrap_networked/start && chmod +x /service/ttyd1_socat_bwrap_networked/start
-
-RUN echo -e '#!/bin/bash\nset -e\necho PRE_EXEC; exec socat TCP-LISTEN:41993,reuseaddr,fork UNIX-CONNECT:/var/run/ttyd1_socket_bwrap_networked/ttyd.sock 2>&1\n' > /service/ttyd1_socat_bwrap_networked/run
-COPY files/run /service/ttyd1_socat_bwrap_networked/log
-RUN chmod +x /service/ttyd1_socat_bwrap_networked/run /service/ttyd1_socat_bwrap_networked/log/run
-
-RUN mkdir -p /service/ttyd1_socket_bwrap_networked/log
-
-RUN echo -e '#!/bin/bash\nset -e\nexec mkdir -p /var/run/ttyd1_socket_bwrap_networked 2>&1\n' > /service/ttyd1_socket_bwrap_networked/start && chmod +x /service/ttyd1_socket_bwrap_networked/start
-
-RUN echo -e '#!/bin/bash\nset -e\nsleep 0; exec bwrap_exec_with_network.sh --bind /var/run/ttyd1_socket_bwrap_networked /var/run/ttyd1_socket_bwrap_networked ttyd -p 0 -i /var/run/ttyd1_socket_bwrap_networked/ttyd.sock zsh 2>&1\n' > /service/ttyd1_socket_bwrap_networked/run
-COPY files/run /service/ttyd1_socket_bwrap_networked/log
-RUN chmod +x /service/ttyd1_socket_bwrap_networked/run /service/ttyd1_socket_bwrap_networked/log/run
-
 
 RUN echo '[[ $- = *i* ]] && svstat /service/*' > /etc/profile.d/daemontools.sh && chmod 755 /etc/profile.d/daemontools.sh
 

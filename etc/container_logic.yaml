@@ -48,7 +48,8 @@ haproxy:
       servers: 
         - { name: apache, host: 127.0.0.1, port: 80, }
 
-daemontools_services:
+daemontools_services: []
+_daemontools_services:
 #  - name: ttyd1
 #    run: ttyd -p 6001 -i lo zsh
 

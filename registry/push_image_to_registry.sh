@@ -13,7 +13,7 @@ podman push localhost:5009/$DST_IMAGE --tls-verify=false
 
 
 
-IMG=nagios-02a53693_centos_7
+IMG=nagios-02a53693_nagios
 DST_IMAGE=nagios-centos-7
 SRC_IMAGE=localhost/$IMG
 podman tag $SRC_IMAGE localhost:5009/$DST_IMAGE
