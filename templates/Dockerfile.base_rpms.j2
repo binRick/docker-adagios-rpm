@@ -17,7 +17,7 @@ RUN yum install -y epel-release dnf && \
 # INSTALL PACKAGES
 RUN dnf -4 -y install --exclude=nagiosxx --enablerepo=ok-testing \
 	gcc-c++ rrdtool perl-Time-HiRes perl-rrdtool php-gd php php-cli wget mlocate \
-    naemon naemon-livestatus adagios okconfig pnp4nagios \
+    naemon naemon-livestatus adagios okconfig pnp4nagios which \
 	git postfix python-pip python3-pip python3-devel python-devel acl python-setuptools \
 	zsh telnet openssh-server ansible-python3 openvpn openvpn-devel rpm-build tinyproxy nodejs \
     haproxy jq chrony rng-tools automake cmake gcc tcpdump ngrep bind-utils nmap-ncat at tar npm \
