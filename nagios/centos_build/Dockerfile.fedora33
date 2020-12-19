@@ -251,6 +251,7 @@ RUN neofetch > /etc/motd
 RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable httpd naemon haproxy redis sysstat crond 
 RUN systemctl disable postfix atd rngd php-fpm
+RUN systemctl stop postfix atd rngd php-fpm
 
 
 #HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
