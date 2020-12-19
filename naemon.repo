@@ -1,0 +1,7 @@
+[home_naemon]
+name=Naemon (Fedora_33)
+type=rpm-md
+baseurl=https://download.opensuse.org/repositories/home:/naemon/Fedora_33/
+gpgcheck=1
+gpgkey=https://download.opensuse.org/repositories/home:/naemon/Fedora_33/repodata/repomd.xml.key
+enabled=1

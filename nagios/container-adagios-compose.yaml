@@ -1,0 +1,150 @@
+---
+version: "3.8"
+
+RESTART_POLICIES:
+ restart_policy: &DEFAULT_RESTART_POLICY
+  condition: always
+  delay: 5s
+  max_attempts: 5
+  window: 10s
+
+LOGGING_POLICIES:
+  logging: &JSON_LOGGING_POLICY
+    driver: json-file
+    options:
+      max-size: '12m'
+      max-file: '5'
+
+BUILD_TYPES:
+ base: &BUILD_BASE
+   target: phase_1
+
+ centos: &BUILD_CENTOS
+   <<: *BUILD_BASE
+
+ centos_nagios_all: &BUILD_CENTOS_NAGIOS_ALL
+   <<: *BUILD_CENTOS
+   dockerfile: centos_build/Dockerfile.all
+
+ centos_nagios_base_rpmsm: &BUILD_CENTOS_NAGIOS_BASE_RPMS
+   <<: *BUILD_CENTOS
+   dockerfile: centos_build/Dockerfile.base_rpms
+
+ centos_nagios_base: &BUILD_CENTOS_NAGIOS_BASE
+   <<: *BUILD_CENTOS
+   dockerfile: centos_build/Dockerfile.base
+
+ centos_nagios: &BUILD_FEDORA33_ADAGIOS
+   dockerfile: centos_build/Dockerfile.fedora33
+   privileged: yes
+   working_dir: /etc/naemon
+   restart: always
+   volumes: 
+     - etc_naemon:/etc/naemon
+     - var_log_naemon:/var/log/naemon
+   healthcheck: '--interval=2m --timeout=3s CMD curl -f http://localhost:{{ports.internal.apache}}/ || exit 1'
+
+ centos_8: &BUILD_CENTOS_8
+   <<: *BUILD_CENTOS
+   dockerfile: centos_build/Dockerfile_centos_8
+   target: phase_1
+   args:
+     CENTOS_VERSION: 8
+
+ ingress: &BUILD_INGRESS
+   <<: *BUILD_CENTOS_8
+   args:
+     CENTOS_VERSION: 8
+     ADDED_PACKAGES: haproxy
+
+ log: &BUILD_LOGS
+   <<: *BUILD_CENTOS_8
+   args:
+     CENTOS_VERSION: 8
+     ADDED_PACKAGES: rsyslog
+
+SECURITY_CONTEXTS:
+   securityContext: &DEFAULT_SECURITY_CONTEXT
+     allowPrivilegeEscalation: true
+     capabilities: {}
+     privileged: yes
+     readOnlyRootFilesystem: false
+     seLinuxOptions: {}
+
+   securityContext: &PRIVILEGED_SECURITY_CONTEXT
+     allowPrivilegeEscalation: true
+     capabilities: {}
+     privileged: yes
+     readOnlyRootFilesystem: false
+     seLinuxOptions: {}
+
+HEALTH_CHECKS:
+    healthcheck: &WEBSERVER_HEALTH_CHECK
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+CONTAINER_TYPES:
+  default: &DEFAULT_CONTAINER
+    init: yes
+    securityContext: *DEFAULT_SECURITY_CONTEXT
+    workingDir: /root
+    deploy:
+      restart_policy: *DEFAULT_RESTART_POLICY
+    logging: 
+      <<: *JSON_LOGGING_POLICY
+    working_dir: /
+    tmpfs:
+      - /run
+      - /tmp
+    ulimits:
+      nofile: 500000
+      nproc:
+        soft: 4000
+        hard: 5000
+
+  default: &PRIVILEGED_CONTAINER
+    <<: *DEFAULT_CONTAINER
+    securityContext: *PRIVILEGED_SECURITY_CONTEXT
+    rm: yes
+    volumes: 
+        - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    cap_add:
+      - ALL
+
+services:
+    nagios:
+      <<: *PRIVILEGED_CONTAINER
+      build:  *BUILD_FEDORA33_ADAGIOS
+      ports: ['5923:80','5924:31528']
+      init: no
+      command: ["/usr/sbin/init"]
+      hostname: adagios
+
+
+dns_search:
+  - vpntech.net
+  - vpnservice.company
+
+extra_hosts:
+  - "somehost:162.242.195.82"
+  - "otherhost:50.31.209.229"
+
+ulimits:
+  nproc: 10000
+  nofile:
+    soft: 200000
+    hard: 400000
+
+sysctls:
+  net.core.somaxconn: 1024
+  net.ipv4.tcp_syncookies: 0
+
+
+volumes:
+    etc_naemon:
+    var_log_naemon:
+
+...

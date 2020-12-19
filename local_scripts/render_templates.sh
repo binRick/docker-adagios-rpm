@@ -29,6 +29,7 @@ j2 $j2_args -o .Dockerfile.base_rpms templates/Dockerfile.base_rpms.j2 $LOGIC_FI
 j2 $j2_args -o .Dockerfile.base templates/Dockerfile.base.j2 $LOGIC_FILE
 j2 $j2_args -o .Dockerfile templates/Dockerfile.j2 $LOGIC_FILE
 j2 $j2_args -o .Dockerfile.all templates/Dockerfile.all.j2 $LOGIC_FILE
+j2 $j2_args -o .Dockerfile.wow templates/Dockerfile.wow.j2 $LOGIC_FILE
 j2 $j2_args -o .haproxy.cfg templates/haproxy.cfg.j2 $LOGIC_FILE
 
 get_templates | while read -r template_file; do
@@ -38,9 +39,12 @@ get_templates | while read -r template_file; do
 done
 
 rm -rf nagios/configs nagios/templates nagios/files 
-mkdir -p nagios/configs nagios/templates nagios/files nagios/configs/rendered
+mkdir -p nagios/configs nagios/templates nagios/files nagios/configs/rendered nagios/files/bin
 
-rsync $rsync_opts .Dockerfile.all nagios/centos_build/Dockerfile.all
+rsync $rsync_opts .Dockerfile.wow nagios/centos_build/Dockerfile.wow
+#rsync $rsync_opts .Dockerfile.wow nagios/centos_build/Dockerfile.fedora33
+#rsync $rsync_opts .Dockerfile.wow nagios/Dockerfile
+#rsync $rsync_opts .Dockerfile.all nagios/centos_build/Dockerfile.all
 rsync $rsync_opts .Dockerfile.base_rpms nagios/centos_build/Dockerfile.base_rpms
 rsync $rsync_opts .Dockerfile.base nagios/centos_build/Dockerfile.base
 rsync $rsync_opts .Dockerfile nagios/centos_build/Dockerfile
@@ -52,10 +56,13 @@ rsync $rsync_opts configs/localhost.cfg nagios/configs/localhost.cfg
 rsync $rsync_opts configs/resource.cfg nagios/configs/.
 rsync $rsync_opts configs/rendered/localhost2.cfg nagios/configs/rendered/.
 rsync $rsync_opts configs/rendered/templates.cfg nagios/configs/rendered/.
+rsync $rsync_opts files/ops-dashboard.tar.gz nagios/files/.
 
 for f in daemontools-encore-1.11-1.el7.x86_64.rpm labs-consol-stable.rhel7.noarch.rpm ok-release.rpm ncpa-2.2.2.el7.x86_64.rpm; do
     rsync $rsync_opts rpms/$f nagios/files/.
 done
+
+rsy
 
 for f in check_haproxy neofetch check_speedtest-cli.sh check_service.pl check_systemd_service.sh log_run \
          install_borg.sh \

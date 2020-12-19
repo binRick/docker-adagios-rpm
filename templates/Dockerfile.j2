@@ -1,4 +1,4 @@
-FROM {{env.MY_POD_UUID}}_centos_7_base:latest as phase_1
+FROM {{env.MY_POD_UUID}}:latest as phase_1
 
 ENV ADAGIOS_HOST adagios.local
 ENV ADAGIOS_USER {{auth.adagios.user}}

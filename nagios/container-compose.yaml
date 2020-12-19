@@ -49,8 +49,7 @@ BUILD_TYPES:
    dockerfile: centos_build/Dockerfile.base
 
  centos_nagios: &BUILD_CENTOS_NAGIOS
-   dockerfile: centos_build/Dockerfile
-   target: phase_1
+   dockerfile: centos_build/Dockerfile.wow
    privileged: yes
    working_dir: /etc/naemon
    restart: always
@@ -207,7 +206,7 @@ _________________sodsd:
       export: ["6379"]
 
 
-services:
+_______services:
     centos_7_base_rpms:
       <<: *DEFAULT_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS_BASE_RPMS
@@ -218,7 +217,7 @@ services:
       build:  *BUILD_CENTOS_NAGIOS_BASE
       volumes: *BUILD_VOLUMES
 
-#services:
+services:
     nagios:
       <<: *PRIVILEGED_CONTAINER
       build:  *BUILD_CENTOS_NAGIOS

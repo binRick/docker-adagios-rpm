@@ -1,0 +1,45 @@
+---
+- name: Ansible Podman
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  collections:
+    - containers.podman
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: copy centos_build/Dockerfile.fedora33 to Dockerfile
+      command:
+       warn: no
+       cmd: cp centos_build/Dockerfile.fedora33 Dockerfile
+
+    - name: Build and push an image using existing credentials
+      podman_image:
+        name: adagios
+        path: .
+        push: yes
+        push_args:
+          dest: adagios-fedora-33
+        build:
+          cache: yes
+          format: oci
+          annotation:
+            app: adagios
+            function: monitoring
+            info: Load balancer for my cool app
+          
+
+    - name: Run redis container
+      when: no
+      containers.podman.podman_container:
+        name: myredis
+        image: redis
+        command: redis-server --appendonly yes
+        state: present
+        recreate: yes
+        expose:
+          - 6379
+        volumes_from:
+          - mydata
+...            
