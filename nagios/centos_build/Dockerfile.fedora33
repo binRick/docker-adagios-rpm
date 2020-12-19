@@ -35,6 +35,9 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
     		coreutils python3-simplejson naemon-livestatus naemon-devel naemon naemon-core naemon-thruk \
 		glibc-langpack-en
 
+COPY files/install_borg.sh /root/install_borg.sh
+RUN /root/install_borg.sh
+RUN unlink /root/install_borg.sh
 
 RUN useradd -G nagios,wheel adagios
 RUN git clone git://github.com/pynag/pynag.git /opt/pynag
@@ -116,9 +119,6 @@ RUN \
 
 RUN pynag list where object_type=service
 
-COPY files/install_borg.sh /root/install_borg.sh
-#RUN /root/install_borg.sh
-#RUN unlink /root/install_borg.sh
 
 
 COPY rendered_templates/haproxy.cfg /etc/haproxy/.
@@ -134,16 +134,16 @@ RUN	mkdir -p /etc/naemon/adagios ;\
 
 
 
-RUN sed 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' -i /etc/httpd/conf.d/adagios.conf ;\
-	sed 's|user=nagios|user=naemon|g' -i /etc/httpd/conf.d/adagios.conf ;\
-	sed 's|group=nagios|group=naemon|g' -i /etc/httpd/conf.d/adagios.conf ;\
-	sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/adagios/adagios.conf ;\
-	sed 's|nagios_url = "/nagios|nagios_url = "/naemon|g' -i /etc/adagios/adagios.conf ;\
-	sed 's|/etc/nagios/adagios/|/etc/naemon/adagios/|g' -i /etc/adagios/adagios.conf ;\
-	sed 's|/etc/init.d/nagios|/etc/init.d/naemon|g' -i /etc/adagios/adagios.conf ;\
-	sed 's|nagios_service = "nagios"|nagios_service = "naemon"|g' -i /etc/adagios/adagios.conf ;\
-	sed 's|livestatus_path = None|livestatus_path = "/var/cache/naemon/live"|g' -i /etc/adagios/adagios.conf ;\
-	sed 's|/usr/sbin/nagios|/usr/bin/naemon|g' -i /etc/adagios/adagios.conf
+#RUN sed 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' -i /etc/httpd/conf.d/adagios.conf ;\
+#	sed 's|user=nagios|user=naemon|g' -i /etc/httpd/conf.d/adagios.conf ;\
+	#		sed 's|group=nagios|group=naemon|g' -i /etc/httpd/conf.d/adagios.conf ;\
+	#	sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/adagios/adagios.conf ;\
+	#	sed 's|nagios_url = "/nagios|nagios_url = "/naemon|g' -i /etc/adagios/adagios.conf ;\
+	#	sed 's|/etc/nagios/adagios/|/etc/naemon/adagios/|g' -i /etc/adagios/adagios.conf ;\
+	#	sed 's|/etc/init.d/nagios|/etc/init.d/naemon|g' -i /etc/adagios/adagios.conf ;\
+	#	sed 's|nagios_service = "nagios"|nagios_service = "naemon"|g' -i /etc/adagios/adagios.conf ;\
+	#	sed 's|livestatus_path = None|livestatus_path = "/var/cache/naemon/live"|g' -i /etc/adagios/adagios.conf ;\
+	#	sed 's|/usr/sbin/nagios|/usr/bin/naemon|g' -i /etc/adagios/adagios.conf
 
 
 RUN sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/okconfig.conf ;\
