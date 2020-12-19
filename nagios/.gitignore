@@ -1,3 +1,5 @@
 configs/
 templates/
 check-mk-raw-1.6.0p19.cre.tar.gz
+wget-log
+RPM_CACHE

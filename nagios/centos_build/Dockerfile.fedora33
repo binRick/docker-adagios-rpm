@@ -29,6 +29,7 @@ RUN dnf -y install 	nagios git python3 python3-pip nodejs npm python3-virtualenv
 
 RUN dnf -y install 	vim-enhanced colordiff ansible sysstat
 
+RUN dnf -4 -y --installroot /RPM_CACHE --downloadonly install curl
 
 RUN useradd -G nagios,wheel adagios
 RUN git clone git://github.com/pynag/pynag.git /usr/src/pynag
