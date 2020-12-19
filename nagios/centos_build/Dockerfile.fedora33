@@ -47,7 +47,7 @@ ADD pnp4nagios-0.6.26.tar.gz /usr/src
 
 RUN sh -c "cd /usr/src/pnp4nagios-0.6.26 && ./configure && make all && make fullinstall"
 
-ADD check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
+ADD https://checkmk.com/support/1.6.0p19/check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
 
 RUN sh -c "cd /usr/src/check-mk-raw-1.6.0p19.cre && ls"
 
