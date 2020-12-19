@@ -67,7 +67,7 @@ RUN update-alternatives --install /usr/bin/ansible          ansible          /us
     update-alternatives --list
 
 
-COPY files/naemon_plugins /etc/sudoers.d
+COPY files/naemon_plugins /etc/sudoers.d/.
 RUN chmod 600 /etc/sudoers.d/naemon_plugins
 
 COPY files/.ansi /etc/.ansi
@@ -91,11 +91,11 @@ COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 
 
 RUN mkdir -p /var/lib/adagios
-RUN ls /opt
-RUN ls /opt/adagios
-RUN ls /opt/adagios/adagios
+#RUN ls /opt
+#RUN ls /opt/adagios
+#RUN ls /opt/adagios/adagios
 RUN cp -r /opt/adagios/adagios/etc/adagios /etc/.
-RUN chown -R nagios:nagios -R /etc/adagios /etc/nagios
+RUN chown -R nagios:nagios /etc/adagios /etc/nagios
 RUN chmod g+w -R /etc/adagios
 RUN chown nagios:nagios /var/lib/adagios
 RUN mkdir -p /etc/nagios/adagios /etc/nagios/commands 
@@ -155,8 +155,8 @@ RUN sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/okconfig.con
 RUN echo "RedirectMatch ^/$ /adagios" > /etc/httpd/conf.d/redirect.conf
 
 
-RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
-	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
+#RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
+#	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
 
 
 RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg ;\
