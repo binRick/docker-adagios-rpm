@@ -11,5 +11,5 @@ set -e
 #podman build -f centos_build/Dockerfile.fedora33 -t naemon .
 buildah bud \
     --layers --jobs $JOBS \
-    --volume $(pwd)/RPM_CACHE:/RPM_CACHE:rw,Z \
+    --volume $(pwd)/RPM_CACHE:/var/cache/dnf:rw,Z \
     -f centos_build/Dockerfile.fedora33 -t adagios-fedora .
