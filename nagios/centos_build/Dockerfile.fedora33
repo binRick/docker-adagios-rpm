@@ -19,6 +19,9 @@ RUN dnf config-manager --set-disabled fedora-modular;\
 	dnf config-manager --set-disabled fedora-cisco-openh264
 
 RUN curl -s https://download.opensuse.org/repositories/home:/naemon/Fedora_33/home:naemon.repo >> /etc/yum.repos.d/naemon-stable.repo
+
+RUN dnf -y -4 install findutils
+#RUN sh -c "dnf -y install --skip-broken curl $(find /var/cache/dnf -name '*.rpm'|tr '\n' ' ')"
 RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -4 -y update
 
 RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 install 	nagios git python3 python3-pip nodejs npm python3-virtualenv \
@@ -85,8 +88,8 @@ RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 
 
 
-
-RUN sh -c "dnf list | tee /root/.dnf |tee /var/cache/dnf/.dnf"
+RUN dnf makecache
+RUN sh -c "dnf list | tee /root/.dnf |tee /var/cache/dnf/.dnf | wc -l"
 
 
 #COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
