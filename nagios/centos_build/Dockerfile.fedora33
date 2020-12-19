@@ -278,7 +278,7 @@ RUN  chmod +x /usr/lib64/nagios/plugins/check_speedtest-cli.sh /usr/lib64/nagios
 RUN neofetch > /etc/motd
 
 #RUN chmod a-x /usr/lib/systemd/system/*.service
-RUN systemctl enable httpd naemon haproxy redis sysstat crond ncpa_listener firewalld supervisor
+RUN systemctl enable httpd naemon haproxy redis sysstat crond firewalld supervisor
 RUN systemctl disable ncpa_passive keepalived tinyproxy postfix fail2ban atd rngd sshd
 
 
