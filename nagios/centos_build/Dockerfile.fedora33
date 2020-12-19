@@ -27,7 +27,7 @@ RUN dnf -y install 	nagios git python3 python3-pip nodejs npm python3-virtualenv
 			procps-ng zsh redis curl python3-wheel php-common php-gd php-pear zsh-syntax-highlighting \
 			naemon
 
-RUN dnf -y install 	vim-enhanced colordiff ansible
+RUN dnf -y install 	vim-enhanced colordiff ansible sysstat
 
 
 RUN useradd -G nagios,wheel adagios
@@ -280,8 +280,8 @@ RUN  chmod +x /usr/lib64/nagios/plugins/check_speedtest-cli.sh /usr/lib64/nagios
 
 RUN neofetch > /etc/motd
 
-RUN chmod a-x /usr/lib/systemd/system/*.service
-RUN systemctl enable httpd naemon haproxy redis sysstat npcd crond ncpa_listener firewalld supervisor
+#RUN chmod a-x /usr/lib/systemd/system/*.service
+RUN systemctl enable httpd naemon haproxy redis sysstat crond ncpa_listener firewalld supervisor
 RUN systemctl disable ncpa_passive keepalived tinyproxy postfix fail2ban atd rngd sshd
 
 
