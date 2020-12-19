@@ -43,16 +43,13 @@ RUN cp /opt/okconfig/etc/okconfig.conf /etc/okconfig.conf
 RUN ln -s /opt/okconfig/usr/share/okconfig /usr/share/
 RUN ln -s /opt/okconfig/usr/bin/okconfig /usr/local/bin/
 
-ADD pnp4nagios-0.6.26.tar.gz /usr/src
-
+ADD https://downloads.sourceforge.net/project/pnp4nagios/PNP-0.6/pnp4nagios-0.6.26.tar.gz /usr/src
 RUN sh -c "cd /usr/src/pnp4nagios-0.6.26 && ./configure && make all && make fullinstall"
 
 ADD https://checkmk.com/support/1.6.0p19/check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
-
-RUN sh -c "cd /usr/src/check-mk-raw-1.6.0p19.cre && ls"
+#RUN sh -c "cd /usr/src/check-mk-raw-1.6.0p19.cre && ls"
 
 RUN sh -c "echo 'export PYTHONPATH=$PYTHONPATH:/opt/okconfig' > /etc/profile.d/okconfig.sh"
-
 
 #RUN 	sh -c 'cd /etc/nagios; \
 #		git init; \
@@ -271,7 +268,7 @@ COPY files/check_speedtest-cli.sh /usr/lib64/nagios/plugins
 COPY files/check_service.pl /usr/lib64/nagios/plugins
 COPY files/check_systemd_service.sh /usr/lib64/nagios/plugins
 COPY files/check_haproxy /usr/lib64/nagios/plugins
-ADD thruk-2.40-2.tar.gz /usr/src
+ADD https://download.thruk.org/pkg/v2.40-2/src/thruk-2.40-2.tar.gz /usr/src
 
 
 RUN  chmod +x /usr/lib64/nagios/plugins/check_speedtest-cli.sh /usr/lib64/nagios/plugins/check_service.pl /usr/local/bin/neofetch
