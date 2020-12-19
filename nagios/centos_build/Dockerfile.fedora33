@@ -26,12 +26,9 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
 			libstdc++-static nagios-plugins-all facter httpd-tools bash-completion geolite2-city \
 			geolite2-country geolite2-asn \
 			procps-ng zsh redis curl python3-wheel php-common php-gd php-pear zsh-syntax-highlighting \
-			naemon vim-enhanced colordiff ansible sysstat
+			naemon vim-enhanced colordiff ansible sysstat \
+    			coreutils python3-simplejson
 
-RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 install \
-    coreutils
-
-RUN dnf --releasever 33 --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -4 -y --installroot /RPM_CACHE --downloadonly install curl
 
 RUN useradd -G nagios,wheel adagios
 RUN git clone git://github.com/pynag/pynag.git /usr/src/pynag
@@ -39,7 +36,7 @@ RUN git clone git://github.com/opinkerfi/adagios.git /usr/src/adagios
 RUN git clone https://github.com/opinkerfi/okconfig.git /opt/okconfig
 
 
-RUN pip3 install django==1.6 simplejson 
+RUN pip3 install django==1.6
 RUN pip3 install /usr/src/pynag
 
 RUN cp /opt/okconfig/etc/okconfig.conf /etc/okconfig.conf
