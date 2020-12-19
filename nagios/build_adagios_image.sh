@@ -43,8 +43,8 @@ echo -e "${green}Image Build is done!${reset}"
 
 buildah images
 
+#		--project-name $PROJECT_NAME \
 podman-compose \
-		--project-name $PROJECT_NAME \
 		-f container-adagios-compose.yaml up \
 							--no-build --force-recreate --detach
 
