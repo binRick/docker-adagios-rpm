@@ -86,7 +86,7 @@ RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 
 
 
-RUN sh -c "dnf list > /root/.dnf && cat /root/.dnf > /RPM_CACHE/.dnf"
+RUN sh -c "dnf list | tee /root/.dnf |tee /var/cache/dnf/.dnf"
 
 
 #COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
