@@ -65,8 +65,8 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 	rm -f /lib/systemd/system/anaconda.target.wants/*;
 
 
-RUN update-alternatives --install /usr/bin/ansible          ansible          /usr/bin/ansible-3            1; \
-    update-alternatives --install /usr/bin/ansible-playbook ansible-playbook /usr/bin/ansible-playbook-3   1; \
+#RUN update-alternatives --install /usr/bin/ansible          ansible          /usr/bin/ansible-3            1; \
+#    update-alternatives --install /usr/bin/ansible-playbook ansible-playbook /usr/bin/ansible-playbook-3   1; \
     update-alternatives --list
 
 
@@ -154,15 +154,18 @@ RUN sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/okconfig.con
 
 RUN echo "RedirectMatch ^/$ /adagios" > /etc/httpd/conf.d/redirect.conf
 
+RUN echo "nagios ALL=NOPASSWD: /usr/bin/nagios-supervisor-wrapper.sh" >> /etc/sudoers.d/adagios
+RUN chmod 600 /etc/sudoers.d/adagios
 
-#RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
-#	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
+RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
+	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
 
 
 RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg ;\
-	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf ;\
-	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
-	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
+	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf
+
+#	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
+#	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
 
 # ACL group permissions need g+rwx
 RUN	chmod g+rwx -R \
