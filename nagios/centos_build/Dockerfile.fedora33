@@ -126,7 +126,6 @@ RUN \
 				
 #COPY livestatus /etc/xinetd.d/livestatus
 
-RUN pynag list where object_type=service
 
 
 
@@ -166,14 +165,14 @@ RUN echo "RedirectMatch ^/$ /adagios" > /etc/httpd/conf.d/redirect.conf
 RUN echo "nagios ALL=NOPASSWD: /usr/bin/nagios-supervisor-wrapper.sh" >> /etc/sudoers.d/adagios
 RUN chmod 600 /etc/sudoers.d/adagios
 
-RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
-	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
+#RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
+	#	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
 
 
-RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg
-
-	#	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf
-
+#RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg
+#
+#	#	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf
+#
 #	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
 #	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
 
@@ -258,33 +257,40 @@ RUN systemctl disable postfix atd rngd php-fpm
 
 RUN chown -R naemon:naemon \
 		/etc/naemon \
-		/etc/adagios \
-		/var/lib/adagios \
-		/var/lib/pnp4nagios \
-		/var/log/pnp4nagios \
-		/var/spool/pnp4nagios \
-		/etc/pnp4nagios/process_perfdata.cfg \
-		/var/log/okconfig
+		/etc/adagios
+
+#		/var/lib/adagios \
+	#		/var/lib/pnp4nagios \
+	#		/var/log/pnp4nagios \
+	#		/var/spool/pnp4nagios \
+	#		/etc/pnp4nagios/process_perfdata.cfg \
+	#		/var/log/okconfig
 
 RUN	chmod g+rwx -R \
 	/etc/naemon \
-	/etc/adagios \
-	/var/lib/adagios \
-	/var/lib/pnp4nagios \
-	/var/log/pnp4nagios \
-	/var/spool/pnp4nagios \
-	/etc/pnp4nagios/process_perfdata.cfg /var/log/okconfig
+	/etc/adagios
+
+#	/var/lib/adagios \
+	#	/var/lib/pnp4nagios \
+	#/var/log/pnp4nagios \
+	#/var/spool/pnp4nagios \
+	#/etc/pnp4nagios/process_perfdata.cfg /var/log/okconfig
 
 RUN	setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
 	/etc/naemon/ \
-	/etc/adagios \
-	/var/lib/adagios \
-	/var/lib/pnp4nagios \
-	/var/log/pnp4nagios \
-	/var/spool/pnp4nagios \
-	/etc/pnp4nagios/process_perfdata.cfg \
-	/var/log/okconfig
+	/etc/adagios
 
 
-VOLUME ["/etc/nagios", "/var/log/nagios", "/etc/adagios", "/opt/adagios", "/opt/pynag"]
+#	/var/lib/adagios \
+	#	/var/lib/pnp4nagios \
+	#/var/log/pnp4nagios \
+	#/var/spool/pnp4nagios \
+	#/etc/pnp4nagios/process_perfdata.cfg \
+	#/var/log/okconfig
+
+
+#VOLUME ["/etc/nagios", "/var/log/nagios", "/etc/adagios", "/opt/adagios", "/opt/pynag"]
+
+RUN pynag list where object_type=service
+RUN naemon-ctl configtest
 
