@@ -36,8 +36,8 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
 		glibc-langpack-en
 
 COPY files/install_borg.sh /root/install_borg.sh
-RUN /root/install_borg.sh
-RUN unlink /root/install_borg.sh
+#RUN /root/install_borg.sh
+#RUN unlink /root/install_borg.sh
 
 RUN useradd -G nagios,wheel adagios
 RUN git clone git://github.com/pynag/pynag.git /opt/pynag
