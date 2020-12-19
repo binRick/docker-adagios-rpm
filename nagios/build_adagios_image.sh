@@ -1,6 +1,16 @@
 #!/bin/bash
 PROJECT_NAME=naemon
 JOBS=10
+bold=$(tput bold)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+yellow=$(tput setaf 3)
+blue=$(tput setaf 4)
+cyan=$(tput setaf 6)
+reset=$(tput sgr0)
+
+echo -e "Building an image called ${PROJECT_NAME}"
+
 [[ ! -d RPM_CACHE ]] && mkdir RPM_CACHE
 
 set +e
@@ -16,3 +26,10 @@ buildah bud \
     --layers --jobs $JOBS \
     --volume $(pwd)/RPM_CACHE:/var/cache/dnf:rw,Z \
     -f centos_build/Dockerfile.fedora33 -t adagios-fedora .
+
+echo -e "${green}Build are done!${reset}"
+
+buildah images
+
+podman-compose -f container-adagios-compose.yaml  up --no-build --force-recreate
+

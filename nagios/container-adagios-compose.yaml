@@ -35,7 +35,7 @@ BUILD_TYPES:
    dockerfile: centos_build/Dockerfile.base
 
  centos_nagios: &BUILD_FEDORA33_ADAGIOS
-   dockerfile: centos_build/Dockerfile.fedora33
+   #   dockerfile: centos_build/Dockerfile.fedora33
    privileged: yes
    working_dir: /etc/naemon
    restart: always
@@ -115,9 +115,10 @@ CONTAINER_TYPES:
       - ALL
 
 services:
-    nagios:
+    adagios-fedora:
       <<: *PRIVILEGED_CONTAINER
-      build:  *BUILD_FEDORA33_ADAGIOS
+      #build:  *BUILD_FEDORA33_ADAGIOS
+      image: "localhost/adagios-fedora:latest"
       ports: ['5923:80','5924:31528']
       init: no
       command: ["/usr/sbin/init"]

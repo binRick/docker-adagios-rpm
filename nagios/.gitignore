@@ -5,3 +5,4 @@ wget-log
 RPM_CACHE
 RPM_CACHE1
 check-mk-raw-1.6.0p19.cre.tar.gz
+.attic/
