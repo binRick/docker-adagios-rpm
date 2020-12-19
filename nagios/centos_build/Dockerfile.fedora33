@@ -33,19 +33,22 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
 			procps-ng zsh redis curl python3-wheel php-common php-gd php-pear zsh-syntax-highlighting \
 			vim-enhanced colordiff ansible sysstat \
     		coreutils python3-simplejson naemon-livestatus naemon-devel naemon naemon-core naemon-thruk \
-		glibc-langpack-en
+		glibc-langpack-en python3-devel gettext-devel python3-paramiko samba-winexe pynag pynag-examples python3-setuptools python3-setuptools-devel
+		
 
 COPY files/install_borg.sh /root/install_borg.sh
 #RUN /root/install_borg.sh
 #RUN unlink /root/install_borg.sh
 
 RUN useradd -G nagios,wheel adagios
-RUN git clone git://github.com/pynag/pynag.git /opt/pynag
+#RUN git clone git://github.com/pynag/pynag.git /opt/pynag
 RUN git clone git://github.com/opinkerfi/adagios.git /opt/adagios
-RUN git clone https://github.com/opinkerfi/okconfig.git /opt/okconfig
+#RUN git clone https://github.com/opinkerfi/okconfig.git /opt/okconfig
+RUN git clone https://github.com/binRick/okconfig /opt/okconfig
+RUN sh -c 'cd /opt/okconfig && make'
 
 RUN pip3 install django==1.6
-RUN pip3 install /opt/pynag
+#RUN pip3 install /opt/pynag
 
 RUN cp /opt/okconfig/etc/okconfig.conf /etc/okconfig.conf
 RUN ln -s /opt/okconfig/usr/share/okconfig /usr/share/
@@ -67,6 +70,7 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 
 #RUN update-alternatives --install /usr/bin/ansible          ansible          /usr/bin/ansible-3            1; \
 #    update-alternatives --install /usr/bin/ansible-playbook ansible-playbook /usr/bin/ansible-playbook-3   1; \
+RUN  update-alternatives --verbose --install /usr/bin/python python /usr/bin/python3 1
 RUN  update-alternatives --list
 
 
@@ -126,7 +130,6 @@ RUN \
 				
 #COPY livestatus /etc/xinetd.d/livestatus
 
-RUN pynag list where object_type=service
 
 
 
@@ -166,14 +169,14 @@ RUN echo "RedirectMatch ^/$ /adagios" > /etc/httpd/conf.d/redirect.conf
 RUN echo "nagios ALL=NOPASSWD: /usr/bin/nagios-supervisor-wrapper.sh" >> /etc/sudoers.d/adagios
 RUN chmod 600 /etc/sudoers.d/adagios
 
-RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
-	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
+#RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
+	#	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
 
 
-RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg
-
-	#	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf
-
+#RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg
+#
+#	#	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf
+#
 #	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
 #	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
 
@@ -252,39 +255,47 @@ RUN neofetch > /etc/motd
 RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable httpd naemon haproxy redis sysstat crond 
 RUN systemctl disable postfix atd rngd php-fpm
+RUN systemctl stop postfix atd rngd php-fpm
 
 
 #HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
 
 RUN chown -R naemon:naemon \
 		/etc/naemon \
-		/etc/adagios \
-		/var/lib/adagios \
-		/var/lib/pnp4nagios \
-		/var/log/pnp4nagios \
-		/var/spool/pnp4nagios \
-		/etc/pnp4nagios/process_perfdata.cfg \
-		/var/log/okconfig
+		/etc/adagios
+
+#		/var/lib/adagios \
+	#		/var/lib/pnp4nagios \
+	#		/var/log/pnp4nagios \
+	#		/var/spool/pnp4nagios \
+	#		/etc/pnp4nagios/process_perfdata.cfg \
+	#		/var/log/okconfig
 
 RUN	chmod g+rwx -R \
 	/etc/naemon \
-	/etc/adagios \
-	/var/lib/adagios \
-	/var/lib/pnp4nagios \
-	/var/log/pnp4nagios \
-	/var/spool/pnp4nagios \
-	/etc/pnp4nagios/process_perfdata.cfg /var/log/okconfig
+	/etc/adagios
+
+#	/var/lib/adagios \
+	#	/var/lib/pnp4nagios \
+	#/var/log/pnp4nagios \
+	#/var/spool/pnp4nagios \
+	#/etc/pnp4nagios/process_perfdata.cfg /var/log/okconfig
 
 RUN	setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
 	/etc/naemon/ \
-	/etc/adagios \
-	/var/lib/adagios \
-	/var/lib/pnp4nagios \
-	/var/log/pnp4nagios \
-	/var/spool/pnp4nagios \
-	/etc/pnp4nagios/process_perfdata.cfg \
-	/var/log/okconfig
+	/etc/adagios
 
 
-VOLUME ["/etc/nagios", "/var/log/nagios", "/etc/adagios", "/opt/adagios", "/opt/pynag"]
+#	/var/lib/adagios \
+	#	/var/lib/pnp4nagios \
+	#/var/log/pnp4nagios \
+	#/var/spool/pnp4nagios \
+	#/etc/pnp4nagios/process_perfdata.cfg \
+	#/var/log/okconfig
+
+
+#VOLUME ["/etc/nagios", "/var/log/nagios", "/etc/adagios", "/opt/adagios", "/opt/pynag"]
+
+RUN pynag list where object_type=service
+RUN naemon-ctl configtest
 

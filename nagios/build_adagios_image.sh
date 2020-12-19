@@ -1,6 +1,6 @@
 #!/bin/bash
 PROJECT_NAME=naemon
-JOBS=10
+JOBS=1
 bold=$(tput bold)
 red=$(tput setaf 1)
 green=$(tput setaf 2)
@@ -25,8 +25,12 @@ set -e
 du --max-depth=1 -h RPM_CACHE/
 
 buildah bud \
+<<<<<<< HEAD
     --layers --jobs $JOBS \
     --storage-driver vfs \
+=======
+    --jobs $JOBS \
+>>>>>>> 4147c47ca51e372a1f51422295afe4014c87ac3a
     --volume $(pwd)/RPM_CACHE:/var/cache/dnf:rw,Z \
     -f centos_build/Dockerfile.fedora33 -t adagios-fedora .
 
