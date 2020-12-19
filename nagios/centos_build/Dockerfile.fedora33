@@ -38,13 +38,13 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
 
 
 RUN useradd -G nagios,wheel adagios
-RUN git clone git://github.com/pynag/pynag.git /usr/src/pynag
-RUN git clone git://github.com/opinkerfi/adagios.git /usr/src/adagios
+RUN git clone git://github.com/pynag/pynag.git /opt/pynag
+RUN git clone git://github.com/opinkerfi/adagios.git /opt/adagios
 RUN git clone https://github.com/opinkerfi/okconfig.git /opt/okconfig
 
 
 RUN pip3 install django==1.6
-RUN pip3 install /usr/src/pynag
+RUN pip3 install /opt/pynag
 
 RUN cp /opt/okconfig/etc/okconfig.conf /etc/okconfig.conf
 RUN ln -s /opt/okconfig/usr/share/okconfig /usr/share/
@@ -55,13 +55,6 @@ RUN ln -s /opt/okconfig/usr/bin/okconfig /usr/local/bin/
 #RUN sh -c "cd /usr/src/check-mk-raw-1.6.0p19.cre && ls"
 
 RUN sh -c "echo 'export PYTHONPATH=$PYTHONPATH:/opt/okconfig' > /etc/profile.d/okconfig.sh"
-
-#RUN 	sh -c 'cd /etc/nagios; \
-#		git init; \
-#		git add .; \
-#		git commit -a -m "Initial commit"'
-
-
 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 	systemd-tmpfiles-setup.service ] || rm -f $i; done); \
@@ -88,21 +81,14 @@ RUN chown root:root /usr/local/bin/safeu /usr/local/bin/fzf /etc/.ansi
 RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 
 
-
 RUN dnf makecache
 RUN sh -c "dnf list > /root/.dnf"
 
-
 #COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
-
-
-
 
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/zshrc
 
-RUN sudo setfacl -R -m d:g:nagios:rwx /etc/nagios
-RUN sudo setfacl -R -m g:nagios:rwx /etc/nagios
 
 
 
@@ -112,6 +98,18 @@ COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 
 
 
+
+RUN mkdir -p /var/lib/adagios
+RUN cp -r /opt/adagios/etc/adagios /etc/adagios
+RUN chown -R nagios:nagios -R /etc/adagios /etc/nagios
+RUN chmod g+w -R /etc/adagios
+RUN chown nagios:nagios /var/lib/adagios
+RUN mkdir -p /etc/nagios/adagios /etc/nagios/commands 
+RUN pynag config --set cfg_dir=/etc/nagios/adagios
+
+sudo setfacl -R -m d:g:nagios:rwx /etc/nagios
+sudo setfacl -R -m g:nagios:rwx /etc/nagios
+
 RUN \
 	cd /etc/nagios && \
 	git init /etc/nagios && \
@@ -119,18 +117,8 @@ RUN \
 	git config user.email "email@mail.com" && \
 	git add * && \
 	git commit -m "Initial commit"
-
-#	chown -R nagios:nagios -R \
-#				 /etc/adagios /etc/nagios/* /etc/nagios/.git
-
-# /var/lib/adagios
 				
-
-RUN \
-	mkdir -p /etc/nagios/adagios /etc/nagios/commands 
-
 #COPY livestatus /etc/xinetd.d/livestatus
-#RUN cp -r /usr/src/adagios/etc/adagios /etc/adagios
 
 RUN pynag list where object_type=service
 
@@ -155,62 +143,62 @@ RUN	mkdir -p /etc/naemon/adagios ;\
 
 
 
-#RUN sed 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' -i /etc/httpd/conf.d/adagios.conf ;\
-#	sed 's|user=nagios|user=naemon|g' -i /etc/httpd/conf.d/adagios.conf ;\
-#	sed 's|group=nagios|group=naemon|g' -i /etc/httpd/conf.d/adagios.conf ;\
-#	sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/adagios/adagios.conf ;\
-#	sed 's|nagios_url = "/nagios|nagios_url = "/naemon|g' -i /etc/adagios/adagios.conf ;\
-#	sed 's|/etc/nagios/adagios/|/etc/naemon/adagios/|g' -i /etc/adagios/adagios.conf ;\
-#	sed 's|/etc/init.d/nagios|/etc/init.d/naemon|g' -i /etc/adagios/adagios.conf ;\
-#	sed 's|nagios_service = "nagios"|nagios_service = "naemon"|g' -i /etc/adagios/adagios.conf ;\
-#	sed 's|livestatus_path = None|livestatus_path = "/var/cache/naemon/live"|g' -i /etc/adagios/adagios.conf ;\
-#	sed 's|/usr/sbin/nagios|/usr/bin/naemon|g' -i /etc/adagios/adagios.conf
+RUN sed 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' -i /etc/httpd/conf.d/adagios.conf ;\
+	sed 's|user=nagios|user=naemon|g' -i /etc/httpd/conf.d/adagios.conf ;\
+	sed 's|group=nagios|group=naemon|g' -i /etc/httpd/conf.d/adagios.conf ;\
+	sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/adagios/adagios.conf ;\
+	sed 's|nagios_url = "/nagios|nagios_url = "/naemon|g' -i /etc/adagios/adagios.conf ;\
+	sed 's|/etc/nagios/adagios/|/etc/naemon/adagios/|g' -i /etc/adagios/adagios.conf ;\
+	sed 's|/etc/init.d/nagios|/etc/init.d/naemon|g' -i /etc/adagios/adagios.conf ;\
+	sed 's|nagios_service = "nagios"|nagios_service = "naemon"|g' -i /etc/adagios/adagios.conf ;\
+	sed 's|livestatus_path = None|livestatus_path = "/var/cache/naemon/live"|g' -i /etc/adagios/adagios.conf ;\
+	sed 's|/usr/sbin/nagios|/usr/bin/naemon|g' -i /etc/adagios/adagios.conf
 
 
-#RUN sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/okconfig.conf ;\
-#	sed 's|/etc/nagios/okconfig/|/etc/naemon/okconfig/|g' -i /etc/okconfig.conf ;\
-#	sed 's|/etc/nagios/okconfig/examples|/etc/naemon/okconfig/examples|g' -i /etc/okconfig.conf
-
-
-
-#RUN echo "RedirectMatch ^/$ /adagios" > /etc/httpd/conf.d/redirect.conf
+RUN sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/okconfig.conf ;\
+	sed 's|/etc/nagios/okconfig/|/etc/naemon/okconfig/|g' -i /etc/okconfig.conf ;\
+	sed 's|/etc/nagios/okconfig/examples|/etc/naemon/okconfig/examples|g' -i /etc/okconfig.conf
 
 
 
-
-#RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
-#	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
+RUN echo "RedirectMatch ^/$ /adagios" > /etc/httpd/conf.d/redirect.conf
 
 
 
 
+RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
+	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
 
 
-#RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg ;\
-#	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf ;\
-#	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
-#	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
+
+
+
+
+RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg ;\
+	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf ;\
+	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
+	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
 
 # ACL group permissions need g+rwx
-#RUN	chmod g+rwx -R \
-#	/etc/naemon \
-#	/etc/adagios \
-#	/var/lib/adagios \
-#	/var/lib/pnp4nagios \
-#	/var/log/pnp4nagios \
-#	/var/spool/pnp4nagios \
-#	/etc/pnp4nagios/process_perfdata.cfg  \
-#	/var/log/okconfig
+RUN	chmod g+rwx -R \
+	/etc/naemon \
+	/etc/adagios \
+	/var/lib/adagios \
+	/var/lib/pnp4nagios \
+	/var/log/pnp4nagios \
+	/var/spool/pnp4nagios \
+	/etc/pnp4nagios/process_perfdata.cfg  \
+	/var/log/okconfig
 
-#RUN setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
-#	/etc/naemon/ \
-#	/etc/adagios \
-#	/var/lib/adagios \
-#	/var/lib/pnp4nagios \
-#	/var/log/pnp4nagios \
-#	/var/spool/pnp4nagios \
-#	/etc/pnp4nagios/process_perfdata.cfg \
-#	/var/log/okconfig
+RUN setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
+	/etc/naemon/ \
+	/etc/adagios \
+	/var/lib/adagios \
+	/var/lib/pnp4nagios \
+	/var/log/pnp4nagios \
+	/var/spool/pnp4nagios \
+	/etc/pnp4nagios/process_perfdata.cfg \
+	/var/log/okconfig
 
 
 
@@ -277,7 +265,7 @@ RUN systemctl disable postfix atd rngd php-fpm
 
 #HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
 
-RUN echo chown -R naemon:naemon \
+RUN chown -R naemon:naemon \
 		/etc/naemon \
 		/etc/adagios \
 	/var/lib/adagios \
@@ -287,21 +275,25 @@ RUN echo chown -R naemon:naemon \
 	/etc/pnp4nagios/process_perfdata.cfg \
 	/var/log/okconfig
 
-#RUN	chmod g+rwx -R \
-#	/etc/naemon \
-#	/etc/adagios \
-#	/var/lib/adagios \
-#	/var/lib/pnp4nagios \
-#	/var/log/pnp4nagios \
-#	/var/spool/pnp4nagios \
-#	/etc/pnp4nagios/process_perfdata.cfg /var/log/okconfig
+RUN	chmod g+rwx -R \
+	/etc/naemon \
+	/etc/adagios \
+	/var/lib/adagios \
+	/var/lib/pnp4nagios \
+	/var/log/pnp4nagios \
+	/var/spool/pnp4nagios \
+	/etc/pnp4nagios/process_perfdata.cfg /var/log/okconfig
 
-#RUN	setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
-#	/etc/naemon/ \
-#	/etc/adagios \
-#	/var/lib/adagios \
-#	/var/lib/pnp4nagios \
-#	/var/log/pnp4nagios \
-#	/var/spool/pnp4nagios \
-#	/etc/pnp4nagios/process_perfdata.cfg \
-#	/var/log/okconfig
+RUN	setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
+	/etc/naemon/ \
+	/etc/adagios \
+	/var/lib/adagios \
+	/var/lib/pnp4nagios \
+	/var/log/pnp4nagios \
+	/var/spool/pnp4nagios \
+	/etc/pnp4nagios/process_perfdata.cfg \
+	/var/log/okconfig
+
+
+VOLUME ["/etc/nagios", "/var/log/nagios", "/etc/adagios", "/opt/adagios", "/opt/pynag"]
+
