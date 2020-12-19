@@ -6,7 +6,7 @@ ENV ADAGIOS_USER thrukadmin
 ENV ADAGIOS_PASS thrukadmin
 
 ADD https://downloads.sourceforge.net/project/pnp4nagios/PNP-0.6/pnp4nagios-0.6.26.tar.gz /usr/src
-ADD check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
+#ADD check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
 ADD files/liquidprompt.tar.gz /opt
 ADD ops-dashboard.tar.gz /var/www
 ADD files/my-public-ip.tar.gz /opt
@@ -32,8 +32,9 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
 			libstdc++-static nagios-plugins-all facter httpd-tools bash-completion geolite2-city \
 			geolite2-country geolite2-asn \
 			procps-ng zsh redis curl python3-wheel php-common php-gd php-pear zsh-syntax-highlighting \
-			naemon vim-enhanced colordiff ansible sysstat \
-    		coreutils python3-simplejson
+			vim-enhanced colordiff ansible sysstat \
+    		coreutils python3-simplejson naemon-livestatus naemon-devel naemon naemon-core naemon-thruk \
+		glibc-langpack-en
 
 
 RUN useradd -G nagios,wheel adagios
@@ -111,13 +112,14 @@ COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 
 
 
-#RUN \
-#	cd /etc/nagios && \
-#	git init /etc/nagios && \
-#	git config user.name "User" && \
-#	git config user.email "email@mail.com" && \
-#	git add * && \
-#	git commit -m "Initial commit" && \
+RUN \
+	cd /etc/nagios && \
+	git init /etc/nagios && \
+	git config user.name "User" && \
+	git config user.email "email@mail.com" && \
+	git add * && \
+	git commit -m "Initial commit"
+
 #	chown -R nagios:nagios -R \
 #				 /etc/adagios /etc/nagios/* /etc/nagios/.git
 
@@ -127,7 +129,7 @@ COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 RUN \
 	mkdir -p /etc/nagios/adagios /etc/nagios/commands 
 
-COPY livestatus /etc/xinetd.d/livestatus
+#COPY livestatus /etc/xinetd.d/livestatus
 #RUN cp -r /usr/src/adagios/etc/adagios /etc/adagios
 
 RUN pynag list where object_type=service
@@ -270,7 +272,7 @@ RUN neofetch > /etc/motd
 
 #RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable httpd naemon haproxy redis sysstat crond 
-RUN systemctl disable postfix atd rngd 
+RUN systemctl disable postfix atd rngd php-fpm
 
 
 #HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
