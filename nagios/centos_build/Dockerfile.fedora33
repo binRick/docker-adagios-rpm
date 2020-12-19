@@ -109,7 +109,7 @@ RUN pynag config --set debug_verbosity=2
 RUN pynag config --set debug_file=/var/log/naemon/debug.log
 RUN pynag config --set enable_notifications=0
 RUN pynag config --set max_concurrent_checks=60
-RUN pynag config --set use_syslog=60
+RUN pynag config --set use_syslog=0
 RUN pynag config --set check_workers=2
 RUN pynag config --set host_down_disable_service_checks=1
 
