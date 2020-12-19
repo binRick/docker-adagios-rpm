@@ -48,7 +48,7 @@ RUN cp /opt/okconfig/etc/okconfig.conf /etc/okconfig.conf
 RUN ln -s /opt/okconfig/usr/share/okconfig /usr/share/
 RUN ln -s /opt/okconfig/usr/bin/okconfig /usr/local/bin/
 
-RUN sh -c "cd /usr/src/pnp4nagios-0.6.26 && ./configure && make all && make fullinstall"
+#RUN sh -c "cd /usr/src/pnp4nagios-0.6.26 && ./configure && make all && make fullinstall"
 RUN sh -c "echo 'export PYTHONPATH=$PYTHONPATH:/opt/okconfig' > /etc/profile.d/okconfig.sh"
 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
