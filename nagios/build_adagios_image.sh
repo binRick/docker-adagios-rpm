@@ -13,6 +13,8 @@ echo -e "Building an image called ${PROJECT_NAME}"
 
 [[ ! -d RPM_CACHE ]] && mkdir RPM_CACHE
 
+stat -c %T -f /sys/fs/cgroup
+
 set +e
 podman-compose -f container-adagios-compose.yaml down 2>/dev/null
 
