@@ -33,7 +33,7 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
 			procps-ng zsh redis curl python3-wheel php-common php-gd php-pear zsh-syntax-highlighting \
 			vim-enhanced colordiff ansible sysstat \
     		coreutils python3-simplejson naemon-livestatus naemon-devel naemon naemon-core naemon-thruk \
-		glibc-langpack-en python3-devel gettext-devel python3-paramiko samba-winexe pynag pynag-examples python3-setuptools python3-setuptools-devel
+		glibc-langpack-en python3-devel gettext-devel python3-paramiko samba-winexe pynag pynag-examples python3-setuptools
 		
 
 COPY files/install_borg.sh /root/install_borg.sh
@@ -42,10 +42,17 @@ COPY files/install_borg.sh /root/install_borg.sh
 
 RUN useradd -G nagios,wheel adagios
 #RUN git clone git://github.com/pynag/pynag.git /opt/pynag
-RUN git clone git://github.com/opinkerfi/adagios.git /opt/adagios
+#RUN git clone git://github.com/opinkerfi/adagios.git /opt/adagios
+ADD rpms /usr/src
+RUN dnf -y install /usr/src/*.rpm
+RUN okconfig --help
+
+
+
 #RUN git clone https://github.com/opinkerfi/okconfig.git /opt/okconfig
-RUN git clone https://github.com/binRick/okconfig /opt/okconfig
-RUN sh -c 'cd /opt/okconfig && make'
+#RUN git clone https://github.com/binRick/okconfig /opt/okconfig
+#RUN sh -c 'cd /opt/okconfig && make'
+#RUN dnf -y install 
 
 RUN pip3 install django==1.6
 #RUN pip3 install /opt/pynag
