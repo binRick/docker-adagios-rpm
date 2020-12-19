@@ -13,6 +13,7 @@ ADD files/my-public-ip.tar.gz /opt
 ADD files/usr_local_bin /usr/local/bin
 
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/dnf/dnf.conf
+RUN dnf -4 -y install 'dnf-command(config-manager)'
 RUN dnf config-manager --set-disabled fedora-modular;\
 	dnf config-manager --set-disabled updates-modular;\
 	dnf config-manager --set-disabled fedora-cisco-openh264
