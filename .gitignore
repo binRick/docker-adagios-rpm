@@ -19,3 +19,4 @@ unit_files/
 .firewalld_zones_public.xml
 nagios/rendered_templates
 nagios/files
+nagios/Dockerfile.vim
