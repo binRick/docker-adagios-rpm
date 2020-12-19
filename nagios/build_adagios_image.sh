@@ -35,3 +35,6 @@ buildah images
 
 podman-compose -f container-adagios-compose.yaml  up --no-build --force-recreate --detach
 
+podman exec nagios_adagios-fedora_1 ps axfuw
+
+podman exec -it nagios_adagios-fedora_1 bash
