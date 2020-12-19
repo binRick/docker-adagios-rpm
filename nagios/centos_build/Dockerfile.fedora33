@@ -13,7 +13,9 @@ ADD files/my-public-ip.tar.gz /opt
 ADD files/usr_local_bin /usr/local/bin
 
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/dnf/dnf.conf
-
+RUN dnf config-manager --set-disabled fedora-modular;\
+	dnf config-manager --set-disabled updates-modular;\
+	dnf config-manager --set-disabled fedora-cisco-openh264
 
 RUN curl -s https://download.opensuse.org/repositories/home:/naemon/Fedora_33/home:naemon.repo >> /etc/yum.repos.d/naemon-stable.repo
 RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -4 -y update
@@ -83,7 +85,7 @@ RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 
 
 
-RUN sh -c "dnf list |tee /root/.dnf | tee /RPM_CACHE/.dnf"
+RUN sh -c "dnf list > /root/.dnf && cat /root/.dnf > /RPM_CACHE/.dnf"
 
 
 #COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
