@@ -89,7 +89,7 @@ RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 
 
 RUN dnf makecache
-RUN sh -c "dnf list > tee /root/.dnf"
+RUN sh -c "dnf list > /root/.dnf"
 
 
 #COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
