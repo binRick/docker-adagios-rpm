@@ -270,10 +270,10 @@ RUN neofetch > /etc/motd
 
 #RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable httpd naemon haproxy redis sysstat crond 
-RUN systemctl disable ncpa_passive keepalived tinyproxy postfix fail2ban atd rngd sshd
+RUN systemctl disable postfix atd rngd 
 
 
-HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
+#HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
 
 #RUN chown -R naemon:naemon \
 #	/etc/naemon \
