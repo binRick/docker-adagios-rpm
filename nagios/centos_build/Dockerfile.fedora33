@@ -93,16 +93,25 @@ COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 
 
 
-RUN mkdir -p /var/lib/adagios
+RUN mkdir -p /var/lib/adagios/userdata
 #RUN ls /opt
 #RUN ls /opt/adagios
 #RUN ls /opt/adagios/adagios
 RUN cp -r /opt/adagios/adagios/etc/adagios /etc/.
 RUN chown -R nagios:nagios /etc/adagios /etc/nagios
 RUN chmod g+w -R /etc/adagios
-RUN chown nagios:nagios /var/lib/adagios
+RUN chown -R nagios:nagios /var/lib/adagios
 RUN mkdir -p /etc/nagios/adagios /etc/nagios/commands 
 RUN pynag config --set cfg_dir=/etc/nagios/adagios
+RUN pynag config --set cfg_dir=/etc/nagios/commands
+RUN pynag config --set debug_level=128
+RUN pynag config --set debug_verbosity=2
+RUN pynag config --set debug_file=/var/log/naemon/debug.log
+RUN pynag config --set enable_notifications=0
+RUN pynag config --set max_concurrent_checks=60
+RUN pynag config --set use_syslog=60
+RUN pynag config --set check_workers=2
+RUN pynag config --set host_down_disable_service_checks=1
 
 RUN setfacl -R -m d:g:nagios:rwx /etc/nagios
 RUN setfacl -R -m g:nagios:rwx /etc/nagios
@@ -161,32 +170,33 @@ RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
 	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
 
 
-RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg ;\
-	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf
+RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg
+
+	#	sed -i 's|/etc/nagios/passwd|/etc/thruk/htpasswd|g' /etc/httpd/conf.d/pnp4nagios.conf
 
 #	sed -i 's|user = nagios|user = naemon|g' /etc/pnp4nagios/npcd.cfg ;\
 #	sed -i 's|group = nagios|group = naemon|g' /etc/pnp4nagios/npcd.cfg
 
 # ACL group permissions need g+rwx
-RUN	chmod g+rwx -R \
-	/etc/naemon \
-	/etc/adagios \
-	/var/lib/adagios \
-	/var/lib/pnp4nagios \
-	/var/log/pnp4nagios \
-	/var/spool/pnp4nagios \
-	/etc/pnp4nagios/process_perfdata.cfg  \
-	/var/log/okconfig
+#RUN	chmod g+rwx -R \
+	#	/etc/naemon \
+	#/etc/adagios \
+	#/var/lib/adagios \
+	#/var/lib/pnp4nagios \
+	#/var/log/pnp4nagios \
+	#/var/spool/pnp4nagios \
+	#/etc/pnp4nagios/process_perfdata.cfg  \
+	#/var/log/okconfig
 
-RUN setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
-	/etc/naemon/ \
-	/etc/adagios \
-	/var/lib/adagios \
-	/var/lib/pnp4nagios \
-	/var/log/pnp4nagios \
-	/var/spool/pnp4nagios \
-	/etc/pnp4nagios/process_perfdata.cfg \
-	/var/log/okconfig
+#RUN setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
+	#	/etc/naemon/ \
+	#/etc/adagios \
+	#/var/lib/adagios \
+	#/var/lib/pnp4nagios \
+	#/var/log/pnp4nagios \
+	#/var/spool/pnp4nagios \
+	#/etc/pnp4nagios/process_perfdata.cfg \
+	#/var/log/okconfig
 
 
 # Fix permissions for naemon and pnp4nagios
