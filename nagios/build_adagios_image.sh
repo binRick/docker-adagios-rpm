@@ -1,6 +1,6 @@
 #!/bin/bash
 PROJECT_NAME=naemon
-JOBS=4
+JOBS=10
 [[ ! -d RPM_CACHE ]] && mkdir RPM_CACHE
 
 set +e
