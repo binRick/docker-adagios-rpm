@@ -29,9 +29,9 @@ buildah bud \
     --volume $(pwd)/RPM_CACHE:/var/cache/dnf:rw,Z \
     -f centos_build/Dockerfile.fedora33 -t adagios-fedora .
 
-echo -e "${green}Build are done!${reset}"
+echo -e "${green}Image Build is done!${reset}"
 
 buildah images
 
-podman-compose -f container-adagios-compose.yaml  up --no-build --force-recreate
+podman-compose -f container-adagios-compose.yaml  up --no-build --force-recreate --detach
 
