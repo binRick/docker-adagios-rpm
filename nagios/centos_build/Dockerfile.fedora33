@@ -91,7 +91,10 @@ COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 
 
 RUN mkdir -p /var/lib/adagios
-RUN cp -r /opt/adagios/etc/adagios /etc/adagios
+RUN ls /opt
+RUN ls /opt/adagios
+RUN ls /opt/adagios/adagios
+RUN cp -r /opt/adagios/adagios/etc/adagios /etc/adagios
 RUN chown -R nagios:nagios -R /etc/adagios /etc/nagios
 RUN chmod g+w -R /etc/adagios
 RUN chown nagios:nagios /var/lib/adagios
