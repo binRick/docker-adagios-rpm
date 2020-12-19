@@ -275,9 +275,9 @@ RUN systemctl disable postfix atd rngd
 
 #HEALTHCHECK --interval=2m --timeout=3s CMD curl -f http://localhost:80/ || exit 1
 
-RUN chown -R naemon:naemon \
-	/etc/naemon \
-	/etc/adagios \
+RUN echo chown -R naemon:naemon \
+		/etc/naemon \
+		/etc/adagios \
 	/var/lib/adagios \
 	/var/lib/pnp4nagios \
 	/var/log/pnp4nagios \
