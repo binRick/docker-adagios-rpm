@@ -28,11 +28,13 @@ defaults
     timeout check           10s
     maxconn                 {{haproxy.maxconn}}
 
-#frontend main *:{{ports.internal.haproxy}}
+#frontend main 
+#    bind*:{{ports.internal.haproxy}}
 #    default_backend             ttyd_socket
 
 {%for fe in  haproxy.frontends%}
-frontend {{fe.name}} {{fe.host}}:{{fe.port}}
+frontend {{fe.name}}
+    bind {{fe.host}}:{{fe.port}}
     default_backend             {{fe.default_backend}}
 {%endfor%}
 

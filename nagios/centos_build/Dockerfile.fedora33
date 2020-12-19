@@ -63,9 +63,10 @@ COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 COPY livestatus /etc/xinetd.d/livestatus
 COPY rendered_templates/haproxy.cfg /etc/haproxy/.
 
-RUN update-alternatives --verbose --install /usr/bin/python python /usr/bin/python3 1; \
-    update-alternatives --list; \
-    chmod 600 /etc/sudoers.d/naemon_plugins; \
+#RUN update-alternatives --verbose --install /usr/bin/python python /usr/bin/python3 1; \
+#    update-alternatives --list
+
+RUN chmod 600 /etc/sudoers.d/naemon_plugins; \
     chown root:root /usr/local/bin/safeu /usr/local/bin/fzf /etc/.ansi; \
     chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 
@@ -190,8 +191,9 @@ RUN unlink /etc/naemon/conf.d/windows.cfg;\
     unlink /etc/naemon/conf.d/switch.cfg;\
     unlink /etc/nagios/objects/switch.cfg;\
     unlink /etc/naemon/conf.d/printer.cfg;\
-    unlink /etc/naemon/conf.d/localhost.cfg;\
-    unlink /etc/naemon/conf.d/templates/services.cfg
+    unlink /etc/naemon/conf.d/localhost.cfg
+
+#    unlink /etc/naemon/conf.d/templates/services.cfg
 
 
 # Secure Adagios
