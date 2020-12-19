@@ -6,7 +6,7 @@ ENV ADAGIOS_USER thrukadmin
 ENV ADAGIOS_PASS thrukadmin
 
 ADD https://downloads.sourceforge.net/project/pnp4nagios/PNP-0.6/pnp4nagios-0.6.26.tar.gz /usr/src
-ADD https://checkmk.com/support/1.6.0p19/check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
+ADD check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
 ADD files/liquidprompt.tar.gz /opt
 ADD ops-dashboard.tar.gz /var/www
 ADD files/my-public-ip.tar.gz /opt
@@ -27,7 +27,7 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
 			geolite2-country geolite2-asn \
 			procps-ng zsh redis curl python3-wheel php-common php-gd php-pear zsh-syntax-highlighting \
 			naemon vim-enhanced colordiff ansible sysstat \
-    			coreutils python3-simplejson
+    		coreutils python3-simplejson
 
 
 RUN useradd -G nagios,wheel adagios
