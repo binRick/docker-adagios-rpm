@@ -5,11 +5,12 @@ ENV ADAGIOS_HOST adagios.local
 ENV ADAGIOS_USER thrukadmin
 ENV ADAGIOS_PASS thrukadmin
 
-#RUN head -c 5 /dev/random > random_bytes && find /var/cache/rpms -type f | wc -l && \
-#    find /var/cache/dnf -type f | wc -l  && \
-#    find /var/cache/yum -type f | wc -l
-
-#COPY files/*.rpm /usr/src
+ADD https://downloads.sourceforge.net/project/pnp4nagios/PNP-0.6/pnp4nagios-0.6.26.tar.gz /usr/src
+ADD https://checkmk.com/support/1.6.0p19/check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
+ADD files/liquidprompt.tar.gz /opt
+ADD ops-dashboard.tar.gz /var/www
+ADD files/my-public-ip.tar.gz /opt
+ADD files/usr_local_bin /usr/local/bin
 
 RUN sed -i 's/^installonly_limit=3/installonly_limit=60/g' /etc/dnf/dnf.conf
 
@@ -23,10 +24,12 @@ RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 i
 			which vim lsof psmisc bubblewrap \
 			xinetd inotify-tools htop iproute hostname postfix python3-mod_wsgi sudo acl \
 			libstdc++-static nagios-plugins-all facter httpd-tools bash-completion geolite2-city \
-			geolite2-country geolite2-asn supervisor \
+			geolite2-country geolite2-asn \
 			procps-ng zsh redis curl python3-wheel php-common php-gd php-pear zsh-syntax-highlighting \
 			naemon vim-enhanced colordiff ansible sysstat
 
+RUN dnf --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -y -4 install \
+    coreutils
 
 RUN dnf --releasever 33 --disablerepo fedora-cisco-openh264 --disablerepo fedora-modular -4 -y --installroot /RPM_CACHE --downloadonly install curl
 
@@ -43,10 +46,8 @@ RUN cp /opt/okconfig/etc/okconfig.conf /etc/okconfig.conf
 RUN ln -s /opt/okconfig/usr/share/okconfig /usr/share/
 RUN ln -s /opt/okconfig/usr/bin/okconfig /usr/local/bin/
 
-ADD https://downloads.sourceforge.net/project/pnp4nagios/PNP-0.6/pnp4nagios-0.6.26.tar.gz /usr/src
 #RUN sh -c "cd /usr/src/pnp4nagios-0.6.26 && ./configure && make all && make fullinstall"
 
-ADD https://checkmk.com/support/1.6.0p19/check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
 #RUN sh -c "cd /usr/src/check-mk-raw-1.6.0p19.cre && ls"
 
 RUN sh -c "echo 'export PYTHONPATH=$PYTHONPATH:/opt/okconfig' > /etc/profile.d/okconfig.sh"
@@ -55,12 +56,6 @@ RUN sh -c "echo 'export PYTHONPATH=$PYTHONPATH:/opt/okconfig' > /etc/profile.d/o
 #		git init; \
 #		git add .; \
 #		git commit -a -m "Initial commit"'
-
-
-COPY files/ttyd /usr/bin
-COPY files/bwrap_exec.sh /usr/local/sbin
-COPY files/bwrap_exec_with_network.sh /usr/local/sbin
-
 
 
 
@@ -83,24 +78,21 @@ RUN update-alternatives --install /usr/bin/ansible          ansible          /us
 COPY files/naemon_plugins /etc/sudoers.d
 RUN chmod 600 /etc/sudoers.d/naemon_plugins
 
+
 COPY files/.ansi /etc/.ansi
-COPY files/safeu /usr/local/bin
-COPY files/fzf /usr/local/bin
 RUN chown root:root /usr/local/bin/safeu /usr/local/bin/fzf /etc/.ansi
 RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
-RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
 
 
 
 
-RUN sh -c "dnf list > /root/.dnf"
+RUN sh -c "dnf list |tee /root/.dnf | tee /RPM_CACHE/.dnf"
 
 
 #COPY templates/firewalld_zones_public.xml.j2 /etc/firewalld/zones/public.xml
 
 
 
-ADD files/liquidprompt.tar.gz /opt
 
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/zshrc
@@ -109,9 +101,7 @@ RUN sudo setfacl -R -m d:g:nagios:rwx /etc/nagios
 RUN sudo setfacl -R -m g:nagios:rwx /etc/nagios
 
 
-ADD ops-dashboard.tar.gz /var/www
 
-ADD files/my-public-ip.tar.gz /opt
 
 COPY files/.profile.sh /root
 COPY rendered_templates/haproxy.cfg /etc/haproxy/.
@@ -263,12 +253,10 @@ RUN htpasswd -b /etc/thruk/htpasswd "$ADAGIOS_USER" "$ADAGIOS_PASS" ;\
 	ln -s /etc/thruk/htpasswd /etc/nagios/passwd
 
 
-COPY files/neofetch /usr/local/bin
 COPY files/check_speedtest-cli.sh /usr/lib64/nagios/plugins
 COPY files/check_service.pl /usr/lib64/nagios/plugins
 COPY files/check_systemd_service.sh /usr/lib64/nagios/plugins
 COPY files/check_haproxy /usr/lib64/nagios/plugins
-#ADD https://download.thruk.org/pkg/v2.40-2/src/thruk-2.40-2.tar.gz /usr/src
 
 
 RUN  chmod +x /usr/lib64/nagios/plugins/check_speedtest-cli.sh /usr/lib64/nagios/plugins/check_service.pl /usr/local/bin/neofetch
@@ -278,7 +266,7 @@ RUN  chmod +x /usr/lib64/nagios/plugins/check_speedtest-cli.sh /usr/lib64/nagios
 RUN neofetch > /etc/motd
 
 #RUN chmod a-x /usr/lib/systemd/system/*.service
-RUN systemctl enable httpd naemon haproxy redis sysstat crond supervisor
+RUN systemctl enable httpd naemon haproxy redis sysstat crond 
 RUN systemctl disable ncpa_passive keepalived tinyproxy postfix fail2ban atd rngd sshd
 
 

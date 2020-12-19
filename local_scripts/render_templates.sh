@@ -39,7 +39,7 @@ get_templates | while read -r template_file; do
 done
 
 rm -rf nagios/configs nagios/templates nagios/files 
-mkdir -p nagios/configs nagios/templates nagios/files nagios/configs/rendered nagios/files/bin
+mkdir -p nagios/configs nagios/templates nagios/files nagios/configs/rendered nagios/files/usr_local_bin
 
 rsync $rsync_opts .Dockerfile.wow nagios/centos_build/Dockerfile.wow
 #rsync $rsync_opts .Dockerfile.wow nagios/centos_build/Dockerfile.fedora33
@@ -62,19 +62,17 @@ for f in daemontools-encore-1.11-1.el7.x86_64.rpm labs-consol-stable.rhel7.noarc
     rsync $rsync_opts rpms/$f nagios/files/.
 done
 
-rsy
+for f in bwrap_exec.sh bwrap_exec_with_network.sh ttyd neofetch fzf safeu \
+   ; do
+    rsync $rsync_opts files/$f nagios/files/usr_local_bin/.
+done
 
-for f in check_haproxy neofetch check_speedtest-cli.sh check_service.pl check_systemd_service.sh log_run \
+for f in check_haproxy check_speedtest-cli.sh check_service.pl check_systemd_service.sh log_run \
          install_borg.sh \
          naemon_plugins \
-         ttyd \
          liquidprompt.tar.gz \
-         bwrap_exec.sh \
          .ansi \
-         fzf \
          lynis.tar.gz \
-         safeu \
-         bwrap_exec_with_network.sh \
          my-public-ip.tar.gz \
     ; do
     rsync $rsync_opts files/$f nagios/files/.
