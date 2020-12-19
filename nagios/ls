@@ -1,0 +1,1 @@
+dnf list --noplugins --enablerepo local_repo --disablerepo=fedora --disablerepo=updates --disablerepo=home_naemon

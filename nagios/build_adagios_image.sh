@@ -31,6 +31,7 @@ set -e
 du --max-depth=1 -h RPM_CACHE/
 du --max-depth=1 -h /repo
 
+#    --volume $(pwd)/yum.repos.d/local.repo:/etc/yum.repos.d/local.repo:ro,Z \
 buildah bud \
     $SQUASH \
     --jobs $JOBS \

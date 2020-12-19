@@ -1,0 +1,10 @@
+[local_repo]
+name=Fedora $releasever - $basearch
+baseurl=file:///repo/fedora
+enabled=1
+countme=1
+metadata_expire=-1
+repo_gpgcheck=0
+type=rpm
+gpgcheck=0
+skip_if_unavailable=False
