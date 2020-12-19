@@ -26,6 +26,7 @@ du --max-depth=1 -h RPM_CACHE/
 
 buildah bud \
     --layers --jobs $JOBS \
+    --storage-driver vfs \
     --volume $(pwd)/RPM_CACHE:/var/cache/dnf:rw,Z \
     -f centos_build/Dockerfile.fedora33 -t adagios-fedora .
 
