@@ -6,7 +6,6 @@ ENV ADAGIOS_USER thrukadmin
 ENV ADAGIOS_PASS thrukadmin
 
 ADD https://downloads.sourceforge.net/project/pnp4nagios/PNP-0.6/pnp4nagios-0.6.26.tar.gz /usr/src
-#ADD check-mk-raw-1.6.0p19.cre.tar.gz /usr/src
 ADD files/liquidprompt.tar.gz /opt
 ADD ops-dashboard.tar.gz /var/www
 ADD files/my-public-ip.tar.gz /opt
@@ -42,7 +41,6 @@ RUN git clone git://github.com/pynag/pynag.git /opt/pynag
 RUN git clone git://github.com/opinkerfi/adagios.git /opt/adagios
 RUN git clone https://github.com/opinkerfi/okconfig.git /opt/okconfig
 
-
 RUN pip3 install django==1.6
 RUN pip3 install /opt/pynag
 
@@ -50,10 +48,7 @@ RUN cp /opt/okconfig/etc/okconfig.conf /etc/okconfig.conf
 RUN ln -s /opt/okconfig/usr/share/okconfig /usr/share/
 RUN ln -s /opt/okconfig/usr/bin/okconfig /usr/local/bin/
 
-#RUN sh -c "cd /usr/src/pnp4nagios-0.6.26 && ./configure && make all && make fullinstall"
-
-#RUN sh -c "cd /usr/src/check-mk-raw-1.6.0p19.cre && ls"
-
+RUN sh -c "cd /usr/src/pnp4nagios-0.6.26 && ./configure && make all && make fullinstall"
 RUN sh -c "echo 'export PYTHONPATH=$PYTHONPATH:/opt/okconfig' > /etc/profile.d/okconfig.sh"
 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
@@ -75,7 +70,6 @@ RUN update-alternatives --install /usr/bin/ansible          ansible          /us
 COPY files/naemon_plugins /etc/sudoers.d
 RUN chmod 600 /etc/sudoers.d/naemon_plugins
 
-
 COPY files/.ansi /etc/.ansi
 RUN chown root:root /usr/local/bin/safeu /usr/local/bin/fzf /etc/.ansi
 RUN chmod +x /usr/local/bin/safeu /usr/local/bin/fzf
@@ -88,9 +82,6 @@ RUN sh -c "dnf list > /root/.dnf"
 
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/zshrc
-
-
-
 
 
 COPY files/.profile.sh /root
@@ -127,10 +118,7 @@ COPY files/install_borg.sh /root/install_borg.sh
 #RUN unlink /root/install_borg.sh
 
 
-
 COPY rendered_templates/haproxy.cfg /etc/haproxy/.
-
-
 
 # Make sure nagios doesn't interfere
 RUN	mkdir /etc/nagios/disabled ;\
@@ -164,14 +152,8 @@ RUN sed 's|/etc/nagios/nagios.cfg|/etc/naemon/naemon.cfg|g' -i /etc/okconfig.con
 RUN echo "RedirectMatch ^/$ /adagios" > /etc/httpd/conf.d/redirect.conf
 
 
-
-
 RUN sed 's|nagios|naemon|g' -i /etc/sudoers.d/adagios ;\
 	sed 's|/usr/sbin/naemon|/usr/bin/naemon|g' -i /etc/sudoers.d/adagios
-
-
-
-
 
 
 RUN sed -i 's|/usr/lib64/naemon/plugins|/usr/lib64/nagios/plugins|g' /etc/naemon/resource.cfg ;\
@@ -201,14 +183,7 @@ RUN setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
 	/var/log/okconfig
 
 
-
-
-
-
-
-
 # Fix permissions for naemon and pnp4nagios
-
 RUN pynag config --set "process_performance_data=1" ;\
 	pynag config --set 'service_perfdata_file=/var/lib/naemon/service-perfdata' ;\
 	pynag config --set 'service_perfdata_file_template=DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$' ;\
@@ -253,12 +228,12 @@ COPY files/check_haproxy /usr/lib64/nagios/plugins
 
 
 RUN  chmod +x /usr/lib64/nagios/plugins/check_speedtest-cli.sh /usr/lib64/nagios/plugins/check_service.pl /usr/local/bin/neofetch
-#RUN  chmod +x /usr/lib64/nagios/plugins/check_systemd_service.sh
-#RUN  chmod +x /usr/lib64/nagios/plugins/check_haproxy
+RUN  chmod +x /usr/lib64/nagios/plugins/check_systemd_service.sh
+RUN  chmod +x /usr/lib64/nagios/plugins/check_haproxy
 
 RUN neofetch > /etc/motd
 
-#RUN chmod a-x /usr/lib/systemd/system/*.service
+RUN chmod a-x /usr/lib/systemd/system/*.service
 RUN systemctl enable httpd naemon haproxy redis sysstat crond 
 RUN systemctl disable postfix atd rngd php-fpm
 
@@ -268,12 +243,12 @@ RUN systemctl disable postfix atd rngd php-fpm
 RUN chown -R naemon:naemon \
 		/etc/naemon \
 		/etc/adagios \
-	/var/lib/adagios \
-	/var/lib/pnp4nagios \
-	/var/log/pnp4nagios \
-	/var/spool/pnp4nagios \
-	/etc/pnp4nagios/process_perfdata.cfg \
-	/var/log/okconfig
+		/var/lib/adagios \
+		/var/lib/pnp4nagios \
+		/var/log/pnp4nagios \
+		/var/spool/pnp4nagios \
+		/etc/pnp4nagios/process_perfdata.cfg \
+		/var/log/okconfig
 
 RUN	chmod g+rwx -R \
 	/etc/naemon \
