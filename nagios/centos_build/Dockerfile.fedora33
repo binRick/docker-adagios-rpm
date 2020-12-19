@@ -94,15 +94,15 @@ RUN mkdir -p /var/lib/adagios
 RUN ls /opt
 RUN ls /opt/adagios
 RUN ls /opt/adagios/adagios
-RUN cp -r /opt/adagios/adagios/etc/adagios /etc/adagios
+RUN cp -r /opt/adagios/adagios/etc/adagios /etc/.
 RUN chown -R nagios:nagios -R /etc/adagios /etc/nagios
 RUN chmod g+w -R /etc/adagios
 RUN chown nagios:nagios /var/lib/adagios
 RUN mkdir -p /etc/nagios/adagios /etc/nagios/commands 
 RUN pynag config --set cfg_dir=/etc/nagios/adagios
 
-sudo setfacl -R -m d:g:nagios:rwx /etc/nagios
-sudo setfacl -R -m g:nagios:rwx /etc/nagios
+RUN setfacl -R -m d:g:nagios:rwx /etc/nagios
+RUN setfacl -R -m g:nagios:rwx /etc/nagios
 
 RUN \
 	cd /etc/nagios && \
