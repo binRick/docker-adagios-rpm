@@ -25,7 +25,7 @@ RUN dnf -y install 	nagios git python3 python3-pip nodejs npm python3-virtualenv
 			libstdc++-static nagios-plugins-all facter httpd-tools bash-completion geolite2-city \
 			geolite2-country geolite2-asn supervisor \
 			procps-ng zsh redis curl python3-wheel php-common php-gd php-pear zsh-syntax-highlighting \
-			naemon
+			naemon wireguard-tools
 
 RUN dnf -y install 	vim-enhanced colordiff ansible
 
