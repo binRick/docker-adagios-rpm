@@ -110,8 +110,8 @@ RUN cd /opt && tar zxf liquidprompt.tar.gz && unlink liquidprompt.tar.gz
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/bashrc
 RUN echo '[[ $- = *i* ]] && source /opt/liquidprompt/liquidprompt && source /etc/.ansi && source ~/.profile.sh' >> /etc/zshrc
 
-RUN sudo setfacl -R -m d:g:nagios:rwx /etc/nagios
-RUN sudo setfacl -R -m g:nagios:rwx /etc/nagios
+RUN sudo setfacl -R -m d:g:nagios:rwx /etc/nagios || true
+RUN sudo setfacl -R -m g:nagios:rwx /etc/nagios   || true
 
 
 #COPY files/ops-dashboard.tar.gz /var/www
@@ -318,4 +318,4 @@ RUN	setfacl -R -m group:naemon:rwx -m d:group:naemon:rwx \
 	/var/log/pnp4nagios \
 	/var/spool/pnp4nagios \
 	/etc/pnp4nagios/process_perfdata.cfg \
-	/var/log/okconfig
+	/var/log/okconfig || true
